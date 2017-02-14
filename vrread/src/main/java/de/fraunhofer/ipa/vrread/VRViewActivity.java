@@ -276,7 +276,7 @@ public class VRViewActivity extends GvrActivity implements GvrView.StereoRendere
 		checkGLError("Floor program");
 
 		// Load texture
-		textureDataHandle = loadTexture(this, R.drawable.text);
+		textureDataHandle = loadTexture(R.drawable.text);
 
 		GLES20.glUseProgram(wallProgram);
 		wallPositionParam = GLES20.glGetAttribLocation(wallProgram, "a_Position");
@@ -407,7 +407,7 @@ public class VRViewActivity extends GvrActivity implements GvrView.StereoRendere
 		vibrator.vibrate(50);
 	}
 
-	public int loadTexture(final Context context, final int resourceId)
+	public int loadTexture(final int resourceId)
 	{
 		final int[] textureHandle = new int[1];
 
@@ -419,14 +419,14 @@ public class VRViewActivity extends GvrActivity implements GvrView.StereoRendere
 			options.inScaled = false;   // No pre-scaling
 
 			// Read in the resource
-			final Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), resourceId, options);
+			final Bitmap bitmap = BitmapFactory.decodeResource(getResources(), resourceId, options);
 
 			// Bind to the texture in OpenGL
 			GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle[0]);
 
 			// Set filtering of the texture
 			GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
-			GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST);
+			GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
 
 			// Load the bitmap into the bound texture.
 			GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
@@ -445,11 +445,27 @@ public class VRViewActivity extends GvrActivity implements GvrView.StereoRendere
 		return textureHandle[0];
 	}
 
+	/**
+	 * Replaces the text texture.
+	 */
+	public void replaceTexture(int oldTextureHandle) {
+		textureDataHandle = loadTexture(R.drawable.text_inv);
+
+		final int[] textureHandle = new int[]{oldTextureHandle};
+		GLES20.glDeleteTextures(1, textureHandle, 0);
+	}
+
 	public void onClick(View view) {
 		//gvrView.recenterHeadTracker();
 
-		//textureScale /= 1.1;
-		textureUvOffset[0] += 0.5;
-		textureUvOffset[1] += 0.7;
+		textureScale += 0.5;
+		//textureUvOffset[0] += 0.5;
+		//textureUvOffset[1] += 0.7;
+
+		if(textureScale > 2) {
+			// TODO Must be in the same thread as the initial loading
+			// http://stackoverflow.com/questions/29356508/why-does-glgentextures-returns-zero-on-opengl-context-thread-android/29357321
+			//replaceTexture(textureDataHandle);
+		}
 	}
 }
