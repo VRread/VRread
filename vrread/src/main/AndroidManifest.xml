@@ -27,11 +27,10 @@
 		android:icon="@mipmap/ic_launcher"
 		android:label="TreasureHuntActivity">
 		<activity
-			android:name=".TreasureHuntActivity"
+			android:name=".VRViewActivity"
 			android:label="TreasureHuntActivity"
 			android:screenOrientation="landscape"
-			android:configChanges="orientation|keyboardHidden|screenSize"
-			android:enableVrMode="@string/gvr_vr_mode_component">
+			android:configChanges="orientation|keyboardHidden|screenSize">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />

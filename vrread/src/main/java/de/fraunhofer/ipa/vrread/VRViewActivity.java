@@ -49,9 +49,9 @@ import javax.microedition.khronos.egl.EGLConfig;
  * "treasure" cube. When the user looks at the cube, the cube will turn gold. While gold, the user can activate the
  * Cardboard trigger, which will in turn randomly reposition the cube.
  */
-public class TreasureHuntActivity extends GvrActivity implements GvrView.StereoRenderer {
+public class VRViewActivity extends GvrActivity implements GvrView.StereoRenderer {
 
-	private static final String TAG = TreasureHuntActivity.class.getSimpleName();
+	private static final String TAG = VRViewActivity.class.getSimpleName();
 
 	private static final float Z_NEAR = 0.1f;
 	private static final float Z_FAR = 10.0f;
@@ -286,7 +286,7 @@ public class TreasureHuntActivity extends GvrActivity implements GvrView.StereoR
 		textureCoordinateParam = GLES20.glGetAttribLocation(wallProgram, "a_TexCoordinate");
 		textureColorParam = GLES20.glGetUniformLocation(wallProgram, "u_Texture");
 		textureScaleParam = GLES20.glGetUniformLocation(wallProgram, "u_Scale");
-		textureUvOffsetParam = GLES20.glGetUniformLocation(wallProgram, "");
+		textureUvOffsetParam = GLES20.glGetUniformLocation(wallProgram, "u_Offset");
 
 		checkGLError("Floor program params");
 
@@ -338,6 +338,7 @@ public class TreasureHuntActivity extends GvrActivity implements GvrView.StereoR
 		GLES20.glVertexAttribPointer(textureCoordinateParam, 2, GLES20.GL_FLOAT, false, 0, wallTextureCoordinates);
 		GLES20.glEnableVertexAttribArray(textureCoordinateParam);
 		GLES20.glUniform1f(textureScaleParam, textureScale);
+		GLES20.glUniform2f(textureUvOffsetParam, textureUvOffset[0], textureUvOffset[1]);
 		checkGLError("texture coordiantes");
 
 		// Set the position of the floor
@@ -445,8 +446,10 @@ public class TreasureHuntActivity extends GvrActivity implements GvrView.StereoR
 	}
 
 	public void onClick(View view) {
-		gvrView.recenterHeadTracker();
+		//gvrView.recenterHeadTracker();
 
-		textureScale /= 1.1;
+		//textureScale /= 1.1;
+		textureUvOffset[0] += 0.5;
+		textureUvOffset[1] += 0.7;
 	}
 }
