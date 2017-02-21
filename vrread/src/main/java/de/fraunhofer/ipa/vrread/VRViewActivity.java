@@ -26,6 +26,7 @@ import android.os.Bundle;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import com.google.vr.sdk.base.AndroidCompat;
 import com.google.vr.sdk.base.Eye;
@@ -54,7 +55,8 @@ public class VRViewActivity extends GvrActivity implements GvrView.StereoRendere
 	private static final String TAG = VRViewActivity.class.getSimpleName();
 
 	private static final float Z_NEAR = 0.1f;
-	private static final float Z_FAR = 10.0f;
+	private static final float Z_FAR = 100.0f;
+	private static final float Z_MODEL_POS = -1f;
 
 	private static final float CAMERA_Z = 0.5f;
 
@@ -69,6 +71,10 @@ public class VRViewActivity extends GvrActivity implements GvrView.StereoRendere
 	 */
 	private float[] cameraMatrix;
 
+	/**
+	 * Holds the rotation part of the eye to camera transform.
+	 */
+	private float[] eyeRotMatrix = new float[16];
 
 	/**
 	 * All the cam transforms are feeded into this matrix.
@@ -78,12 +84,13 @@ public class VRViewActivity extends GvrActivity implements GvrView.StereoRendere
 	/**
 	 * Positions the model.
 	 */
-	private float[] modelWall;
+	private float[] modelMatrix;
 
 	/**
 	 * Holds the rotation of the head.
 	 */
 	private float[] headQuaternion = new float[4];
+	private float[] eulerAngles = new float[3];
 
 	/**
 	 * Projection matrix.
@@ -107,20 +114,19 @@ public class VRViewActivity extends GvrActivity implements GvrView.StereoRendere
 	private int textureDataHandle;
 
 	/**
-	 * The current scale of the texture. This parameter is fed into the shader in each
-	 * rendering step.
+	 * The current scale of the texture. This parameter is fed into the shader in each rendering step.
 	 */
 	private float textureScale = 1.0f;
 
 	/**
-	 * Offset uv coordinates which are fed in each rendering to the shader in order to
-	 * shift  the  texture.
+	 * Offset uv coordinates which are fed in each rendering to the shader in order to shift  the  texture.
 	 */
-	private float[] textureUvOffset = new float[] {0f, 0f};
+	private float[] textureUvOffset = new float[]{0f, 0f};
 
 	private Vibrator vibrator;
 
 	private GvrView gvrView;
+	private TextView overlay;
 
 
 	/**
@@ -178,9 +184,11 @@ public class VRViewActivity extends GvrActivity implements GvrView.StereoRendere
 
 		cameraMatrix = new float[16];
 		modelViewProjection = new float[16];
-		modelWall = new float[16];
+		modelMatrix = new float[16];
 		viewMatrix = new float[16];
+
 		vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+		overlay = (TextView) findViewById(R.id.vr_overlaytext);
 	}
 
 	public void initializeGvrView() {
@@ -248,13 +256,12 @@ public class VRViewActivity extends GvrActivity implements GvrView.StereoRendere
 		wallTextureCoordinates.put(WorldLayoutData.PLANE_TEX_CORDS);
 		wallTextureCoordinates.position(0);
 
-		int textVertShader = loadGLShader(GLES20.GL_VERTEX_SHADER, R.raw.vertex);
-		int textFragShader = loadGLShader(GLES20.GL_FRAGMENT_SHADER, R.raw.fragment);
+		final int textVertShader = loadGLShader(GLES20.GL_VERTEX_SHADER, R.raw.vertex);
+		final int textFragShader = loadGLShader(GLES20.GL_FRAGMENT_SHADER, R.raw.fragment);
 
 		wallProgram = GLES20.glCreateProgram();
 		GLES20.glAttachShader(wallProgram, textVertShader);
 		GLES20.glAttachShader(wallProgram, textFragShader);
-
 		GLES20.glLinkProgram(wallProgram);
 
 		// Error check the linkage.
@@ -263,13 +270,11 @@ public class VRViewActivity extends GvrActivity implements GvrView.StereoRendere
 		GLES20.glGetProgramiv(wallProgram, GLES20.GL_LINK_STATUS, linkStatus, 0);
 
 		// If the link failed, delete the program.
-		if (linkStatus[0] == 0)
-		{
+		if (linkStatus[0] == 0) {
 			GLES20.glDeleteProgram(wallProgram);
 			wallProgram = 0;
 		}
-		if (wallProgram == 0)
-		{
+		if (wallProgram == 0) {
 			throw new RuntimeException("Error creating program.");
 		}
 
@@ -290,9 +295,10 @@ public class VRViewActivity extends GvrActivity implements GvrView.StereoRendere
 
 		checkGLError("Floor program params");
 
-		// Position the wall in front of the user.
-		Matrix.setIdentityM(modelWall, 0);
-		Matrix.translateM(modelWall, 0, 0f, 0f, -1.0f);
+		// Position the wall in front of the user. (-1 unit/meter in worldspace).
+		Matrix.setIdentityM(modelMatrix, 0);
+		Matrix.translateM(modelMatrix, 0, 0f, 0f, Z_MODEL_POS);
+		Matrix.setLookAtM(cameraMatrix, 0, 0.0f, 0.0f, CAMERA_Z, 0f, 0f, 0f, 0f, 1.0f, 0f);
 
 		checkGLError("onSurfaceCreated");
 	}
@@ -311,19 +317,29 @@ public class VRViewActivity extends GvrActivity implements GvrView.StereoRendere
 
 		checkGLError("basic setup");
 
-		// Apply the eye transformation to the camera.
-		Matrix.multiplyMM(viewMatrix, 0, eye.getEyeView(), 0, cameraMatrix, 0);
+		// Remove the rotation from the matrix.
+		float[] eyeMat = eye.getEyeView();
 
-		// Build the ModelView and ModelViewProjection matrices
-		// for calculating cube position and light.
-		float[] perspective = eye.getPerspective(Z_NEAR, Z_FAR);
+		eyeMat[0] = 1;
+		eyeMat[1] = 0;
+		eyeMat[2] = 0;
+		eyeMat[4] = 0;
+		eyeMat[5] = 1;
+		eyeMat[6] = 0;
+		eyeMat[8] = 0;
+		eyeMat[9] = 0;
+		eyeMat[10] = 1;
+
+		// Set identity to rotation.
+		Matrix.multiplyMM(viewMatrix, 0, eyeMat, 0, cameraMatrix, 0);
 
 		// This multiplies the view matrix by the model matrix, and stores the result in the MVP matrix
 		// (which currently contains model * view).
-		Matrix.multiplyMM(modelViewProjection, 0, viewMatrix, 0, modelWall, 0);
+		Matrix.multiplyMM(modelViewProjection, 0, viewMatrix, 0, modelMatrix, 0);
 
 		// This multiplies the modelview matrix by the projection matrix, and stores the result in the MVP matrix
 		// (which now contains model * view * projection).
+		float[] perspective = eye.getPerspective(Z_NEAR, Z_FAR);
 		Matrix.multiplyMM(modelViewProjection, 0, perspective, 0, modelViewProjection, 0);
 
 		// ### Prepare Texture
@@ -382,11 +398,29 @@ public class VRViewActivity extends GvrActivity implements GvrView.StereoRendere
 	@Override
 	public void onNewFrame(HeadTransform headTransform) {
 
-		// Build the camera matrix and apply it to the ModelView.
-		Matrix.setLookAtM(cameraMatrix, 0, 0.0f, 0.0f, CAMERA_Z, 0.0f, 0.0f, 0f, 0.0f, 1.0f, 0.0f);
+		//float[] forward = new float[3];
+		//float[] up = new float[3];
+
+		// Set the model matrix that the object is oriented in front of the camera.
+		//headTransform.getForwardVector(forward, 0);
+		//headTransform.getUpVector(up, 0);
+/*
+		Matrix.setIdentityM(modelMatrix, 0);
+		Matrix.setLookAtM(modelMatrix, 0, 0.0f, 0.0f, CAMERA_Z, forward[0], forward[1], forward[2], up[0], up[1],
+				up[2]);
+		Matrix.translateM(modelMatrix, 0, 0f, 0f, Z_MODEL_POS);*/
 
 		// Get deviation of the head angle from the z direction with regards to the y axis.
 		headTransform.getQuaternion(headQuaternion, 0);
+		calculateEulerAngles();
+
+		// Check the distortion angle.
+		if (eulerAngles[1] > 0.5f) {
+			textureUvOffset[0] += 0.005;
+		}
+		if (eulerAngles[1] < -0.5f) {
+			textureUvOffset[0] -= 0.005;
+		}
 
 		checkGLError("onReadyToDraw");
 	}
@@ -395,6 +429,32 @@ public class VRViewActivity extends GvrActivity implements GvrView.StereoRendere
 	public void onFinishFrame(Viewport viewport) {
 	}
 
+	/**
+	 * Caluclates the new euler angles from the head rotation quaternion.
+	 */
+	private void calculateEulerAngles() {
+
+		final double psi = Math.atan2(-2. * (headQuaternion[2] * headQuaternion[3] - headQuaternion[0] *
+				headQuaternion[1]), headQuaternion[0] * headQuaternion[0] - headQuaternion[1] * headQuaternion[1] -
+				headQuaternion[2] * headQuaternion[2] + headQuaternion[3] * headQuaternion[3]);
+
+		final double theta = Math.asin(2. * (headQuaternion[1] * headQuaternion[3] + headQuaternion[0] *
+				headQuaternion[2]));
+		final double phi = Math.atan2(2. * (headQuaternion[1] * headQuaternion[2] + headQuaternion[0] *
+				headQuaternion[3]), headQuaternion[0] * headQuaternion[0] + headQuaternion[1] * headQuaternion[1] -
+				headQuaternion[2] * headQuaternion[2] - headQuaternion[3] * headQuaternion[3]);
+
+		eulerAngles[0] = (float) psi;
+		eulerAngles[1] = (float) theta;
+		eulerAngles[2] = (float) phi;
+
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				overlay.setText(String.format("Winkel\npsi: %f\ntheta: %f\nphi: %f", psi, theta, phi));
+			}
+		});
+	}
 
 	/**
 	 * Called when the Cardboard trigger is pulled.
@@ -407,14 +467,12 @@ public class VRViewActivity extends GvrActivity implements GvrView.StereoRendere
 		vibrator.vibrate(50);
 	}
 
-	public int loadTexture(final int resourceId)
-	{
+	public int loadTexture(final int resourceId) {
 		final int[] textureHandle = new int[1];
 
 		GLES20.glGenTextures(1, textureHandle, 0);
 
-		if (textureHandle[0] != 0)
-		{
+		if (textureHandle[0] != 0) {
 			final BitmapFactory.Options options = new BitmapFactory.Options();
 			options.inScaled = false;   // No pre-scaling
 
@@ -430,15 +488,12 @@ public class VRViewActivity extends GvrActivity implements GvrView.StereoRendere
 
 			// Load the bitmap into the bound texture.
 			GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
-			// http://stackoverflow.com/questions/9863969/updating-a-texture-in-opengl-with-glteximage2d
-			//GLUtils.texS
 
 			// Recycle the bitmap, since its data has been loaded into OpenGL.
 			bitmap.recycle();
 		}
 
-		if (textureHandle[0] == 0)
-		{
+		if (textureHandle[0] == 0) {
 			throw new RuntimeException("Error loading texture.");
 		}
 
@@ -456,15 +511,16 @@ public class VRViewActivity extends GvrActivity implements GvrView.StereoRendere
 	}
 
 	public void onClick(View view) {
-		//gvrView.recenterHeadTracker();
+		gvrView.recenterHeadTracker();
 
 		textureScale += 0.5;
 		//textureUvOffset[0] += 0.5;
 		//textureUvOffset[1] += 0.7;
 
-		if(textureScale > 2) {
+		if (textureScale > 2) {
 			// TODO Must be in the same thread as the initial loading
-			// http://stackoverflow.com/questions/29356508/why-does-glgentextures-returns-zero-on-opengl-context-thread-android/29357321
+			// http://stackoverflow.com/questions/29356508/why-does-glgentextures-returns-zero-on-opengl-context
+			// -thread-android/29357321
 			//replaceTexture(textureDataHandle);
 		}
 	}
