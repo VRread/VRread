@@ -72,11 +72,6 @@ public class VRViewActivity extends GvrActivity implements GvrView.StereoRendere
 	private float[] cameraMatrix;
 
 	/**
-	 * Holds the rotation part of the eye to camera transform.
-	 */
-	private float[] eyeRotMatrix = new float[16];
-
-	/**
 	 * All the cam transforms are feeded into this matrix.
 	 */
 	private float[] viewMatrix;
@@ -127,6 +122,8 @@ public class VRViewActivity extends GvrActivity implements GvrView.StereoRendere
 
 	private GvrView gvrView;
 	private TextView overlay;
+
+	private int newTexId = -1;
 
 
 	/**
@@ -192,7 +189,7 @@ public class VRViewActivity extends GvrActivity implements GvrView.StereoRendere
 	}
 
 	public void initializeGvrView() {
-		setContentView(R.layout.common_ui);
+		setContentView(R.layout.renderer);
 
 		gvrView = (GvrView) findViewById(R.id.gvr_view);
 		gvrView.setEGLConfigChooser(8, 8, 8, 8, 16, 8);
@@ -418,11 +415,16 @@ public class VRViewActivity extends GvrActivity implements GvrView.StereoRendere
 		if (eulerAngles[1] > 0.5f) {
 			textureUvOffset[0] += 0.005;
 		}
+
 		if (eulerAngles[1] < -0.5f) {
 			textureUvOffset[0] -= 0.005;
 		}
 
 		checkGLError("onReadyToDraw");
+
+		if(newTexId != -1) {
+			replaceTexture(textureDataHandle);
+		}
 	}
 
 	@Override
@@ -522,6 +524,7 @@ public class VRViewActivity extends GvrActivity implements GvrView.StereoRendere
 			// http://stackoverflow.com/questions/29356508/why-does-glgentextures-returns-zero-on-opengl-context
 			// -thread-android/29357321
 			//replaceTexture(textureDataHandle);
+			newTexId = R.drawable.text_inv;
 		}
 	}
 }
