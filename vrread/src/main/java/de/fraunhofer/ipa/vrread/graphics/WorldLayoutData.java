@@ -14,24 +14,30 @@
  * limitations under the License.
  */
 
-package de.fraunhofer.ipa.vrread;
+package de.fraunhofer.ipa.vrread.graphics;
 
 /**
  * Contains vertex, normal and color data.
  */
 public final class WorldLayoutData {
 
-  // The grid lines on the floor are rendered procedurally and large polygons cause floating point
-  // precision problems on some architectures. So we split the floor into 4 quadrants.
-  public static final float[] FLOOR_COORDS = new float[] {
-		  // +X, +Y quadrant
-		  2, -2, 0,
-		  -2, -2, 0,
-		  -2, 2, 0,
-		  2, -2, 0,
-		  -2, 2, 0,
-		  2, 2, 0
-  };
+	/**
+	 * Priv. ctor so the class can only be used in static fashon.
+	 */
+	private WorldLayoutData() {
+		// no op.
+	}
+
+	// The grid lines on the floor are rendered procedurally and large polygons cause floating point
+	// precision problems on some architectures. So we split the floor into 4 quadrants.
+	public static final float[] PLANE_COORDS = new float[]{
+			// +X, +Y quadrant
+			2, -2, 0,
+			-2, -2, 0,
+			-2, 2, 0,
+			2, -2, 0,
+			-2, 2, 0,
+			2, 2, 0};
 
 
 	// S, T (or X, Y)
@@ -39,13 +45,12 @@ public final class WorldLayoutData {
 	// Because images have a Y axis pointing downward (values increase as you move down the image) while
 	// OpenGL has a Y axis pointing upward, we adjust for that here by flipping the Y axis.
 	// What's more is that the texture coordinates are the same for every face.
-	public static  final float[] PLANE_TEX_CORDS = new float[] {
+	public static final float[] PLANE_TEX_CORDS = new float[]{
 			// Front face
 			1.0f, 1.0f,
 			0.0f, 1.0f,
 			0.0f, 0.0f,
 			1.0f, 1.0f,
 			0.0f, 0.0f,
-			1.0f, 0.0f
-	};
+			1.0f, 0.0f};
 }

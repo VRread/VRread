@@ -27,7 +27,7 @@
 		android:icon="@mipmap/ic_launcher"
 		android:label="@string/app_name">
 		<activity
-			android:name=".VRViewActivity"
+			android:name=".ui.VRViewActivity"
 			android:screenOrientation="landscape"
 			android:configChanges="orientation|keyboardHidden|screenSize">
 			<intent-filter>
