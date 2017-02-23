@@ -17,7 +17,9 @@ import java.nio.FloatBuffer;
 import de.fraunhofer.ipa.vrread.R;
 
 /**
- * Created by tbf on 23.02.2017.
+ * This creates a shader which is able to draw, scroll and scale a texture.
+ * <p>
+ * Created by Thomas Felix on 23.02.2017.
  */
 
 public class ScrollingTextureShader extends Shader {
@@ -57,7 +59,7 @@ public class ScrollingTextureShader extends Shader {
 		this.textureScale = textureScale;
 	}
 
-	private synchronized  float getTextureScale() {
+	private synchronized float getTextureScale() {
 		return textureScale;
 	}
 
@@ -118,7 +120,7 @@ public class ScrollingTextureShader extends Shader {
 		return textureHandle[0];
 	}
 
-	public ScrollingTextureShader(Context ctx) {
+	ScrollingTextureShader(Context ctx) {
 
 		this.ctx = ctx;
 	}
@@ -204,5 +206,39 @@ public class ScrollingTextureShader extends Shader {
 		// Set the position of the model
 		GLES20.glVertexAttribPointer(wallPositionParam, 3, GLES20.GL_FLOAT, false, 0, vertices);
 		GLES20.glEnableVertexAttribArray(wallPositionParam);
+	}
+
+	public int useTexture(Bitmap bitmap) {
+		final int[] textureHandle = new int[1];
+
+		GLES20.glGenTextures(1, textureHandle, 0);
+
+		if (textureHandle[0] != 0) {
+			// Bind to the texture in OpenGL
+			GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle[0]);
+
+			// Set filtering of the texture
+			GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
+			GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
+
+			// Load the bitmap into the bound texture.
+			GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
+		}
+
+		if (textureHandle[0] == 0) {
+			throw new RuntimeException("Error loading texture.");
+		}
+
+		return textureHandle[0];
+	}
+
+	/**
+	 * Replaces the text texture.
+	 */
+	public void replaceTexture(int oldTextureHandle) {
+		//textureDataHandle = loadTexture(R.drawable.text_inv);
+
+		final int[] textureHandle = new int[]{oldTextureHandle};
+		GLES20.glDeleteTextures(1, textureHandle, 0);
 	}
 }

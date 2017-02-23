@@ -1,8 +1,6 @@
 package de.fraunhofer.ipa.vrread.graphics;
 
-import android.graphics.Bitmap;
 import android.opengl.GLES20;
-import android.opengl.GLUtils;
 import android.opengl.Matrix;
 import android.util.Log;
 
@@ -28,6 +26,7 @@ public class Renderer implements GvrView.StereoRenderer {
 	private static final float Z_NEAR = 0.1f;
 	private static final float Z_FAR = 100.0f;
 	private static final float Z_MODEL_POS = -1f;
+	private static final float Z_LAYER_DISTANCE = 0.001f;
 	private static final float CAMERA_Z = 0.5f;
 
 	/**
@@ -38,7 +37,7 @@ public class Renderer implements GvrView.StereoRenderer {
 	/**
 	 * Positions the model.
 	 */
-	private float[] modelMatrix  = new float[16];
+	private float[] modelMatrix = new float[16];
 
 	/**
 	 * Holds the rotation of the head.
@@ -49,6 +48,8 @@ public class Renderer implements GvrView.StereoRenderer {
 	 * Projection matrix.
 	 */
 	private float[] modelViewProjection = new float[16];
+
+	private float[] eulerAngles = new float[3];
 
 	/**
 	 * Holds the different render layer.
@@ -66,11 +67,12 @@ public class Renderer implements GvrView.StereoRenderer {
 
 	/**
 	 * TODO Den Zugriff hier threadsafe machen.
+	 *
 	 * @param pos
 	 * @param layer
 	 */
 	public void addLayer(int pos, Layer layer) {
-		if(pos < 0 || pos >= MAX_LAYERS) {
+		if (pos < 0 || pos >= MAX_LAYERS) {
 			throw new IllegalArgumentException("Pos must be between 0 and " + (MAX_LAYERS - 1));
 		}
 
@@ -79,7 +81,7 @@ public class Renderer implements GvrView.StereoRenderer {
 	}
 
 	public void removeLayer(int pos) {
-		if(pos < 0 || pos >= MAX_LAYERS) {
+		if (pos < 0 || pos >= MAX_LAYERS) {
 			throw new IllegalArgumentException("Pos must be between 0 and " + (MAX_LAYERS - 1));
 		}
 
@@ -100,7 +102,6 @@ public class Renderer implements GvrView.StereoRenderer {
 	/**
 	 * Caluclates the new euler angles from the head rotation quaternion.
 	 */
-	/*
 	private void calculateEulerAngles() {
 
 		final double psi = Math.atan2(-2. * (headQuaternion[2] * headQuaternion[3] - headQuaternion[0] *
@@ -117,8 +118,8 @@ public class Renderer implements GvrView.StereoRenderer {
 		eulerAngles[1] = (float) theta;
 		eulerAngles[2] = (float) phi;
 
-		overlay.setText(String.format("Winkel\npsi: %f\ntheta: %f\nphi: %f", psi, theta, phi));
-	}*/
+		//overlay.setText(String.format("Winkel\npsi: %f\ntheta: %f\nphi: %f", psi, theta, phi));
+	}
 
 	/**
 	 * Creates the buffers we use to store information about the 3D world.
@@ -166,19 +167,28 @@ public class Renderer implements GvrView.StereoRenderer {
 		// Set camera to eye position.
 		Matrix.multiplyMM(modelViewProjection, 0, eyeMat, 0, cameraMatrix, 0);
 
-		// This multiplies the view matrix by the model matrix, and stores the result in the MVP matrix
-		// (which currently contains model * view).
-		Matrix.multiplyMM(modelViewProjection, 0, modelViewProjection, 0, modelMatrix, 0);
-
-		// This multiplies the modelview matrix by the projection matrix, and stores the result in the MVP matrix
-		// (which now contains model * view * projection).
-		Matrix.multiplyMM(modelViewProjection, 0, eye.getPerspective(Z_NEAR, Z_FAR), 0, modelViewProjection, 0);
-
-		// No step through the different layer and render them.
-		for(int i = 0; i < MAX_LAYERS; i++) {
-			if(layers[i] != null) {
-				layers[i].onDrawEye(modelViewProjection);
+		// Now step through the different layer and render them each with a slightly z-offest towards the viewer
+		// starting from index 0 as the farthest away.
+		for (int i = 0; i < MAX_LAYERS; i++) {
+			if (layers[i] == null) {
+				continue;
 			}
+
+			// Prepare the model matrix.
+			Matrix.setIdentityM(modelMatrix, 0);
+
+			final float modelZPos = Z_MODEL_POS + i * Z_LAYER_DISTANCE;
+			Matrix.translateM(modelMatrix, 0, 0f, 0f, modelZPos);
+
+			// This multiplies the view matrix by the model matrix, and stores the result in the MVP matrix
+			// (which currently contains model * view).
+			Matrix.multiplyMM(modelViewProjection, 0, modelViewProjection, 0, modelMatrix, 0);
+
+			// This multiplies the modelview matrix by the projection matrix, and stores the result in the MVP matrix
+			// (which now contains model * view * projection).
+			Matrix.multiplyMM(modelViewProjection, 0, eye.getPerspective(Z_NEAR, Z_FAR), 0, modelViewProjection, 0);
+
+			layers[i].onDrawEye(modelViewProjection);
 		}
 	}
 
@@ -190,8 +200,8 @@ public class Renderer implements GvrView.StereoRenderer {
 	@Override
 	public void onNewFrame(HeadTransform headTransform) {
 		// Check if new layers must be initilized.
-		for(int i = 0; i < MAX_LAYERS; i++) {
-			if(!layersInitialized[i] && layers[i] != null) {
+		for (int i = 0; i < MAX_LAYERS; i++) {
+			if (!layersInitialized[i] && layers[i] != null) {
 
 				layers[i].onCreated();
 				layersInitialized[i] = true;
@@ -209,39 +219,5 @@ public class Renderer implements GvrView.StereoRenderer {
 	@Override
 	public void onFinishFrame(Viewport viewport) {
 		// no op.
-	}
-
-	public int useTexture(Bitmap bitmap) {
-		final int[] textureHandle = new int[1];
-
-		GLES20.glGenTextures(1, textureHandle, 0);
-
-		if (textureHandle[0] != 0) {
-			// Bind to the texture in OpenGL
-			GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle[0]);
-
-			// Set filtering of the texture
-			GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
-			GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
-
-			// Load the bitmap into the bound texture.
-			GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
-		}
-
-		if (textureHandle[0] == 0) {
-			throw new RuntimeException("Error loading texture.");
-		}
-
-		return textureHandle[0];
-	}
-
-	/**
-	 * Replaces the text texture.
-	 */
-	public void replaceTexture(int oldTextureHandle) {
-		//textureDataHandle = loadTexture(R.drawable.text_inv);
-
-		final int[] textureHandle = new int[]{oldTextureHandle};
-		GLES20.glDeleteTextures(1, textureHandle, 0);
 	}
 }
