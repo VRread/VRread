@@ -35,6 +35,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import de.fraunhofer.ipa.vrread.R;
+import de.fraunhofer.ipa.vrread.graphics.Layer;
 import de.fraunhofer.ipa.vrread.graphics.Renderer;
 
 /**
@@ -58,6 +59,8 @@ public class VRViewActivity extends GvrActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		setContentView(R.layout.renderer);
+
 		gvrView = (GvrView) findViewById(R.id.gvr_view);
 		if (gvrView.setAsyncReprojectionEnabled(true)) {
 			// Async reprojection decouples the app framerate from the display framerate,
@@ -69,6 +72,7 @@ public class VRViewActivity extends GvrActivity {
 		vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
 		renderer = new Renderer(gvrView);
+		renderer.addLayer(0, new Layer(this));
 	}
 
 	@Override
@@ -81,29 +85,6 @@ public class VRViewActivity extends GvrActivity {
 		super.onResume();
 	}
 
-
-	/**
-	 * Caluclates the new euler angles from the head rotation quaternion.
-	 */
-	/*
-	private void calculateEulerAngles() {
-
-		final double psi = Math.atan2(-2. * (headQuaternion[2] * headQuaternion[3] - headQuaternion[0] *
-				headQuaternion[1]), headQuaternion[0] * headQuaternion[0] - headQuaternion[1] * headQuaternion[1] -
-				headQuaternion[2] * headQuaternion[2] + headQuaternion[3] * headQuaternion[3]);
-
-		final double theta = Math.asin(2. * (headQuaternion[1] * headQuaternion[3] + headQuaternion[0] *
-				headQuaternion[2]));
-		final double phi = Math.atan2(2. * (headQuaternion[1] * headQuaternion[2] + headQuaternion[0] *
-				headQuaternion[3]), headQuaternion[0] * headQuaternion[0] + headQuaternion[1] * headQuaternion[1] -
-				headQuaternion[2] * headQuaternion[2] - headQuaternion[3] * headQuaternion[3]);
-
-		eulerAngles[0] = (float) psi;
-		eulerAngles[1] = (float) theta;
-		eulerAngles[2] = (float) phi;
-
-		overlay.setText(String.format("Winkel\npsi: %f\ntheta: %f\nphi: %f", psi, theta, phi));
-	}*/
 
 	/**
 	 * Called when the Cardboard trigger is pulled.

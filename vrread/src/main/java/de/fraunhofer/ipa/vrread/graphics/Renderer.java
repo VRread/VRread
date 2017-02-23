@@ -11,9 +11,7 @@ import com.google.vr.sdk.base.GvrView;
 import com.google.vr.sdk.base.HeadTransform;
 import com.google.vr.sdk.base.Viewport;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import javax.microedition.khronos.egl.EGLConfig;
 
@@ -38,11 +36,6 @@ public class Renderer implements GvrView.StereoRenderer {
 	private float[] cameraMatrix = new float[16];
 
 	/**
-	 * All the cam transforms are feeded into this matrix.
-	 */
-	private float[] viewMatrix  = new float[16];
-
-	/**
 	 * Positions the model.
 	 */
 	private float[] modelMatrix  = new float[16];
@@ -57,8 +50,11 @@ public class Renderer implements GvrView.StereoRenderer {
 	 */
 	private float[] modelViewProjection = new float[16];
 
+	/**
+	 * Holds the different render layer.
+	 */
 	private boolean[] layersInitialized = new boolean[MAX_LAYERS];
-	private final List<Layer> layers = new ArrayList<>(MAX_LAYERS);
+	private Layer[] layers = new Layer[MAX_LAYERS];
 
 	public Renderer(GvrView gvrView) {
 		gvrView.setEGLConfigChooser(8, 8, 8, 8, 16, 8);
@@ -68,12 +64,26 @@ public class Renderer implements GvrView.StereoRenderer {
 		Arrays.fill(layersInitialized, false);
 	}
 
+	/**
+	 * TODO Den Zugriff hier threadsafe machen.
+	 * @param pos
+	 * @param layer
+	 */
 	public void addLayer(int pos, Layer layer) {
 		if(pos < 0 || pos >= MAX_LAYERS) {
-			throw new IllegalArgumentException("Pos must be between 0 and 9");
+			throw new IllegalArgumentException("Pos must be between 0 and " + (MAX_LAYERS - 1));
 		}
 
-		layers.set(pos, layer);
+		layers[pos] = layer;
+		layersInitialized[pos] = false;
+	}
+
+	public void removeLayer(int pos) {
+		if(pos < 0 || pos >= MAX_LAYERS) {
+			throw new IllegalArgumentException("Pos must be between 0 and " + (MAX_LAYERS - 1));
+		}
+
+		layers[pos] = null;
 		layersInitialized[pos] = false;
 	}
 
@@ -86,6 +96,29 @@ public class Renderer implements GvrView.StereoRenderer {
 	public void onSurfaceChanged(int width, int height) {
 		Log.i(TAG, "onSurfaceChanged");
 	}
+
+	/**
+	 * Caluclates the new euler angles from the head rotation quaternion.
+	 */
+	/*
+	private void calculateEulerAngles() {
+
+		final double psi = Math.atan2(-2. * (headQuaternion[2] * headQuaternion[3] - headQuaternion[0] *
+				headQuaternion[1]), headQuaternion[0] * headQuaternion[0] - headQuaternion[1] * headQuaternion[1] -
+				headQuaternion[2] * headQuaternion[2] + headQuaternion[3] * headQuaternion[3]);
+
+		final double theta = Math.asin(2. * (headQuaternion[1] * headQuaternion[3] + headQuaternion[0] *
+				headQuaternion[2]));
+		final double phi = Math.atan2(2. * (headQuaternion[1] * headQuaternion[2] + headQuaternion[0] *
+				headQuaternion[3]), headQuaternion[0] * headQuaternion[0] + headQuaternion[1] * headQuaternion[1] -
+				headQuaternion[2] * headQuaternion[2] - headQuaternion[3] * headQuaternion[3]);
+
+		eulerAngles[0] = (float) psi;
+		eulerAngles[1] = (float) theta;
+		eulerAngles[2] = (float) phi;
+
+		overlay.setText(String.format("Winkel\npsi: %f\ntheta: %f\nphi: %f", psi, theta, phi));
+	}*/
 
 	/**
 	 * Creates the buffers we use to store information about the 3D world.
@@ -143,7 +176,9 @@ public class Renderer implements GvrView.StereoRenderer {
 
 		// No step through the different layer and render them.
 		for(int i = 0; i < MAX_LAYERS; i++) {
-			layers.get(i).onDrawEye(modelViewProjection);
+			if(layers[i] != null) {
+				layers[i].onDrawEye(modelViewProjection);
+			}
 		}
 	}
 
@@ -156,8 +191,10 @@ public class Renderer implements GvrView.StereoRenderer {
 	public void onNewFrame(HeadTransform headTransform) {
 		// Check if new layers must be initilized.
 		for(int i = 0; i < MAX_LAYERS; i++) {
-			if(!layersInitialized[i]) {
-				layers.get(i).onCreated();
+			if(!layersInitialized[i] && layers[i] != null) {
+
+				layers[i].onCreated();
+				layersInitialized[i] = true;
 			}
 		}
 

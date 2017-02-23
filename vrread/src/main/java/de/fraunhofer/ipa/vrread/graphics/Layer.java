@@ -1,5 +1,6 @@
 package de.fraunhofer.ipa.vrread.graphics;
 
+import android.content.Context;
 import android.opengl.GLES20;
 import android.util.Log;
 
@@ -21,13 +22,16 @@ public class Layer {
 	private FloatBuffer wallVertices;
 	private ScrollingTextureShader shader;
 
+	public Layer(Context ctx) {
+
+		this.shader = new ScrollingTextureShader(ctx);
+	}
+
 	/**
-	 * Calles when the object is added to the scene.
+	 * Calls when the object is added to the scene.
 	 */
 	public void onCreated() {
-
 		Log.i(TAG, "onCreated");
-		GLES20.glClearColor(0.1f, 0.1f, 0.1f, 1.0f); // Dark background so text shows up well.
 
 		// make a floor
 		ByteBuffer bbFloorVertices = ByteBuffer.allocateDirect(WorldLayoutData.PLANE_COORDS.length * 4);
@@ -35,6 +39,8 @@ public class Layer {
 		wallVertices = bbFloorVertices.asFloatBuffer();
 		wallVertices.put(WorldLayoutData.PLANE_COORDS);
 		wallVertices.position(0);
+
+		shader.loadShader();
 	}
 
 	public void onDrawEye(float[] modelViewProjection) {
