@@ -37,6 +37,7 @@ import java.io.InputStreamReader;
 import de.fraunhofer.ipa.vrread.R;
 import de.fraunhofer.ipa.vrread.graphics.Layer;
 import de.fraunhofer.ipa.vrread.graphics.Renderer;
+import de.fraunhofer.ipa.vrread.graphics.ScrollingTextLayer;
 
 /**
  * A Google VR sample application. </p><p> The TreasureHunt scene consists of a planar ground grid and a floating
@@ -72,7 +73,7 @@ public class VRViewActivity extends GvrActivity {
 		vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
 		renderer = new Renderer(gvrView);
-		renderer.addLayer(0, new Layer(this));
+		renderer.addLayer(0, new ScrollingTextLayer(this));
 	}
 
 	@Override

@@ -13,6 +13,8 @@ import java.util.Arrays;
 
 import javax.microedition.khronos.egl.EGLConfig;
 
+import de.fraunhofer.ipa.vrread.control.GestureController;
+
 /**
  * This handles all the rendering of the reader app. The renderer will calls and uses openGL for drawing the text layer.
  * Created by tbf on 22.02.2017.
@@ -40,16 +42,10 @@ public class Renderer implements GvrView.StereoRenderer {
 	private float[] modelMatrix = new float[16];
 
 	/**
-	 * Holds the rotation of the head.
-	 */
-	private float[] headQuaternion = new float[4];
-
-	/**
 	 * Projection matrix.
 	 */
 	private float[] modelViewProjection = new float[16];
 
-	private float[] eulerAngles = new float[3];
 
 	/**
 	 * Holds the different render layer.
@@ -57,12 +53,24 @@ public class Renderer implements GvrView.StereoRenderer {
 	private boolean[] layersInitialized = new boolean[MAX_LAYERS];
 	private Layer[] layers = new Layer[MAX_LAYERS];
 
+	private GestureController gestureController;
+
 	public Renderer(GvrView gvrView) {
 		gvrView.setEGLConfigChooser(8, 8, 8, 8, 16, 8);
 		gvrView.setRenderer(this);
 		gvrView.setTransitionViewEnabled(true);
 
 		Arrays.fill(layersInitialized, false);
+	}
+
+	/**
+	 * Sets a gesture controller which is responsible for reading the movement and controlling the environment. Setting
+	 * it to null will disable all movement control.
+	 *
+	 * @param gestureController The new gesture controller of null.
+	 */
+	public void setGestureController(GestureController gestureController) {
+		this.gestureController = gestureController;
 	}
 
 	/**
@@ -97,28 +105,6 @@ public class Renderer implements GvrView.StereoRenderer {
 	@Override
 	public void onSurfaceChanged(int width, int height) {
 		Log.i(TAG, "onSurfaceChanged");
-	}
-
-	/**
-	 * Caluclates the new euler angles from the head rotation quaternion.
-	 */
-	private void calculateEulerAngles() {
-
-		final double psi = Math.atan2(-2. * (headQuaternion[2] * headQuaternion[3] - headQuaternion[0] *
-				headQuaternion[1]), headQuaternion[0] * headQuaternion[0] - headQuaternion[1] * headQuaternion[1] -
-				headQuaternion[2] * headQuaternion[2] + headQuaternion[3] * headQuaternion[3]);
-
-		final double theta = Math.asin(2. * (headQuaternion[1] * headQuaternion[3] + headQuaternion[0] *
-				headQuaternion[2]));
-		final double phi = Math.atan2(2. * (headQuaternion[1] * headQuaternion[2] + headQuaternion[0] *
-				headQuaternion[3]), headQuaternion[0] * headQuaternion[0] + headQuaternion[1] * headQuaternion[1] -
-				headQuaternion[2] * headQuaternion[2] - headQuaternion[3] * headQuaternion[3]);
-
-		eulerAngles[0] = (float) psi;
-		eulerAngles[1] = (float) theta;
-		eulerAngles[2] = (float) phi;
-
-		//overlay.setText(String.format("Winkel\npsi: %f\ntheta: %f\nphi: %f", psi, theta, phi));
 	}
 
 	/**
@@ -199,7 +185,7 @@ public class Renderer implements GvrView.StereoRenderer {
 	 */
 	@Override
 	public void onNewFrame(HeadTransform headTransform) {
-		// Check if new layers must be initilized.
+		// Check if new layers must be initialized, we must to this in the render thread.
 		for (int i = 0; i < MAX_LAYERS; i++) {
 			if (!layersInitialized[i] && layers[i] != null) {
 
@@ -208,10 +194,9 @@ public class Renderer implements GvrView.StereoRenderer {
 			}
 		}
 
-		// Get deviation of the head angle from the z direction with regards to the y axis.
-		headTransform.getQuaternion(headQuaternion, 0);
-
-		// TODO inform the listener about changed movement.
+		if (gestureController != null) {
+			gestureController.onHeadMovement(headTransform);
+		}
 
 		GLHelper.checkGLError("onNewFrame");
 	}
