@@ -1,7 +1,7 @@
 package de.fraunhofer.ipa.vrread;
 
 import de.fraunhofer.ipa.vrread.datasource.Datasource;
-import de.fraunhofer.ipa.vrread.graphics.ScrollingTextureShader;
+import de.fraunhofer.ipa.vrread.graphics.shader.ScrollingTextureShader;
 
 /**
  * The read controller is holding the current reading position and reacts upon control requests. It will calculate a new

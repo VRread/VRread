@@ -7,6 +7,9 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
+import de.fraunhofer.ipa.vrread.graphics.shader.GLHelper;
+
+
 /**
  * Creates a simple geometry from vertices.
  *
@@ -21,7 +24,7 @@ public class Layer {
 	protected FloatBuffer wallVertices;
 
 
-	public Layer() {
+	Layer() {
 		// no op.
 	}
 

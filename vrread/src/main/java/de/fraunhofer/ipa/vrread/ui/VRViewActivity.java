@@ -74,6 +74,7 @@ public class VRViewActivity extends GvrActivity {
 
 		renderer = new Renderer(gvrView);
 		renderer.addLayer(0, new ScrollingTextLayer(this));
+		renderer.addLayer(1, new ScrollingTextLayer(this));
 	}
 
 	@Override

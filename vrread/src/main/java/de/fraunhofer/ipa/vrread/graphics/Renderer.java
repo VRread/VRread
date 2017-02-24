@@ -14,6 +14,7 @@ import java.util.Arrays;
 import javax.microedition.khronos.egl.EGLConfig;
 
 import de.fraunhofer.ipa.vrread.control.GestureController;
+import de.fraunhofer.ipa.vrread.graphics.shader.GLHelper;
 
 /**
  * This handles all the rendering of the reader app. The renderer will calls and uses openGL for drawing the text layer.

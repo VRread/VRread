@@ -1,4 +1,4 @@
-package de.fraunhofer.ipa.vrread.graphics;
+package de.fraunhofer.ipa.vrread.graphics.shader;
 
 import android.opengl.GLES20;
 import android.util.Log;
