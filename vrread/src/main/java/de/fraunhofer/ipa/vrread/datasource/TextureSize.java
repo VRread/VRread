@@ -1,4 +1,4 @@
-package de.fraunhofer.ipa.vrread;
+package de.fraunhofer.ipa.vrread.datasource;
 
 /**
  * Holds information about the size of a texture.

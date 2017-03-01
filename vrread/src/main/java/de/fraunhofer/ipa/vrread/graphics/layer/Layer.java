@@ -1,4 +1,4 @@
-package de.fraunhofer.ipa.vrread.graphics;
+package de.fraunhofer.ipa.vrread.graphics.layer;
 
 import android.opengl.GLES20;
 import android.util.Log;
@@ -8,6 +8,8 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.Objects;
 
+import de.fraunhofer.ipa.vrread.graphics.Renderer;
+import de.fraunhofer.ipa.vrread.graphics.WorldLayoutData;
 import de.fraunhofer.ipa.vrread.graphics.shader.GLHelper;
 import de.fraunhofer.ipa.vrread.graphics.shader.QuadShader;
 
@@ -47,7 +49,7 @@ public class Layer {
 	/**
 	 * Calls when the object is added to the scene.
 	 */
-	void onCreated() {
+	public void onCreated() {
 		Log.i(TAG, "onCreated");
 
 		// make a floor
@@ -67,7 +69,7 @@ public class Layer {
 	 *
 	 * @param modelViewProjection The new matrix.
 	 */
-	void onDrawEye(float[] modelViewProjection) {
+	public void onDrawEye(float[] modelViewProjection) {
 
 		if (shader != null) {
 			shader.useShader();

@@ -2,9 +2,6 @@ package de.fraunhofer.ipa.vrread.datasource;
 
 import android.graphics.Bitmap;
 
-import de.fraunhofer.ipa.vrread.ReadPosition;
-import de.fraunhofer.ipa.vrread.TextureSize;
-
 /**
  * This refers to a datasource. It will provide a method for rendering new texture bitmaps to be used by the renderer.
  * <p>

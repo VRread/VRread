@@ -17,30 +17,20 @@
 package de.fraunhofer.ipa.vrread.ui;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.opengl.GLES20;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.util.Log;
-import android.widget.TextView;
 
 import com.google.vr.sdk.base.AndroidCompat;
 import com.google.vr.sdk.base.GvrActivity;
 import com.google.vr.sdk.base.GvrView;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
-import de.fraunhofer.ipa.vrread.HeadGestureReadController;
+import de.fraunhofer.ipa.vrread.control.HeadGestureReadController;
 import de.fraunhofer.ipa.vrread.R;
 import de.fraunhofer.ipa.vrread.control.HeadGestureController;
-import de.fraunhofer.ipa.vrread.graphics.HelperLineLayer;
-import de.fraunhofer.ipa.vrread.graphics.Layer;
+import de.fraunhofer.ipa.vrread.graphics.layer.HelperLineLayer;
 import de.fraunhofer.ipa.vrread.graphics.Renderer;
-import de.fraunhofer.ipa.vrread.graphics.ScrollingTextLayer;
+import de.fraunhofer.ipa.vrread.graphics.layer.ScrollingTextLayer;
 
 /**
  * A Google VR sample application. </p><p> The TreasureHunt scene consists of a planar ground grid and a floating

@@ -1,4 +1,4 @@
-package de.fraunhofer.ipa.vrread;
+package de.fraunhofer.ipa.vrread.datasource;
 
 /**
  * Helper class to locate the current position inside a document.

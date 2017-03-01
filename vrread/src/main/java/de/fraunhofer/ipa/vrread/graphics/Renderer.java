@@ -14,6 +14,7 @@ import java.util.Arrays;
 import javax.microedition.khronos.egl.EGLConfig;
 
 import de.fraunhofer.ipa.vrread.control.GestureController;
+import de.fraunhofer.ipa.vrread.graphics.layer.Layer;
 import de.fraunhofer.ipa.vrread.graphics.shader.GLHelper;
 
 /**

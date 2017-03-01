@@ -4,8 +4,6 @@ import android.util.Log;
 
 import com.google.vr.sdk.base.HeadTransform;
 
-import de.fraunhofer.ipa.vrread.HeadGestureReadController;
-
 /**
  * Created by tbf on 24.02.2017.
  */

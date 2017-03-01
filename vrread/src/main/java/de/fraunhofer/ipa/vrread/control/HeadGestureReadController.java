@@ -1,8 +1,6 @@
-package de.fraunhofer.ipa.vrread;
+package de.fraunhofer.ipa.vrread.control;
 
 import android.util.Log;
-
-import de.fraunhofer.ipa.vrread.control.HeadGesture;
 
 /**
  * Recognizes head gestures and transform them into read commands.
@@ -23,5 +21,22 @@ public class HeadGestureReadController extends ReadController {
 	public void onHeadGesture(HeadGesture gesture) {
 		Log.d(TAG, String.format("Recognized head gesture: %s", gesture));
 
+		switch(gesture) {
+			case LOOK_DOWN:
+				down();
+				break;
+			case LOOK_UP:
+				up();
+				break;
+			case LOOK_LEFT:
+				left();
+				break;
+			case LOOK_RIGHT:
+				right();
+				break;
+			default:
+				Log.e(TAG, "Direction is not known.");
+				break;
+		}
 	}
 }

@@ -1,9 +1,8 @@
-package de.fraunhofer.ipa.vrread.graphics;
+package de.fraunhofer.ipa.vrread.graphics.layer;
 
 import android.content.Context;
 
 import de.fraunhofer.ipa.vrread.graphics.shader.HelperLineShader;
-import de.fraunhofer.ipa.vrread.graphics.shader.ScrollingTextureShader;
 
 /**
  * Created by tbf on 24.02.2017.
