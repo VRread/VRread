@@ -6,6 +6,9 @@ import android.opengl.GLES20;
 import de.fraunhofer.ipa.vrread.R;
 
 /**
+ * This controls a shader which is able to draw a horizontal helper
+ * line in order to make it easier to read the text.
+ *
  * Created by tbf on 24.02.2017.
  */
 

@@ -28,8 +28,8 @@ public class Renderer implements GvrView.StereoRenderer {
 
 	private static final float Z_NEAR = 0.1f;
 	private static final float Z_FAR = 100.0f;
-	private static final float Z_MODEL_POS = -1f;
-	private static final float Z_LAYER_DISTANCE = 0.001f;
+	private static final float Z_MODEL_POS = 1f;
+	private static final float Z_LAYER_DISTANCE = 0.01f;
 	private static final float CAMERA_Z = 0.5f;
 
 	/**
@@ -151,9 +151,6 @@ public class Renderer implements GvrView.StereoRenderer {
 		eyeMat[9] = 0;
 		eyeMat[10] = 1;
 
-		// Set camera to eye position.
-		Matrix.multiplyMM(modelViewProjection, 0, eyeMat, 0, cameraMatrix, 0);
-
 		// Now step through the different layer and render them each with a slightly z-offest towards the viewer
 		// starting from index 0 as the farthest away.
 		for (int i = 0; i < MAX_LAYERS; i++) {
@@ -161,10 +158,13 @@ public class Renderer implements GvrView.StereoRenderer {
 				continue;
 			}
 
+			// Set camera to eye position.
+			Matrix.multiplyMM(modelViewProjection, 0, eyeMat, 0, cameraMatrix, 0);
+
 			// Prepare the model matrix.
 			Matrix.setIdentityM(modelMatrix, 0);
 
-			final float modelZPos = Z_MODEL_POS + i * Z_LAYER_DISTANCE;
+			final float modelZPos = - (Z_MODEL_POS - i * Z_LAYER_DISTANCE);
 			Matrix.translateM(modelMatrix, 0, 0f, 0f, modelZPos);
 
 			// This multiplies the view matrix by the model matrix, and stores the result in the MVP matrix

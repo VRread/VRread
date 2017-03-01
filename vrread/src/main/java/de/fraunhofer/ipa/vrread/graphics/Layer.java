@@ -14,7 +14,7 @@ import de.fraunhofer.ipa.vrread.graphics.shader.QuadShader;
 
 /**
  * Creates a simple geometry from vertices.
- *
+ * <p>
  * Created by Thomas Felix on 23.02.2017.
  */
 
@@ -30,9 +30,9 @@ public class Layer {
 	protected FloatBuffer quadVertices;
 
 	/**
-	 * Use this ctor to set internal shader to null.
-	 * Then the subsclass has to manage the shader handling and calling
-	 * by itself.
+	 * Use this ctor to set internal shader to null. Then the subsclass has to manage the shader handling and
+	 * calling by
+	 * itself.
 	 */
 	Layer() {
 
@@ -57,14 +57,19 @@ public class Layer {
 		quadVertices.put(WorldLayoutData.PLANE_COORDS);
 		quadVertices.position(0);
 
-		if(shader != null) {
+		if (shader != null) {
 			shader.loadShader();
 		}
 	}
 
+	/**
+	 * Draws a single eye. This basically feeds the model view projection to the shaders.
+	 *
+	 * @param modelViewProjection The new matrix.
+	 */
 	void onDrawEye(float[] modelViewProjection) {
 
-		if(shader != null) {
+		if (shader != null) {
 			shader.useShader();
 			shader.setModelViewProjection(modelViewProjection);
 			shader.setModelVertices(quadVertices);

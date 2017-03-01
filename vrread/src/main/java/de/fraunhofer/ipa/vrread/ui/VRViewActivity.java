@@ -76,7 +76,7 @@ public class VRViewActivity extends GvrActivity {
 		vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
 		renderer = new Renderer(gvrView);
-		//renderer.addLayer(0, new ScrollingTextLayer(this));
+		renderer.addLayer(0, new ScrollingTextLayer(this));
 		renderer.addLayer(1, new HelperLineLayer(this));
 
 		// Setup the gesture controller.
