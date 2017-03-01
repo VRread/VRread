@@ -1,6 +1,10 @@
 package de.fraunhofer.ipa.vrread.control;
 
+import android.util.Log;
+
 import com.google.vr.sdk.base.HeadTransform;
+
+import de.fraunhofer.ipa.vrread.HeadGestureReadController;
 
 /**
  * Created by tbf on 24.02.2017.
@@ -8,11 +12,18 @@ import com.google.vr.sdk.base.HeadTransform;
 
 public class HeadGestureController implements GestureController {
 
+	private final static String TAG = HeadGestureController.class.getSimpleName();
+
 	/**
 	 * Holds the rotation of the head.
 	 */
 	private float[] headQuaternion = new float[4];
-	private float[] eulerAngles = new float[3];
+
+	private float psi;
+	private float theta;
+	private float phi;
+
+	private HeadGestureReadController controller;
 
 	@Override
 	public void onHeadMovement(HeadTransform headTransform) {
@@ -21,28 +32,38 @@ public class HeadGestureController implements GestureController {
 		headTransform.getQuaternion(headQuaternion, 0);
 		calculateEulerAngles();
 
+		if(Math.abs(psi) > 0.2f) {
+			if(controller != null) {
+				controller.onHeadGesture(HeadGesture.LOOK_LEFT);
+			}
+		}
 	}
 
+	/**
+	 * Sets a callback so the gesture is actually transformed into a reading display operation.
+	 *
+	 * @param controller The new {@link HeadGestureReadController} handling the read event.
+	 */
+	public void setHeadGestureReadController(HeadGestureReadController controller) {
+		this.controller = controller;
+	}
 
 	/**
 	 * Caluclates the new euler angles from the head rotation quaternion.
 	 */
 	private void calculateEulerAngles() {
 
-		final double psi = Math.atan2(-2. * (headQuaternion[2] * headQuaternion[3] - headQuaternion[0] *
+		psi = (float) Math.atan2(-2. * (headQuaternion[2] * headQuaternion[3] - headQuaternion[0] *
 				headQuaternion[1]), headQuaternion[0] * headQuaternion[0] - headQuaternion[1] * headQuaternion[1] -
 				headQuaternion[2] * headQuaternion[2] + headQuaternion[3] * headQuaternion[3]);
 
-		final double theta = Math.asin(2. * (headQuaternion[1] * headQuaternion[3] + headQuaternion[0] *
+		theta =(float) Math.asin(2. * (headQuaternion[1] * headQuaternion[3] + headQuaternion[0] *
 				headQuaternion[2]));
-		final double phi = Math.atan2(2. * (headQuaternion[1] * headQuaternion[2] + headQuaternion[0] *
+
+		phi = (float) Math.atan2(2. * (headQuaternion[1] * headQuaternion[2] + headQuaternion[0] *
 				headQuaternion[3]), headQuaternion[0] * headQuaternion[0] + headQuaternion[1] * headQuaternion[1] -
 				headQuaternion[2] * headQuaternion[2] - headQuaternion[3] * headQuaternion[3]);
 
-		eulerAngles[0] = (float) psi;
-		eulerAngles[1] = (float) theta;
-		eulerAngles[2] = (float) phi;
-
-		//overlay.setText(String.format("Winkel\npsi: %f\ntheta: %f\nphi: %f", psi, theta, phi));
+		Log.d(TAG, String.format("Euler angles psi: %f, theta: %f, phi: %f", psi, theta, phi));
 	}
 }

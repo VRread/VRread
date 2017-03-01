@@ -6,8 +6,10 @@ import android.util.Log;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.util.Objects;
 
 import de.fraunhofer.ipa.vrread.graphics.shader.GLHelper;
+import de.fraunhofer.ipa.vrread.graphics.shader.QuadShader;
 
 
 /**
@@ -19,13 +21,27 @@ import de.fraunhofer.ipa.vrread.graphics.shader.GLHelper;
 public class Layer {
 
 	private static final String TAG = Renderer.class.getSimpleName();
+	private static final String GL_ERROR_TAG = TAG + " draw quad";
+
+	private final QuadShader shader;
 
 	// Store our model data in a float buffer.
-	protected FloatBuffer wallVertices;
+	@SuppressWarnings("WeakerAccess")
+	protected FloatBuffer quadVertices;
 
-
+	/**
+	 * Use this ctor to set internal shader to null.
+	 * Then the subsclass has to manage the shader handling and calling
+	 * by itself.
+	 */
 	Layer() {
-		// no op.
+
+		this.shader = null;
+	}
+
+	Layer(QuadShader shader) {
+
+		this.shader = Objects.requireNonNull(shader);
 	}
 
 	/**
@@ -37,14 +53,24 @@ public class Layer {
 		// make a floor
 		ByteBuffer bbFloorVertices = ByteBuffer.allocateDirect(WorldLayoutData.PLANE_COORDS.length * 4);
 		bbFloorVertices.order(ByteOrder.nativeOrder());
-		wallVertices = bbFloorVertices.asFloatBuffer();
-		wallVertices.put(WorldLayoutData.PLANE_COORDS);
-		wallVertices.position(0);
+		quadVertices = bbFloorVertices.asFloatBuffer();
+		quadVertices.put(WorldLayoutData.PLANE_COORDS);
+		quadVertices.position(0);
+
+		if(shader != null) {
+			shader.loadShader();
+		}
 	}
 
 	void onDrawEye(float[] modelViewProjection) {
 
+		if(shader != null) {
+			shader.useShader();
+			shader.setModelViewProjection(modelViewProjection);
+			shader.setModelVertices(quadVertices);
+		}
+
 		GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, 6);
-		GLHelper.checkGLError("drawing floor");
+		GLHelper.checkGLError(GL_ERROR_TAG);
 	}
 }

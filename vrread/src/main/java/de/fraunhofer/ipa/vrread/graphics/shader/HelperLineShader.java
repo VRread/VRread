@@ -1,30 +1,40 @@
 package de.fraunhofer.ipa.vrread.graphics.shader;
 
-import java.nio.FloatBuffer;
+import android.content.Context;
+import android.opengl.GLES20;
+
+import de.fraunhofer.ipa.vrread.R;
 
 /**
  * Created by tbf on 24.02.2017.
  */
 
-public class HelperLineShader extends Shader {
+public class HelperLineShader extends QuadShader {
+
+	private Context ctx;
+
+	public HelperLineShader(Context ctx) {
+
+		this.ctx = ctx;
+	}
 
 	@Override
 	public void useShader() {
+		GLES20.glUseProgram(quadProgram);
 
+		// Set the texture uv coordinates.
+		GLES20.glVertexAttribPointer(textureCoordinateParam, 2, GLES20.GL_FLOAT, false, 0, wallTextureCoordinates);
+		GLES20.glEnableVertexAttribArray(textureCoordinateParam);
 	}
 
 	@Override
-	public void loadShader() {
+	protected void createShaderProgram() {
+		final int vertexShader = loadGLShader(GLHelper.readRawTextFile(ctx, R.raw.vertex), GLES20.GL_VERTEX_SHADER);
+		final int lineShader = loadGLShader(GLHelper.readRawTextFile(ctx, R.raw.helperline), GLES20.GL_FRAGMENT_SHADER);
 
-	}
-
-	@Override
-	public void setModelViewProjection(float[] mvp) {
-
-	}
-
-	@Override
-	public void setModelVertices(FloatBuffer vertices) {
-
+		quadProgram = GLES20.glCreateProgram();
+		GLES20.glAttachShader(quadProgram, vertexShader);
+		GLES20.glAttachShader(quadProgram, lineShader);
+		GLES20.glLinkProgram(quadProgram);
 	}
 }

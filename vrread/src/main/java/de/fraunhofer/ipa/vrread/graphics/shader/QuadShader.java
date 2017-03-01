@@ -1,25 +1,31 @@
 package de.fraunhofer.ipa.vrread.graphics.shader;
 
-import android.content.Context;
 import android.opengl.GLES20;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+
+import de.fraunhofer.ipa.vrread.graphics.WorldLayoutData;
 
 /**
  * Created by tbf on 24.02.2017.
  */
+@SuppressWarnings("WeakerAccess")
 public abstract class QuadShader extends Shader {
 
-	@SuppressWarnings("WeakerAccess")
-	protected final Context ctx;
+	protected FloatBuffer wallTextureCoordinates;
+	// This will be used to pass in the texture image.
+	protected int textureCoordinateParam;
 
 	@SuppressWarnings("WeakerAccess")
 	protected int quadProgram;
+
 	private int wallPositionParam;
 	private int wallModelViewProjectionParam;
 
-	QuadShader(Context ctx) {
-		this.ctx = ctx;
+	public QuadShader() {
+		// no op.
 	}
 
 	protected abstract void createShaderProgram();
@@ -45,6 +51,13 @@ public abstract class QuadShader extends Shader {
 
 	@Override
 	public void loadShader() {
+		// Get the UV coordiantes.
+		ByteBuffer bbFloorTexCords = ByteBuffer.allocateDirect(WorldLayoutData.PLANE_TEX_CORDS.length * 4);
+		bbFloorTexCords.order(ByteOrder.nativeOrder());
+		wallTextureCoordinates = bbFloorTexCords.asFloatBuffer();
+		wallTextureCoordinates.put(WorldLayoutData.PLANE_TEX_CORDS);
+		wallTextureCoordinates.position(0);
+
 		createShaderProgram();
 
 		checkShaderLinkError();
@@ -52,9 +65,10 @@ public abstract class QuadShader extends Shader {
 		GLES20.glUseProgram(quadProgram);
 
 		wallPositionParam = GLES20.glGetAttribLocation(quadProgram, "a_Position");
+		textureCoordinateParam = GLES20.glGetAttribLocation(quadProgram, "a_TexCoordinate");
 		wallModelViewProjectionParam = GLES20.glGetUniformLocation(quadProgram, "u_MVPMatrix");
 
-		GLHelper.checkGLError("Floor program params");
+		GLHelper.checkGLError("quad shader params");
 	}
 
 	@Override

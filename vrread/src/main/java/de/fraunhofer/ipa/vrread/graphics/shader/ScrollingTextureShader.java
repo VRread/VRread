@@ -20,13 +20,10 @@ import de.fraunhofer.ipa.vrread.graphics.WorldLayoutData;
 
 public class ScrollingTextureShader extends QuadShader {
 
-	private FloatBuffer wallTextureCoordinates;
+	private Context ctx;
 
 	private int textureUvOffsetParam;
 	private int textureScaleParam;
-	// This will be used to pass in the texture image.
-	private int textureColorParam;
-	private int textureCoordinateParam;
 
 	// This is a handle to our texture data.
 	private int textureDataHandle;
@@ -53,8 +50,8 @@ public class ScrollingTextureShader extends QuadShader {
 
 
 	public ScrollingTextureShader(Context ctx) {
-		super(ctx);
 
+		this.ctx = ctx;
 	}
 
 	@Override
@@ -66,7 +63,6 @@ public class ScrollingTextureShader extends QuadShader {
 		GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
 		// Bind the texture to this unit.
 		GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureDataHandle);
-		GLES20.glUniform1i(textureColorParam, 0);
 		GLHelper.checkGLError("texture binding");
 
 		// Set the texture uv coordinates.
@@ -95,21 +91,12 @@ public class ScrollingTextureShader extends QuadShader {
 	public void loadShader() {
 		super.loadShader();
 
-		// Get the UV coordiantes.
-		ByteBuffer bbFloorTexCords = ByteBuffer.allocateDirect(WorldLayoutData.PLANE_TEX_CORDS.length * 4);
-		bbFloorTexCords.order(ByteOrder.nativeOrder());
-		wallTextureCoordinates = bbFloorTexCords.asFloatBuffer();
-		wallTextureCoordinates.put(WorldLayoutData.PLANE_TEX_CORDS);
-		wallTextureCoordinates.position(0);
-
 		// Load texture
 		textureDataHandle = GLHelper.loadTexture(ctx, R.drawable.text);
 
 		GLES20.glUseProgram(quadProgram);
 
 		// Texture params
-		textureCoordinateParam = GLES20.glGetAttribLocation(quadProgram, "a_TexCoordinate");
-		textureColorParam = GLES20.glGetUniformLocation(quadProgram, "u_Texture");
 		textureScaleParam = GLES20.glGetUniformLocation(quadProgram, "u_Scale");
 		textureUvOffsetParam = GLES20.glGetUniformLocation(quadProgram, "u_Offset");
 

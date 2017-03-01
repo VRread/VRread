@@ -34,7 +34,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import de.fraunhofer.ipa.vrread.HeadGestureReadController;
 import de.fraunhofer.ipa.vrread.R;
+import de.fraunhofer.ipa.vrread.control.HeadGestureController;
+import de.fraunhofer.ipa.vrread.graphics.HelperLineLayer;
 import de.fraunhofer.ipa.vrread.graphics.Layer;
 import de.fraunhofer.ipa.vrread.graphics.Renderer;
 import de.fraunhofer.ipa.vrread.graphics.ScrollingTextLayer;
@@ -73,8 +76,13 @@ public class VRViewActivity extends GvrActivity {
 		vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
 		renderer = new Renderer(gvrView);
-		renderer.addLayer(0, new ScrollingTextLayer(this));
-		renderer.addLayer(1, new ScrollingTextLayer(this));
+		//renderer.addLayer(0, new ScrollingTextLayer(this));
+		renderer.addLayer(1, new HelperLineLayer(this));
+
+		// Setup the gesture controller.
+		final HeadGestureController headGestureController = new HeadGestureController();
+		headGestureController.setHeadGestureReadController(new HeadGestureReadController());
+		renderer.setGestureController(headGestureController);
 	}
 
 	@Override

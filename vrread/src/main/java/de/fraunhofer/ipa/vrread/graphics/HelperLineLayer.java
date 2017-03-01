@@ -2,6 +2,7 @@ package de.fraunhofer.ipa.vrread.graphics;
 
 import android.content.Context;
 
+import de.fraunhofer.ipa.vrread.graphics.shader.HelperLineShader;
 import de.fraunhofer.ipa.vrread.graphics.shader.ScrollingTextureShader;
 
 /**
@@ -10,25 +11,8 @@ import de.fraunhofer.ipa.vrread.graphics.shader.ScrollingTextureShader;
 
 public class HelperLineLayer extends Layer {
 
-	private ScrollingTextureShader shader;
-
 	public HelperLineLayer(Context ctx) {
-		//this.shader = new ScrollingTextureShader(ctx);
+		super(new HelperLineShader(ctx));
 	}
 
-	@Override
-	void onCreated() {
-		super.onCreated();
-
-		shader.loadShader();
-	}
-
-	@Override
-	void onDrawEye(float[] modelViewProjection) {
-		shader.useShader();
-		shader.setModelViewProjection(modelViewProjection);
-		shader.setModelVertices(wallVertices);
-
-		super.onDrawEye(modelViewProjection);
-	}
 }

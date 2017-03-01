@@ -13,25 +13,7 @@ import de.fraunhofer.ipa.vrread.graphics.shader.ScrollingTextureShader;
 
 public class ScrollingTextLayer extends Layer {
 
-	private ScrollingTextureShader shader;
-
 	public ScrollingTextLayer(Context ctx) {
-		this.shader = new ScrollingTextureShader(ctx);
-	}
-
-	@Override
-	void onCreated() {
-		super.onCreated();
-
-		shader.loadShader();
-	}
-
-	@Override
-	void onDrawEye(float[] modelViewProjection) {
-		shader.useShader();
-		shader.setModelViewProjection(modelViewProjection);
-		shader.setModelVertices(wallVertices);
-
-		super.onDrawEye(modelViewProjection);
+		super(new ScrollingTextureShader(ctx));
 	}
 }

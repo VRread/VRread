@@ -9,6 +9,7 @@ import java.nio.FloatBuffer;
  * Created by tbf on 23.02.2017.
  */
 
+@SuppressWarnings("WeakerAccess")
 public abstract class Shader {
 
 	private static final String TAG = Shader.class.getSimpleName();
