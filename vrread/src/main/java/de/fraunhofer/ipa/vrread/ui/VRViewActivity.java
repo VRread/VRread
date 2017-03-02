@@ -17,6 +17,7 @@
 package de.fraunhofer.ipa.vrread.ui;
 
 import android.content.Context;
+import android.content.res.AssetFileDescriptor;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.util.Log;
@@ -25,9 +26,14 @@ import com.google.vr.sdk.base.AndroidCompat;
 import com.google.vr.sdk.base.GvrActivity;
 import com.google.vr.sdk.base.GvrView;
 
+import java.io.File;
+import java.io.IOException;
+
 import de.fraunhofer.ipa.vrread.control.HeadGestureReadController;
 import de.fraunhofer.ipa.vrread.R;
 import de.fraunhofer.ipa.vrread.control.HeadGestureController;
+import de.fraunhofer.ipa.vrread.datasource.Datasource;
+import de.fraunhofer.ipa.vrread.datasource.PDFDataSource;
 import de.fraunhofer.ipa.vrread.graphics.layer.HelperLineLayer;
 import de.fraunhofer.ipa.vrread.graphics.Renderer;
 import de.fraunhofer.ipa.vrread.graphics.layer.ScrollingTextLayer;
@@ -66,13 +72,26 @@ public class VRViewActivity extends GvrActivity {
 		vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
 		renderer = new Renderer(gvrView);
-		renderer.addLayer(0, new ScrollingTextLayer(this));
+		final ScrollingTextLayer textLayer = new ScrollingTextLayer(this);
+		renderer.addLayer(0, textLayer);
 		renderer.addLayer(1, new HelperLineLayer(this));
 
-		// Setup the gesture controller.
-		final HeadGestureController headGestureController = new HeadGestureController();
-		headGestureController.setHeadGestureReadController(new HeadGestureReadController());
-		renderer.setGestureController(headGestureController);
+		// Now we need a head gesture controller.
+		final HeadGestureController headController = new HeadGestureController();
+		renderer.setGestureController(headController);
+
+		// We attach a head gesture controller for the
+		final HeadGestureReadController readController = new HeadGestureReadController(textLayer);
+		headController.setHeadGestureReadController(readController);
+
+		try {
+			// Prepare the datasource
+			AssetFileDescriptor desc = getResources().openRawResourceFd(R.raw.bitcoin);
+			Datasource datasource = new PDFDataSource(desc.getParcelFileDescriptor());
+			readController.setDatasource(datasource);
+		} catch(IOException ex) {
+			Log.e(TAG, "Could not open pdf.");
+		}
 	}
 
 	@Override

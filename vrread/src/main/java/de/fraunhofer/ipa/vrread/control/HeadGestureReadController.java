@@ -2,6 +2,8 @@ package de.fraunhofer.ipa.vrread.control;
 
 import android.util.Log;
 
+import de.fraunhofer.ipa.vrread.graphics.layer.ScrollingTextLayer;
+
 /**
  * Recognizes head gestures and transform them into read commands.
  * These commands are used to calculcate the current
@@ -12,6 +14,13 @@ import android.util.Log;
 public class HeadGestureReadController extends ReadController {
 
 	private final String TAG = HeadGestureReadController.class.getSimpleName();
+
+	/**
+	 * @param textLayer The textlayer to work upon when receiving the movement commands.
+	 */
+	public HeadGestureReadController(ScrollingTextLayer textLayer) {
+		super(textLayer);
+	}
 
 	/**
 	 * Translates a recognized head gesture into read commands.

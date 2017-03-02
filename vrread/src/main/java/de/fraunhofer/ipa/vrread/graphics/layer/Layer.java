@@ -8,6 +8,7 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.Objects;
 
+import de.fraunhofer.ipa.vrread.datasource.TextureSize;
 import de.fraunhofer.ipa.vrread.graphics.Renderer;
 import de.fraunhofer.ipa.vrread.graphics.WorldLayoutData;
 import de.fraunhofer.ipa.vrread.graphics.shader.GLHelper;
@@ -44,6 +45,16 @@ public class Layer {
 	Layer(QuadShader shader) {
 
 		this.shader = Objects.requireNonNull(shader);
+	}
+
+	/**
+	 * Gets the current best texture size.
+	 *
+	 * @return The best texture size for this platform.
+	 */
+	public TextureSize getTextureSize() {
+		// This should be determined by opengl.
+		return new TextureSize(1024, 1024);
 	}
 
 	/**

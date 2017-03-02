@@ -7,7 +7,7 @@ import android.graphics.Bitmap;
  * <p>
  * Created by Thomas Felix on 22.02.2017.
  */
-public abstract class Datasource {
+public interface Datasource {
 
 	/**
 	 * Returns a rendered bitmap for the given
@@ -18,5 +18,14 @@ public abstract class Datasource {
 	 * @param size     The texture size in px. Usually they are multiplies of 2.
 	 * @return Returns a bitmap for rendering.
 	 */
-	public abstract Bitmap getTextureBitmap(ReadPosition position, float scale, TextureSize size);
+	Bitmap getTextureBitmap(ReadPosition position, float scale, TextureSize size);
+
+	/**
+	 * Number of pages inside this source. It happens that there are sources which have basically only one page
+	 * (maybe a
+	 * big webpage), then the returned page count is always 1.
+	 *
+	 * @return The number of pages inside this source.
+	 */
+	int getPageCount();
 }

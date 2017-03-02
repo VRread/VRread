@@ -1,8 +1,12 @@
 package de.fraunhofer.ipa.vrread.control;
 
+import android.graphics.Bitmap;
+
 import java.util.Objects;
 
 import de.fraunhofer.ipa.vrread.datasource.Datasource;
+import de.fraunhofer.ipa.vrread.datasource.ReadPosition;
+import de.fraunhofer.ipa.vrread.datasource.TextureSize;
 import de.fraunhofer.ipa.vrread.graphics.layer.ScrollingTextLayer;
 
 /**
@@ -21,6 +25,11 @@ public class ReadController {
 	 * Distance to be scrolled when a looking method is called.
 	 */
 	private int scrollDistanceIncrement = 1;
+
+	private int currentPage = 0;
+	private int x;
+	private int y;
+	private float scale = 1f;
 
 	/**
 	 * @param textLayer The textlayer to work upon when receiving the movement commands.
@@ -59,14 +68,32 @@ public class ReadController {
 	 * Manually switch to the next page.
 	 */
 	public void nextPage() {
-
+		if(currentPage + 1 < datasource.getPageCount()) {
+			currentPage++;
+			x = 0;
+			y = 0;
+			final TextureSize texSize = textLayer.getTextureSize();
+			final Bitmap bitmap = datasource.getTextureBitmap(new ReadPosition(currentPage, x, y), scale, texSize);
+			textLayer.setTexture(bitmap);
+			textLayer.setX(x);
+			textLayer.setY(y);
+		}
 	}
 
 	/**
 	 * Manually switch to the previous page.
 	 */
 	public void previousPage() {
-
+		if(currentPage - 1 <= 0) {
+			currentPage--;
+			x = 0;
+			y = 0;
+			final TextureSize texSize = textLayer.getTextureSize();
+			final Bitmap bitmap = datasource.getTextureBitmap(new ReadPosition(currentPage, x, y), scale, texSize);
+			textLayer.setTexture(bitmap);
+			textLayer.setY(y);
+			textLayer.setX(x);
+		}
 	}
 
 	/**
@@ -75,7 +102,16 @@ public class ReadController {
 	 * @param page The page to jump to.
 	 */
 	public void gotoPage(int page) {
-
+		if(page >= 0 && page < datasource.getPageCount()) {
+			currentPage = page;
+			x = 0;
+			y = 0;
+			final TextureSize texSize = textLayer.getTextureSize();
+			final Bitmap bitmap = datasource.getTextureBitmap(new ReadPosition(currentPage, x, y), scale, texSize);
+			textLayer.setTexture(bitmap);
+			textLayer.setY(y);
+			textLayer.setX(x);
+		}
 	}
 
 }
