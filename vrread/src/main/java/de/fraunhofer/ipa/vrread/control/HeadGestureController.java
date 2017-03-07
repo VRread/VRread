@@ -17,11 +17,21 @@ public class HeadGestureController implements GestureController {
 	 */
 	private float[] headQuaternion = new float[4];
 
-	private float psi;
-	private float theta;
-	private float phi;
+	// roll X-Axis
+	private float roll;
+
+	// Pitch y-axis
+	private float pitch;
+
+	// yaw z-axis
+	private float yaw;
 
 	private HeadGestureReadController controller;
+
+	private static float toRad(float degree) {
+		degree = degree % 360;
+		return (float)(degree * Math.PI / 180);
+	}
 
 	@Override
 	public void onHeadMovement(HeadTransform headTransform) {
@@ -30,9 +40,23 @@ public class HeadGestureController implements GestureController {
 		headTransform.getQuaternion(headQuaternion, 0);
 		calculateEulerAngles();
 
-		if(Math.abs(psi) > 0.2f) {
+		if(roll > toRad(5)) {
+			if(controller != null) {
+				controller.onHeadGesture(HeadGesture.LOOK_DOWN);
+			}
+		} else if(roll < toRad(-10)) {
+			if(controller != null) {
+				controller.onHeadGesture(HeadGesture.LOOK_UP);
+			}
+		}
+
+		if(pitch > toRad(10)) {
 			if(controller != null) {
 				controller.onHeadGesture(HeadGesture.LOOK_LEFT);
+			}
+		}else if(pitch < toRad(-10)) {
+			if(controller != null) {
+				controller.onHeadGesture(HeadGesture.LOOK_RIGHT);
 			}
 		}
 	}
@@ -51,17 +75,23 @@ public class HeadGestureController implements GestureController {
 	 */
 	private void calculateEulerAngles() {
 
-		psi = (float) Math.atan2(-2. * (headQuaternion[2] * headQuaternion[3] - headQuaternion[0] *
-				headQuaternion[1]), headQuaternion[0] * headQuaternion[0] - headQuaternion[1] * headQuaternion[1] -
-				headQuaternion[2] * headQuaternion[2] + headQuaternion[3] * headQuaternion[3]);
+		double ysqr = headQuaternion[1] * headQuaternion[1];
 
-		theta =(float) Math.asin(2. * (headQuaternion[1] * headQuaternion[3] + headQuaternion[0] *
-				headQuaternion[2]));
+		double t0 = 2.0 * (headQuaternion[3] * headQuaternion[0] + headQuaternion[1] * headQuaternion[2]);
+		double t1 = 1.0 - 2.0 * (headQuaternion[0] * headQuaternion[0] + ysqr);
 
-		phi = (float) Math.atan2(2. * (headQuaternion[1] * headQuaternion[2] + headQuaternion[0] *
-				headQuaternion[3]), headQuaternion[0] * headQuaternion[0] + headQuaternion[1] * headQuaternion[1] -
-				headQuaternion[2] * headQuaternion[2] - headQuaternion[3] * headQuaternion[3]);
+		roll = (float) Math.atan2(t0, t1);
 
-		Log.d(TAG, String.format("Euler angles psi: %f, theta: %f, phi: %f", psi, theta, phi));
+		double t2 = 2.0 * (headQuaternion[3] * headQuaternion[1] - headQuaternion[2] * headQuaternion[0]);
+		t2 = t2 > 1.0 ? 1.0 : t2;
+		t2 = t2 < -1.0 ? -1.0 : t2;
+
+		pitch = (float) Math.asin(t2);
+
+		double t3 = 2.0 * (headQuaternion[3] * headQuaternion[2] + headQuaternion[0] * headQuaternion[1]);
+		double t4 = 1.0 - 2.0 * (ysqr + headQuaternion[2] * headQuaternion[2]);
+		yaw = (float) Math.atan2(t3, t4);
+
+		Log.d(TAG, String.format("Euler angles roll: %.3f, pitch: %.3f, yaw: %.3f", roll, pitch, yaw));
 	}
 }

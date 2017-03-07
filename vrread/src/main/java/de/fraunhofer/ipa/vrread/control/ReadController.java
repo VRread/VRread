@@ -24,11 +24,11 @@ public class ReadController {
 	/**
 	 * Distance to be scrolled when a looking method is called.
 	 */
-	private int scrollDistanceIncrement = 1;
+	private float scrollDistanceIncrement = 0.001f;
 
 	private int currentPage = 0;
-	private int x;
-	private int y;
+	private float x;
+	private float y;
 	private float scale = 1f;
 
 	/**

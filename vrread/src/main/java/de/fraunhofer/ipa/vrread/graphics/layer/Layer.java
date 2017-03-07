@@ -3,6 +3,8 @@ package de.fraunhofer.ipa.vrread.graphics.layer;
 import android.opengl.GLES20;
 import android.util.Log;
 
+import com.google.vr.sdk.base.HeadTransform;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -48,6 +50,13 @@ public class Layer {
 	}
 
 	/**
+	 * @return The shader of the layer.
+	 */
+	public QuadShader getShader() {
+		return shader;
+	}
+
+	/**
 	 * Gets the current best texture size.
 	 *
 	 * @return The best texture size for this platform.
@@ -75,6 +84,8 @@ public class Layer {
 		}
 	}
 
+
+
 	/**
 	 * Draws a single eye. This basically feeds the model view projection to the shaders.
 	 *
@@ -90,5 +101,14 @@ public class Layer {
 
 		GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, 6);
 		GLHelper.checkGLError(GL_ERROR_TAG);
+	}
+
+	/**
+	 * Called before the eyes are drawn next.
+	 *
+	 * @param headTransform The new head tranform.
+	 */
+	public void onNewFrame(HeadTransform headTransform) {
+		// no op.
 	}
 }

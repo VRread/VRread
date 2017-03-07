@@ -194,6 +194,10 @@ public class Renderer implements GvrView.StereoRenderer {
 				layers[i].onCreated();
 				layersInitialized[i] = true;
 			}
+
+			if(layers[i] != null) {
+				layers[i].onNewFrame(headTransform);
+			}
 		}
 
 		if (gestureController != null) {

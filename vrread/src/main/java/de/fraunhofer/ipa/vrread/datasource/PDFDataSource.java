@@ -7,7 +7,6 @@ import android.os.ParcelFileDescriptor;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * The datasource is responsible for creation of new textures and sending them

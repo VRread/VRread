@@ -74,7 +74,7 @@ public class VRViewActivity extends GvrActivity {
 		renderer = new Renderer(gvrView);
 		final ScrollingTextLayer textLayer = new ScrollingTextLayer(this);
 		renderer.addLayer(0, textLayer);
-		renderer.addLayer(1, new HelperLineLayer(this));
+		//renderer.addLayer(1, new HelperLineLayer(this));
 
 		// Now we need a head gesture controller.
 		final HeadGestureController headController = new HeadGestureController();

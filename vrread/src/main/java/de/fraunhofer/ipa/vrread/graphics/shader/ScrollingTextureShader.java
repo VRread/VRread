@@ -37,11 +37,17 @@ public class ScrollingTextureShader extends QuadShader {
 	/**
 	 * Offset uv coordinates which are fed in each rendering to the shader in order to shift  the  texture.
 	 */
-	private float[] textureUvOffset = new float[]{0f, 0f};
+	private float u = 0f;
+	private float v = 0f;
 
 
 	public synchronized void setTextureScale(float textureScale) {
 		this.textureScale = textureScale;
+	}
+
+	public synchronized void setUv(float u, float v) {
+		this.u = u;
+		this.v = v;
 	}
 
 	private synchronized float getTextureScale() {
@@ -71,7 +77,7 @@ public class ScrollingTextureShader extends QuadShader {
 
 		// Send scale and offset
 		GLES20.glUniform1f(textureScaleParam, getTextureScale());
-		GLES20.glUniform2f(textureUvOffsetParam, textureUvOffset[0], textureUvOffset[1]);
+		GLES20.glUniform2f(textureUvOffsetParam, u, v);
 		GLHelper.checkGLError("texture scale offset");
 	}
 

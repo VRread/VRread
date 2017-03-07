@@ -3,6 +3,8 @@ package de.fraunhofer.ipa.vrread.graphics.layer;
 import android.content.Context;
 import android.graphics.Bitmap;
 
+import com.google.vr.sdk.base.HeadTransform;
+
 import de.fraunhofer.ipa.vrread.control.ReadController;
 import de.fraunhofer.ipa.vrread.graphics.shader.ScrollingTextureShader;
 
@@ -15,27 +17,31 @@ import de.fraunhofer.ipa.vrread.graphics.shader.ScrollingTextureShader;
 
 public class ScrollingTextLayer extends Layer {
 
-	private int x = 0;
-	private int y = 0;
+	private float x = 0;
+	private float y = 0;
 	private Bitmap newTexture;
+	private final ScrollingTextureShader textShader;
 
 	public ScrollingTextLayer(Context ctx) {
 		super(new ScrollingTextureShader(ctx));
+
+		// Get the shader back again.
+		textShader = (ScrollingTextureShader) getShader();
 	}
 
-	public int getX() {
+	public float getX() {
 		return x;
 	}
 
-	public int getY() {
+	public float getY() {
 		return y;
 	}
 
-	public void setY(int y) {
+	public void setY(float y) {
 		this.y = y;
 	}
 
-	public void setX(int x) {
+	public void setX(float x) {
 		this.x = x;
 	}
 
@@ -49,5 +55,18 @@ public class ScrollingTextLayer extends Layer {
 	 */
 	public void setTexture(Bitmap bitmap) {
 		this.newTexture = bitmap;
+	}
+
+	/**
+	 * Transfer the new x and y uv coordinates into the shader.
+	 *
+	 * @param headTransform The new head tranform.
+	 */
+	@Override
+	public void onNewFrame(HeadTransform headTransform) {
+		super.onNewFrame(headTransform);
+
+		// Transfer the uv coordiantes.
+		textShader.setUv(x, y);
 	}
 }
