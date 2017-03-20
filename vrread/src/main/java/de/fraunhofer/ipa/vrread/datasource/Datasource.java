@@ -28,4 +28,5 @@ public interface Datasource {
 	 * @return The number of pages inside this source.
 	 */
 	int getPageCount();
+
 }

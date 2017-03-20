@@ -26,15 +26,13 @@ import com.google.vr.sdk.base.AndroidCompat;
 import com.google.vr.sdk.base.GvrActivity;
 import com.google.vr.sdk.base.GvrView;
 
-import java.io.File;
 import java.io.IOException;
 
 import de.fraunhofer.ipa.vrread.control.HeadGestureReadController;
 import de.fraunhofer.ipa.vrread.R;
 import de.fraunhofer.ipa.vrread.control.HeadGestureController;
 import de.fraunhofer.ipa.vrread.datasource.Datasource;
-import de.fraunhofer.ipa.vrread.datasource.PDFDataSource;
-import de.fraunhofer.ipa.vrread.graphics.layer.HelperLineLayer;
+import de.fraunhofer.ipa.vrread.datasource.PDFDatasource;
 import de.fraunhofer.ipa.vrread.graphics.Renderer;
 import de.fraunhofer.ipa.vrread.graphics.layer.ScrollingTextLayer;
 
@@ -87,7 +85,7 @@ public class VRViewActivity extends GvrActivity {
 		try {
 			// Prepare the datasource
 			AssetFileDescriptor desc = getResources().openRawResourceFd(R.raw.bitcoin);
-			Datasource datasource = new PDFDataSource(desc.getParcelFileDescriptor());
+			Datasource datasource = new PDFDatasource(desc.getParcelFileDescriptor());
 			readController.setDatasource(datasource);
 		} catch(IOException ex) {
 			Log.e(TAG, "Could not open pdf.");

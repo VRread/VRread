@@ -14,20 +14,24 @@ import java.io.IOException;
  * Created by tbf on 02.03.2017.
  */
 
-public class PDFDataSource implements Datasource {
+public class PDFDatasource implements Datasource {
 
 	private PdfRenderer renderer;
 
-	public PDFDataSource(File file) throws IOException {
+	public PDFDatasource(File file) throws IOException {
 
 		ParcelFileDescriptor randFile = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY);
 		renderer = new PdfRenderer(randFile);
 	}
 
 
-	public PDFDataSource(ParcelFileDescriptor parcelFileDescriptor) throws IOException {
+	public PDFDatasource(ParcelFileDescriptor parcelFileDescriptor) throws IOException {
 
 		renderer = new PdfRenderer(parcelFileDescriptor);
+	}
+
+	public static String[] getSupportedMimeTypes() {
+		return new String[]{"application/pdf"};
 	}
 
 	/**

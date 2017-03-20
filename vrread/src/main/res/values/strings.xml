@@ -1,3 +1,4 @@
 <resources>
 	<string name="app_name">VRRead</string>
+	<string name="open_file">Datei öffnen</string>
 </resources>
