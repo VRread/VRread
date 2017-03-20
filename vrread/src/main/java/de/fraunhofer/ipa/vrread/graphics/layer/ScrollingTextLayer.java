@@ -38,11 +38,11 @@ public class ScrollingTextLayer extends Layer {
 	}
 
 	public void setY(float y) {
-		this.y = y;
+		this.y = y % 1;
 	}
 
 	public void setX(float x) {
-		this.x = x;
+		this.x = x % 1;
 	}
 
 	/**
