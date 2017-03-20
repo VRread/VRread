@@ -20,7 +20,8 @@ public class DatasourceService {
 	private static final String MIME_METHOD_NAME = "getSupportedMimeTypes";
 
 	private static final Class[] CLAZZES = new Class[] {
-			PDFDatasource.class
+			PDFDatasource.class,
+			ImageDatasource.class
 	};
 
 	/**

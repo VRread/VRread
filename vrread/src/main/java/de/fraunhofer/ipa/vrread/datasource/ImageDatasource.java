@@ -21,6 +21,11 @@ public class ImageDatasource implements Datasource {
 		bitmap = BitmapFactory.decodeResource(ctx.getResources(), R.drawable.text);
 	}
 
+	@SuppressWarnings("unused")
+	public static String[] getSupportedMimeTypes() {
+		return new String[]{"image/*"};
+	}
+
 	@Override
 	public Bitmap getTextureBitmap(ReadPosition position, float scale, TextureSize size) {
 		return bitmap;

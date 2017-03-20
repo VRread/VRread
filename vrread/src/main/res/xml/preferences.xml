@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<CheckBoxPreference
+		android:key="pref_read_helper_line"
+		android:title="@string/readhelperline"
+		android:summary="@string/pref_read_helper_line_summary"
+		android:defaultValue="false"
+		/>
+
+	<Preference
+		android:key="pref_zoom"
+		android:title="@string/zoom"
+		android:summary="@string/pref_zoom_summary"
+		/>
+
+</PreferenceScreen>

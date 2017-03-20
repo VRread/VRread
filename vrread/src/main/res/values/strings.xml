@@ -1,4 +1,9 @@
 <resources>
 	<string name="app_name">VRRead</string>
 	<string name="open_file">Datei öffnen</string>
+	<string name="readhelperline">Lesehilfslinie</string>
+	<string name="pref_read_helper_line_summary">Zeigt eine Hilfslinie an, die das Lesen erleichtert.</string>
+	<string name="zoom">Vergrößerungsfaktor</string>
+	<string name="pref_zoom_summary">Vergrößerungsfaktor zur Ansicht von Text.</string>
+	<string name="settings">Einstellungen</string>
 </resources>
