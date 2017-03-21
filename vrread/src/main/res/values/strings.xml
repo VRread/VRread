@@ -6,4 +6,7 @@
 	<string name="zoom">Vergrößerungsfaktor</string>
 	<string name="pref_zoom_summary">Vergrößerungsfaktor zur Ansicht von Text.</string>
 	<string name="settings">Einstellungen</string>
+
+	<string name="please_review_the_settings">Bitte überprüfen Sie die App Einstellungen beim ersten Start der
+		App. Die Einstellungenk können später bei Bedarf angepasst werden.</string>
 </resources>

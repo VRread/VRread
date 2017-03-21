@@ -8,6 +8,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 
+import de.fraunhofer.ipa.vrread.AppSettings;
 import de.fraunhofer.ipa.vrread.R;
 import de.fraunhofer.ipa.vrread.datasource.DatasourceService;
 
@@ -19,6 +20,7 @@ public class MainActivity extends Activity {
 	private static final int INTENT_OPEN_DOC_CODE = 1;
 
 	private DatasourceService datasourceService = new DatasourceService();
+	private AppSettings appSettings;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +28,15 @@ public class MainActivity extends Activity {
 
 		// Prepare the default values for the preferences.
 		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+
+		appSettings = new AppSettings(this);
+
+		//if(appSettings.isFirstRun()) {
+			// Show the settings activity with first run flag set.
+			final Intent intent = new Intent(this, SettingsActivity.class);
+			intent.putExtra(SettingsActivity.EXTRA_FIRST_RUN, Boolean.valueOf(true));
+			startActivity(intent);
+		//}
 
 		setContentView(R.layout.activity_main);
 	}
