@@ -2,14 +2,14 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<CheckBoxPreference
-		android:key="pref_read_helper_line"
+		android:key="@string/key_pref_helperline"
 		android:title="@string/readhelperline"
 		android:summary="@string/pref_read_helper_line_summary"
 		android:defaultValue="false"
 		/>
 
-	<Preference
-		android:key="pref_zoom"
+	<de.fraunhofer.ipa.vrread.NumberPickerPreference
+		android:key="@string/key_pref_zoom"
 		android:title="@string/zoom"
 		android:summary="@string/pref_zoom_summary"
 		/>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Preference keys referenced by the pref display system as well as by the
+AppSettings class.
+-->
+<resources>
+	<string name="key_pref_zoom">pref_zoom</string>
+	<string name="key_pref_helperline">pref_helperline</string>
+</resources>
