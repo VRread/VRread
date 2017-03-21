@@ -28,12 +28,14 @@ import com.google.vr.sdk.base.GvrView;
 
 import java.io.IOException;
 
+import de.fraunhofer.ipa.vrread.AppSettings;
 import de.fraunhofer.ipa.vrread.control.HeadGestureReadController;
 import de.fraunhofer.ipa.vrread.R;
 import de.fraunhofer.ipa.vrread.control.HeadGestureController;
 import de.fraunhofer.ipa.vrread.datasource.Datasource;
 import de.fraunhofer.ipa.vrread.datasource.PDFDatasource;
 import de.fraunhofer.ipa.vrread.graphics.Renderer;
+import de.fraunhofer.ipa.vrread.graphics.layer.HelperLineLayer;
 import de.fraunhofer.ipa.vrread.graphics.layer.ScrollingTextLayer;
 
 /**
@@ -45,10 +47,9 @@ public class VRViewActivity extends GvrActivity {
 
 	private static final String TAG = VRViewActivity.class.getSimpleName();
 
-	private Vibrator vibrator;
 	private GvrView gvrView;
-
 	private Renderer renderer;
+	private AppSettings appSettings;
 
 	/**
 	 * Sets the viewMatrix to our GvrView and initializes the transformation matrices we will use to render our scene.
@@ -59,6 +60,8 @@ public class VRViewActivity extends GvrActivity {
 
 		setContentView(R.layout.renderer);
 
+		appSettings = new AppSettings(this);
+
 		gvrView = (GvrView) findViewById(R.id.gvr_view);
 		if (gvrView.setAsyncReprojectionEnabled(true)) {
 			// Async reprojection decouples the app framerate from the display framerate,
@@ -67,12 +70,14 @@ public class VRViewActivity extends GvrActivity {
 			AndroidCompat.setSustainedPerformanceMode(this, true);
 		}
 
-		vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-
 		renderer = new Renderer(gvrView);
 		final ScrollingTextLayer textLayer = new ScrollingTextLayer(this);
 		renderer.addLayer(0, textLayer);
-		//renderer.addLayer(1, new HelperLineLayer(this));
+
+		// Add the helper line if requested via settings.
+		if(appSettings.hasHelperline()) {
+			renderer.addLayer(1, new HelperLineLayer(this));
+		}
 
 		// Now we need a head gesture controller.
 		final HeadGestureController headController = new HeadGestureController();
@@ -82,6 +87,7 @@ public class VRViewActivity extends GvrActivity {
 		final HeadGestureReadController readController = new HeadGestureReadController(textLayer);
 		headController.setHeadGestureReadController(readController);
 
+		/*
 		try {
 			// Prepare the datasource
 			AssetFileDescriptor desc = getResources().openRawResourceFd(R.raw.bitcoin);
@@ -89,7 +95,7 @@ public class VRViewActivity extends GvrActivity {
 			readController.setDatasource(datasource);
 		} catch(IOException ex) {
 			Log.e(TAG, "Could not open pdf.");
-		}
+		}*/
 	}
 
 	@Override
@@ -110,7 +116,5 @@ public class VRViewActivity extends GvrActivity {
 	public void onCardboardTrigger() {
 		Log.i(TAG, "onCardboardTrigger");
 
-		// Always give user feedback.
-		vibrator.vibrate(50);
 	}
 }

@@ -53,7 +53,8 @@ public class MainActivity extends Activity {
 				Log.d(TAG, "Open Document: " + uri.toString());
 
 				// Prepare the datasource for this document and send it to the visualization.
-				final Intent intent = new Intent();
+				final Intent intent = new Intent(this, VRViewActivity.class);
+				startActivity(intent);
 
 			}
 		}
