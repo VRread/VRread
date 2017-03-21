@@ -31,12 +31,12 @@ public class MainActivity extends Activity {
 
 		appSettings = new AppSettings(this);
 
-		//if(appSettings.isFirstRun()) {
+		if(appSettings.isFirstRun()) {
 			// Show the settings activity with first run flag set.
 			final Intent intent = new Intent(this, SettingsActivity.class);
 			intent.putExtra(SettingsActivity.EXTRA_FIRST_RUN, Boolean.valueOf(true));
 			startActivity(intent);
-		//}
+		}
 
 		setContentView(R.layout.activity_main);
 	}
