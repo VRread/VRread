@@ -46,6 +46,15 @@ public class ScrollingTextLayer extends Layer {
 	}
 
 	/**
+	 * Sets the scale of the texture layer.
+	 *
+	 * @param scale The new scale of the texture layer.
+	 */
+	public void setScale(float scale) {
+		textShader.setTextureScale(scale);
+	}
+
+	/**
 	 * Advises the layer to use a new bitmap. In the next render cycle the bitmap is exchanged.
 	 * <p>
 	 * Note: After the bitmap was used its memory is freed and its recycled. This is done in this method because it is

@@ -54,7 +54,6 @@ public class ScrollingTextureShader extends QuadShader {
 		return textureScale;
 	}
 
-
 	public ScrollingTextureShader(Context ctx) {
 
 		this.ctx = ctx;

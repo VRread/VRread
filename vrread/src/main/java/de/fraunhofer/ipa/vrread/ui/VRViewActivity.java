@@ -18,6 +18,7 @@ package de.fraunhofer.ipa.vrread.ui;
 
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.util.Log;
@@ -33,6 +34,7 @@ import de.fraunhofer.ipa.vrread.control.HeadGestureReadController;
 import de.fraunhofer.ipa.vrread.R;
 import de.fraunhofer.ipa.vrread.control.HeadGestureController;
 import de.fraunhofer.ipa.vrread.datasource.Datasource;
+import de.fraunhofer.ipa.vrread.datasource.DatasourceFactory;
 import de.fraunhofer.ipa.vrread.datasource.PDFDatasource;
 import de.fraunhofer.ipa.vrread.graphics.Renderer;
 import de.fraunhofer.ipa.vrread.graphics.layer.HelperLineLayer;
@@ -47,9 +49,16 @@ public class VRViewActivity extends GvrActivity {
 
 	private static final String TAG = VRViewActivity.class.getSimpleName();
 
+	/**
+	 * Extra URI to open a file upon start of this activity. The filetype must be supported by one of the implemented
+	 * {@link Datasource}.
+	 */
+	private static final String EXTRA_OPEN_URI = "de.fhg.ipa.vrread.openfile";
+
 	private GvrView gvrView;
 	private Renderer renderer;
 	private AppSettings appSettings;
+	private DatasourceFactory datasourceFactory;
 
 	/**
 	 * Sets the viewMatrix to our GvrView and initializes the transformation matrices we will use to render our scene.
@@ -61,6 +70,7 @@ public class VRViewActivity extends GvrActivity {
 		setContentView(R.layout.renderer);
 
 		appSettings = new AppSettings(this);
+		datasourceFactory = new DatasourceFactory();
 
 		gvrView = (GvrView) findViewById(R.id.gvr_view);
 		if (gvrView.setAsyncReprojectionEnabled(true)) {
@@ -73,6 +83,10 @@ public class VRViewActivity extends GvrActivity {
 		renderer = new Renderer(gvrView);
 		final ScrollingTextLayer textLayer = new ScrollingTextLayer(this);
 		renderer.addLayer(0, textLayer);
+
+		// Adapt to the zoom factor.
+		float zoomFac = appSettings.getZoomFactor();
+		textLayer.setScale(zoomFac);
 
 		// Add the helper line if requested via settings.
 		if(appSettings.hasHelperline()) {
@@ -87,15 +101,20 @@ public class VRViewActivity extends GvrActivity {
 		final HeadGestureReadController readController = new HeadGestureReadController(textLayer);
 		headController.setHeadGestureReadController(readController);
 
-		/*
-		try {
-			// Prepare the datasource
-			AssetFileDescriptor desc = getResources().openRawResourceFd(R.raw.bitcoin);
-			Datasource datasource = new PDFDatasource(desc.getParcelFileDescriptor());
-			readController.setDatasource(datasource);
-		} catch(IOException ex) {
-			Log.e(TAG, "Could not open pdf.");
-		}*/
+		// Extract the file uri.
+		if(getIntent().hasExtra(EXTRA_OPEN_URI)) {
+
+			Uri fileUri = getIntent().getExtras().getParcelable(EXTRA_OPEN_URI);
+			Log.d(TAG, "Received uri: " + fileUri.toString());
+
+			final Datasource ds = datasourceFactory.getDatasource(fileUri);
+
+			if(ds!= null) {
+				readController.setDatasource(ds);
+			} else {
+				Log.e(TAG, "Can not open the given file URI.");
+			}
+		}
 	}
 
 	@Override
@@ -115,6 +134,5 @@ public class VRViewActivity extends GvrActivity {
 	@Override
 	public void onCardboardTrigger() {
 		Log.i(TAG, "onCardboardTrigger");
-
 	}
 }
