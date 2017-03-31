@@ -42,7 +42,8 @@ public class ScrollingTextureShader extends QuadShader {
 
 
 	public synchronized void setTextureScale(float textureScale) {
-		this.textureScale = textureScale;
+		// Invert this because the uv scale up works with the inverse.
+		this.textureScale = 1.0f / textureScale;
 	}
 
 	public synchronized void setUv(float u, float v) {

@@ -35,7 +35,8 @@ public class AppSettings {
 	 * @return The current zoom factor of the text.
 	 */
 	public float getZoomFactor() {
-		return sharedPrefs.getFloat(getKey(R.string.key_pref_zoom), 1.0f);
+		int zoom = sharedPrefs.getInt(getKey(R.string.key_pref_zoom), 1);
+		return zoom;
 	}
 
 	/**

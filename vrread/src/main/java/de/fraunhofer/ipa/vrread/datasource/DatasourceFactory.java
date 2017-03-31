@@ -3,6 +3,8 @@ package de.fraunhofer.ipa.vrread.datasource;
 import android.net.Uri;
 import android.webkit.MimeTypeMap;
 
+import java.io.File;
+
 /**
  * The {@link DatasourceFactory} creates datasources upon the given file URI.
  * <p>
@@ -10,6 +12,10 @@ import android.webkit.MimeTypeMap;
  */
 
 public class DatasourceFactory {
+
+	public DatasourceFactory() {
+
+	}
 
 	/**
 	 * Returns the mime type of the given file url.
@@ -36,7 +42,20 @@ public class DatasourceFactory {
 	 */
 	public Datasource getDatasource(Uri fileUri) {
 
+		// Check which filetype is contained inside the uri.
+		String mime = getMimeType(fileUri.toString());
 
+		if(PDFDatasource.getSupportedMimeTypes().equals(mime)) {
+			return createPDFSource(fileUri);
+		} else {
+			return null;
+		}
+	}
+
+	private PDFDatasource createPDFSource(Uri fileUri) {
+
+		final File file = new File(fileUri.getPath());
+		//return
 		return null;
 	}
 }
