@@ -31,7 +31,7 @@ public class MainActivity extends Activity {
 
 		appSettings = new AppSettings(this);
 
-		if(appSettings.isFirstRun()) {
+		if (appSettings.isFirstRun()) {
 			// Show the settings activity with first run flag set.
 			final Intent intent = new Intent(this, SettingsActivity.class);
 			intent.putExtra(SettingsActivity.EXTRA_FIRST_RUN, Boolean.valueOf(true));
@@ -44,16 +44,15 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-		if(requestCode == INTENT_OPEN_DOC_CODE && resultCode == Activity.RESULT_OK) {
+		if (requestCode == INTENT_OPEN_DOC_CODE && resultCode == Activity.RESULT_OK) {
 			// We were asked to open a document.
-
-			Uri uri = null;
-			if(data != null) {
-				uri = data.getData();
+			if (data != null) {
+				Uri uri = data.getData();
 				Log.d(TAG, "Open Document: " + uri.toString());
 
 				// Prepare the datasource for this document and send it to the visualization.
 				final Intent intent = new Intent(this, VRViewActivity.class);
+				intent.putExtra(VRViewActivity.EXTRA_OPEN_URI, uri);
 				startActivity(intent);
 
 			}
@@ -82,7 +81,8 @@ public class MainActivity extends Activity {
 	}
 
 	/**
-	 * TEMPORARLY: Opens the settings.
+	 * TEMPORARLY: Opens the settings. Make this into a normal styled app lookup.
+	 *
 	 * @param view
 	 */
 	public void onSettings(View view) {

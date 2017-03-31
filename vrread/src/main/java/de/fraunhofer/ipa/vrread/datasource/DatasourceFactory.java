@@ -1,9 +1,11 @@
 package de.fraunhofer.ipa.vrread.datasource;
 
 import android.net.Uri;
+import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * The {@link DatasourceFactory} creates datasources upon the given file URI.
@@ -12,6 +14,8 @@ import java.io.File;
  */
 
 public class DatasourceFactory {
+
+	private static final String TAG = DatasourceFactory.class.getSimpleName();
 
 	public DatasourceFactory() {
 
@@ -43,19 +47,23 @@ public class DatasourceFactory {
 	public Datasource getDatasource(Uri fileUri) {
 
 		// Check which filetype is contained inside the uri.
-		String mime = getMimeType(fileUri.toString());
+		final File file = new File(fileUri.getPath());
+		String mime = getMimeType(file.toString());
 
 		if(PDFDatasource.getSupportedMimeTypes().equals(mime)) {
-			return createPDFSource(fileUri);
+			return createPDFSource(file);
 		} else {
 			return null;
 		}
 	}
 
-	private PDFDatasource createPDFSource(Uri fileUri) {
+	private PDFDatasource createPDFSource(File file) {
 
-		final File file = new File(fileUri.getPath());
-		//return
-		return null;
+		try {
+			return new PDFDatasource(file);
+		} catch (IOException e) {
+			Log.e(TAG, "Could not open PDF file.", e);
+			return null;
+		}
 	}
 }

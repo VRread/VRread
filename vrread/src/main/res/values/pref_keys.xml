@@ -6,4 +6,5 @@ AppSettings class.
 <resources>
 	<string name="key_pref_zoom">pref_zoom</string>
 	<string name="key_pref_helperline">pref_helperline</string>
+	<string name="key_pref_sensitivity">pref_sensitivity</string>
 </resources>

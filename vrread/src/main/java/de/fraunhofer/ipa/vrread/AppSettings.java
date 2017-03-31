@@ -6,6 +6,8 @@ import android.preference.PreferenceManager;
 
 import java.util.Objects;
 
+import de.fraunhofer.ipa.vrread.control.SensitivityLevel;
+
 /**
  * Wrapper to access the user settings the user has created by editing the settings.
  * <p>
@@ -37,6 +39,24 @@ public class AppSettings {
 	public float getZoomFactor() {
 		int zoom = sharedPrefs.getInt(getKey(R.string.key_pref_zoom), 1);
 		return zoom;
+	}
+
+	/**
+	 * Gives the user chosen sensitivity level of the device.
+	 *
+	 * @return The usable sensitivity level of the head movement towards the device.
+	 */
+	public SensitivityLevel getSensitivity() {
+
+		String sensitivity = sharedPrefs.getString(getKey(R.string.key_pref_sensitivity), "1");
+		int level = Integer.parseInt(sensitivity);
+		final int enumCount = SensitivityLevel.values().length;
+
+		if (level < 0 || level > enumCount) {
+			throw new IndexOutOfBoundsException("Chosen sensitivty level is not in range.");
+		}
+
+		return SensitivityLevel.values()[level];
 	}
 
 	/**

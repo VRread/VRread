@@ -53,7 +53,7 @@ public class VRViewActivity extends GvrActivity {
 	 * Extra URI to open a file upon start of this activity. The filetype must be supported by one of the implemented
 	 * {@link Datasource}.
 	 */
-	private static final String EXTRA_OPEN_URI = "de.fhg.ipa.vrread.openfile";
+	public static final String EXTRA_OPEN_URI = "de.fhg.ipa.vrread.openfile";
 
 	private GvrView gvrView;
 	private Renderer renderer;

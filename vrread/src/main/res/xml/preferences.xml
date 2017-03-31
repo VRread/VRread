@@ -12,6 +12,16 @@
 		android:key="@string/key_pref_zoom"
 		android:title="@string/zoom"
 		android:summary="@string/pref_zoom_summary"
+		android:defaultValue="1"
+		/>
+
+	<ListPreference
+		android:key="@string/key_pref_sensitivity"
+		android:title="@string/sensitivity"
+		android:summary="@string/sensitivity_summary"
+		android:entries="@array/pref_sensitivity_entries"
+		android:entryValues="@array/pref_sensitivity_values"
+		android:defaultValue="1"
 		/>
 
 </PreferenceScreen>
