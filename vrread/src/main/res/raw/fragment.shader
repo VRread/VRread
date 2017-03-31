@@ -9,5 +9,5 @@ varying vec2 v_TexCoordinate;
 // The entry point for our fragment shader.
 void main()
 {
-   gl_FragColor = texture2D(u_Texture, (u_Scale * v_TexCoordinate) + u_Offset);
+   gl_FragColor = texture2D(u_Texture, (u_Scale * v_TexCoordinate) + u_Offset / u_Scale);
 }
