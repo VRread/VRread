@@ -16,7 +16,7 @@ import android.widget.NumberPicker;
 public class NumberPickerPreference extends DialogPreference {
 
 	// allowed range
-	private static final int MAX_VALUE = 5;
+	private static final int MAX_VALUE = 15;
 	private static final int MIN_VALUE = 1;
 	// enable or disable the 'circular behavior'
 	private static final boolean WRAP_SELECTOR_WHEEL = true;
