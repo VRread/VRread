@@ -21,7 +21,7 @@ public class DatasourceService {
 
 	private static final Class[] CLAZZES = new Class[] {
 			PDFDatasource.class,
-			ImageDatasource.class
+			//ImageDatasource.class
 	};
 
 	/**

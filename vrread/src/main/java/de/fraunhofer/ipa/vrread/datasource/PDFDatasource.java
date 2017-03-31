@@ -1,8 +1,10 @@
 package de.fraunhofer.ipa.vrread.datasource;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.pdf.PdfRenderer;
+import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 
 import java.io.File;
@@ -18,16 +20,10 @@ public class PDFDatasource implements Datasource {
 
 	private PdfRenderer renderer;
 
-	public PDFDatasource(File file) throws IOException {
+	public PDFDatasource(Uri file, Context context) throws IOException {
 
-		ParcelFileDescriptor randFile = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY);
-		renderer = new PdfRenderer(randFile);
-	}
-
-
-	public PDFDatasource(ParcelFileDescriptor parcelFileDescriptor) throws IOException {
-
-		renderer = new PdfRenderer(parcelFileDescriptor);
+		final ParcelFileDescriptor parcFile = context.getContentResolver().openFileDescriptor(file, "r");
+		renderer = new PdfRenderer(parcFile);
 	}
 
 	public static String[] getSupportedMimeTypes() {

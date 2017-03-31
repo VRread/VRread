@@ -70,11 +70,10 @@ public class MainActivity extends Activity {
 		// ACTION_OPEN_DOCUMENT is the intent to choose a certain file.
 		final Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
 		intent.addCategory(Intent.CATEGORY_OPENABLE);
+		// prepare for multiple uris.
 		intent.setType("*/*");
-
 		// Get the mime types from all installed Datasources.
 		String[] mimetypes = datasourceService.getSupportedMimeTypes();
-		//String[] mimetypes = {"image/*", "application/pdf"};
 		intent.putExtra(Intent.EXTRA_MIME_TYPES, mimetypes);
 
 		startActivityForResult(intent, INTENT_OPEN_DOC_CODE);

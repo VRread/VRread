@@ -71,7 +71,7 @@ public class VRViewActivity extends GvrActivity {
 		setContentView(R.layout.renderer);
 
 		appSettings = new AppSettings(this);
-		datasourceFactory = new DatasourceFactory();
+		datasourceFactory = new DatasourceFactory(this);
 
 		gvrView = (GvrView) findViewById(R.id.gvr_view);
 		if (gvrView.setAsyncReprojectionEnabled(true)) {
