@@ -21,7 +21,7 @@
 		android:summary="@string/sensitivity_summary"
 		android:entries="@array/pref_sensitivity_entries"
 		android:entryValues="@array/pref_sensitivity_values"
-		android:defaultValue="1"
+		android:defaultValue="0"
 		/>
 
 </PreferenceScreen>

@@ -37,8 +37,7 @@ public class AppSettings {
 	 * @return The current zoom factor of the text.
 	 */
 	public float getZoomFactor() {
-		int zoom = sharedPrefs.getInt(getKey(R.string.key_pref_zoom), 1);
-		return zoom;
+		return sharedPrefs.getInt(getKey(R.string.key_pref_zoom), 1);
 	}
 
 	/**
@@ -48,11 +47,11 @@ public class AppSettings {
 	 */
 	public SensitivityLevel getSensitivity() {
 
-		String sensitivity = sharedPrefs.getString(getKey(R.string.key_pref_sensitivity), "1");
+		String sensitivity = sharedPrefs.getString(getKey(R.string.key_pref_sensitivity), "0");
 		int level = Integer.parseInt(sensitivity);
 		final int enumCount = SensitivityLevel.values().length;
 
-		if (level < 0 || level > enumCount) {
+		if (level < 0 || level >= enumCount) {
 			throw new IndexOutOfBoundsException("Chosen sensitivty level is not in range.");
 		}
 

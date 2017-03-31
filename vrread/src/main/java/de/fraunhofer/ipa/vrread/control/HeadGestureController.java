@@ -26,11 +26,43 @@ public class HeadGestureController implements GestureController {
 	// yaw z-axis
 	private float yaw;
 
+	private int upMoveThreshold;
+	private int downMoveThreshold;
+	private int leftRightThreshold;
+
 	private HeadGestureReadController controller;
+
+	/**
+	 * Creates a {@link HeadGestureController} with a sensitivity level HIGH.
+	 */
+	public HeadGestureController() {
+		this(SensitivityLevel.HIGH);
+	}
+
+	public HeadGestureController(SensitivityLevel sensitivity) {
+
+		switch(sensitivity) {
+			case HIGH:
+				upMoveThreshold = 5;
+				downMoveThreshold = -10;
+				leftRightThreshold = 10;
+				break;
+			case MEDIUM:
+				upMoveThreshold = 8;
+				downMoveThreshold = -15;
+				leftRightThreshold = 15;
+				break;
+			case LOW:
+				upMoveThreshold = 10;
+				downMoveThreshold = -18;
+				leftRightThreshold = 20;
+				break;
+		}
+	}
 
 	private static float toRad(float degree) {
 		degree = degree % 360;
-		return (float)(degree * Math.PI / 180);
+		return (float) (degree * Math.PI / 180);
 	}
 
 	@Override
@@ -40,22 +72,22 @@ public class HeadGestureController implements GestureController {
 		headTransform.getQuaternion(headQuaternion, 0);
 		calculateEulerAngles();
 
-		if(roll > toRad(5)) {
-			if(controller != null) {
+		if (roll > toRad(upMoveThreshold)) {
+			if (controller != null) {
 				controller.onHeadGesture(HeadGesture.LOOK_DOWN);
 			}
-		} else if(roll < toRad(-10)) {
-			if(controller != null) {
+		} else if (roll < toRad(downMoveThreshold)) {
+			if (controller != null) {
 				controller.onHeadGesture(HeadGesture.LOOK_UP);
 			}
 		}
 
-		if(pitch > toRad(10)) {
-			if(controller != null) {
+		if (pitch > toRad(leftRightThreshold)) {
+			if (controller != null) {
 				controller.onHeadGesture(HeadGesture.LOOK_LEFT);
 			}
-		}else if(pitch < toRad(-10)) {
-			if(controller != null) {
+		} else if (pitch < toRad(-leftRightThreshold)) {
+			if (controller != null) {
 				controller.onHeadGesture(HeadGesture.LOOK_RIGHT);
 			}
 		}
