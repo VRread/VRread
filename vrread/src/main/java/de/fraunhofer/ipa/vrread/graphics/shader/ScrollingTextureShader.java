@@ -26,7 +26,7 @@ public class ScrollingTextureShader extends QuadShader {
 	private int textureScaleParam;
 
 	// This is a handle to our texture data.
-	private int textureDataHandle;
+	private int textureDataHandle = -1;
 
 
 	/**
@@ -109,18 +109,20 @@ public class ScrollingTextureShader extends QuadShader {
 		GLHelper.checkGLError("Floor program params");
 	}
 
-	public int useTexture(Bitmap bitmap) {
-		final int[] textureHandle = new int[1];
+	public void useTexture(Bitmap bitmap) {
 
+		if(textureDataHandle != -1) {
+			// Replace/delete the old texture.
+			final int[] textureHandle = new int[]{textureDataHandle};
+			GLES20.glDeleteTextures(1, textureHandle, 0);
+		}
+
+		final int[] textureHandle = new int[1];
 		GLES20.glGenTextures(1, textureHandle, 0);
 
 		if (textureHandle[0] != 0) {
 			// Bind to the texture in OpenGL
 			GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle[0]);
-
-			// Set filtering of the texture
-			GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
-			GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
 
 			// Load the bitmap into the bound texture.
 			GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
@@ -130,16 +132,6 @@ public class ScrollingTextureShader extends QuadShader {
 			throw new RuntimeException("Error loading texture.");
 		}
 
-		return textureHandle[0];
-	}
-
-	/**
-	 * Replaces the text texture.
-	 */
-	public void replaceTexture(int oldTextureHandle) {
-		//textureDataHandle = loadTexture(R.drawable.text_inv);
-
-		final int[] textureHandle = new int[]{oldTextureHandle};
-		GLES20.glDeleteTextures(1, textureHandle, 0);
+		textureDataHandle = textureHandle[0];
 	}
 }

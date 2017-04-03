@@ -79,12 +79,12 @@ public final class GLHelper {
 			// Bind to the texture in OpenGL
 			GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle[0]);
 
+			// Load the bitmap into the bound texture.
+			GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
+
 			// Set filtering of the texture
 			GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
 			GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
-
-			// Load the bitmap into the bound texture.
-			GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
 
 			// Recycle the bitmap, since its data has been loaded into OpenGL.
 			bitmap.recycle();

@@ -115,6 +115,7 @@ public class VRViewActivity extends GvrActivity {
 
 			if(ds!= null) {
 				readController.setDatasource(ds);
+				readController.gotoPage(0);
 			} else {
 				Log.e(TAG, "Can not open the given file URI.");
 			}

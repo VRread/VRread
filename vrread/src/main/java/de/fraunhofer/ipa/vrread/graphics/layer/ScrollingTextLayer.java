@@ -77,5 +77,13 @@ public class ScrollingTextLayer extends Layer {
 
 		// Transfer the uv coordiantes.
 		textShader.setUv(x, y);
+
+		// Transfer the new texture if there is one.
+		if(newTexture != null) {
+			//textShader.useTexture(newTexture);
+			// has been loaded to opengl.
+			newTexture.recycle();
+			newTexture = null;
+		}
 	}
 }
