@@ -2,15 +2,11 @@ package de.fraunhofer.ipa.vrread.graphics.shader;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
 import android.opengl.GLUtils;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
-
 import de.fraunhofer.ipa.vrread.R;
-import de.fraunhofer.ipa.vrread.graphics.WorldLayoutData;
 
 /**
  * This creates a shader which is able to draw, scroll and scale a texture.
@@ -84,8 +80,8 @@ public class ScrollingTextureShader extends QuadShader {
 	@Override
 	protected void createShaderProgram() {
 		final int textVertShader = loadGLShader(GLHelper.readRawTextFile(ctx, R.raw.vertex), GLES20.GL_VERTEX_SHADER);
-		final int textFragShader = loadGLShader(GLHelper.readRawTextFile(ctx, R.raw.fragment), GLES20
-				.GL_FRAGMENT_SHADER);
+		final int textFragShader = loadGLShader(GLHelper.readRawTextFile(ctx, R.raw.fragment),
+				GLES20.GL_FRAGMENT_SHADER);
 
 		quadProgram = GLES20.glCreateProgram();
 		GLES20.glAttachShader(quadProgram, textVertShader);
@@ -98,7 +94,12 @@ public class ScrollingTextureShader extends QuadShader {
 		super.loadShader();
 
 		// Load texture
-		textureDataHandle = GLHelper.loadTexture(ctx, R.drawable.text);
+		//textureDataHandle = GLHelper.loadTexture(ctx, R.drawable.text);
+
+		final BitmapFactory.Options options = new BitmapFactory.Options();
+		options.inScaled = false;   // No pre-scaling
+		final Bitmap bitmap = BitmapFactory.decodeResource(ctx.getResources(), R.drawable.text, options);
+		useTexture(bitmap);
 
 		GLES20.glUseProgram(quadProgram);
 
@@ -111,7 +112,7 @@ public class ScrollingTextureShader extends QuadShader {
 
 	public void useTexture(Bitmap bitmap) {
 
-		if(textureDataHandle != -1) {
+		if (textureDataHandle != -1) {
 			// Replace/delete the old texture.
 			final int[] textureHandle = new int[]{textureDataHandle};
 			GLES20.glDeleteTextures(1, textureHandle, 0);
@@ -120,17 +121,20 @@ public class ScrollingTextureShader extends QuadShader {
 		final int[] textureHandle = new int[1];
 		GLES20.glGenTextures(1, textureHandle, 0);
 
-		if (textureHandle[0] != 0) {
-			// Bind to the texture in OpenGL
-			GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle[0]);
-
-			// Load the bitmap into the bound texture.
-			GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
-		}
-
 		if (textureHandle[0] == 0) {
 			throw new RuntimeException("Error loading texture.");
 		}
+
+		// Bind to the texture in OpenGL
+		GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle[0]);
+
+		// Load the bitmap into the bound texture.
+		GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
+		bitmap.recycle();
+
+		// Set filtering of the texture
+		GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
+		GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
 
 		textureDataHandle = textureHandle[0];
 	}

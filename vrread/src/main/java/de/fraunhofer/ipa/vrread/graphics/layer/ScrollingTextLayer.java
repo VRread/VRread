@@ -80,7 +80,7 @@ public class ScrollingTextLayer extends Layer {
 
 		// Transfer the new texture if there is one.
 		if(newTexture != null) {
-			//textShader.useTexture(newTexture);
+			textShader.useTexture(newTexture);
 			// has been loaded to opengl.
 			newTexture.recycle();
 			newTexture = null;
