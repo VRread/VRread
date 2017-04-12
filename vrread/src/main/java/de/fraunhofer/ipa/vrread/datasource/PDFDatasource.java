@@ -59,11 +59,10 @@ public class PDFDatasource implements Datasource {
 		Bitmap bitmap = Bitmap.createBitmap(size.getWidth(), size.getHeight(), Bitmap.Config.ARGB_8888);
 
 		Matrix transform = new Matrix();
-		transform.postScale(scale, scale);
+		transform.postScale(8, 8);
 		transform.postTranslate(position.getX(), position.getY());
 
-		//page.render(bitmap, bitmapRect, transform, PdfRenderer.Page.RENDER_MODE_FOR_PRINT);
-		page.render(bitmap, bitmapRect, transform, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY);
+		page.render(bitmap, bitmapRect, transform, PdfRenderer.Page.RENDER_MODE_FOR_PRINT);
 		page.close();
 
 		saveFile(bitmap);

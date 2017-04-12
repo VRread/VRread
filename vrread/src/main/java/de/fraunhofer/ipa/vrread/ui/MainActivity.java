@@ -20,7 +20,6 @@ public class MainActivity extends Activity {
 	private static final int INTENT_OPEN_DOC_CODE = 1;
 
 	private DatasourceService datasourceService = new DatasourceService();
-	private AppSettings appSettings;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +28,7 @@ public class MainActivity extends Activity {
 		// Prepare the default values for the preferences.
 		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
-		appSettings = new AppSettings(this);
+		AppSettings appSettings = new AppSettings(this);
 
 		if (appSettings.isFirstRun()) {
 			// Show the settings activity with first run flag set.
@@ -80,7 +79,6 @@ public class MainActivity extends Activity {
 	/**
 	 * TEMPORARLY: Opens the settings. Make this into a normal styled app lookup.
 	 *
-	 * @param view
 	 */
 	public void onSettings(View view) {
 
