@@ -16,27 +16,22 @@
 
 package de.fraunhofer.ipa.vrread.ui;
 
-import android.content.Context;
-import android.content.res.AssetFileDescriptor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Vibrator;
 import android.util.Log;
+import android.view.KeyEvent;
 
 import com.google.vr.sdk.base.AndroidCompat;
 import com.google.vr.sdk.base.GvrActivity;
 import com.google.vr.sdk.base.GvrView;
 
-import java.io.IOException;
-
 import de.fraunhofer.ipa.vrread.AppSettings;
-import de.fraunhofer.ipa.vrread.control.HeadGestureReadController;
 import de.fraunhofer.ipa.vrread.R;
 import de.fraunhofer.ipa.vrread.control.HeadGestureController;
+import de.fraunhofer.ipa.vrread.control.HeadGestureReadController;
 import de.fraunhofer.ipa.vrread.control.SensitivityLevel;
 import de.fraunhofer.ipa.vrread.datasource.Datasource;
 import de.fraunhofer.ipa.vrread.datasource.DatasourceFactory;
-import de.fraunhofer.ipa.vrread.datasource.PDFDatasource;
 import de.fraunhofer.ipa.vrread.graphics.Renderer;
 import de.fraunhofer.ipa.vrread.graphics.layer.HelperLineLayer;
 import de.fraunhofer.ipa.vrread.graphics.layer.ScrollingTextLayer;
@@ -90,7 +85,7 @@ public class VRViewActivity extends GvrActivity {
 		textLayer.setScale(zoomFac);
 
 		// Add the helper line if requested via settings.
-		if(appSettings.hasHelperline()) {
+		if (appSettings.hasHelperline()) {
 			renderer.addLayer(1, new HelperLineLayer(this));
 		}
 
@@ -106,20 +101,39 @@ public class VRViewActivity extends GvrActivity {
 		headController.setHeadGestureReadController(readController);
 
 		// Extract the file uri.
-		if(getIntent().hasExtra(EXTRA_OPEN_URI)) {
+		if (getIntent().hasExtra(EXTRA_OPEN_URI)) {
 
 			Uri fileUri = getIntent().getExtras().getParcelable(EXTRA_OPEN_URI);
 			Log.d(TAG, "Received uri: " + fileUri.toString());
 
 			final Datasource ds = datasourceFactory.getDatasource(fileUri);
 
-			if(ds!= null) {
+			if (ds != null) {
 				readController.setDatasource(ds);
 				readController.gotoPage(0);
 			} else {
 				Log.e(TAG, "Can not open the given file URI.");
 			}
 		}
+	}
+
+	/**
+	 * Handle the sound button keys and perform certain actions with them.
+	 *
+	 * @param keyCode
+	 * @param event
+	 * @return
+	 */
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if(keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+			Log.d(TAG, "Volume UP was pressed");
+			return true;
+		} else if(keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+			Log.d(TAG, "Volume DOWN was pressed.");
+			return true;
+		}
+		return super.onKeyDown(keyCode, event);
 	}
 
 	@Override

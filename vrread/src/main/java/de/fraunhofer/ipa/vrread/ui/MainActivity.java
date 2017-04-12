@@ -54,10 +54,8 @@ public class MainActivity extends Activity {
 				final Intent intent = new Intent(this, VRViewActivity.class);
 				intent.putExtra(VRViewActivity.EXTRA_OPEN_URI, uri);
 				startActivity(intent);
-
 			}
 		}
-
 	}
 
 	/**
