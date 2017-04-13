@@ -80,10 +80,6 @@ public class VRViewActivity extends GvrActivity {
 		final ScrollingTextLayer textLayer = new ScrollingTextLayer(this);
 		renderer.addLayer(0, textLayer);
 
-		// Adapt to the zoom factor.
-		float zoomFac = appSettings.getZoomFactor();
-		textLayer.setScale(zoomFac);
-
 		// Add the helper line if requested via settings.
 		if (appSettings.hasHelperline()) {
 			renderer.addLayer(1, new HelperLineLayer(this));
@@ -104,12 +100,16 @@ public class VRViewActivity extends GvrActivity {
 		if (getIntent().hasExtra(EXTRA_OPEN_URI)) {
 
 			Uri fileUri = getIntent().getExtras().getParcelable(EXTRA_OPEN_URI);
-			Log.d(TAG, "Received uri: " + fileUri.toString());
+			Log.d(TAG, "Received uri: " + fileUri);
 
 			final Datasource ds = datasourceFactory.getDatasource(fileUri);
 
 			if (ds != null) {
+				// Adapt to the zoom factor.
+				float zoomFac = appSettings.getZoomFactor();
+
 				readController.setDatasource(ds);
+				readController.setScale(zoomFac);
 				readController.gotoPage(0);
 			} else {
 				Log.e(TAG, "Can not open the given file URI.");
@@ -119,10 +119,6 @@ public class VRViewActivity extends GvrActivity {
 
 	/**
 	 * Handle the sound button keys and perform certain actions with them.
-	 *
-	 * @param keyCode
-	 * @param event
-	 * @return
 	 */
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {

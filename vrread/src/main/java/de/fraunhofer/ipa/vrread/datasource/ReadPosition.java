@@ -1,5 +1,7 @@
 package de.fraunhofer.ipa.vrread.datasource;
 
+import java.util.Locale;
+
 /**
  * Helper class to locate the current position inside a document.
  * It consists of the page, and the x and y coordinates.
@@ -57,5 +59,10 @@ public class ReadPosition {
 
 	public int getPage() {
 		return page;
+	}
+
+	@Override
+	public String toString() {
+		return String.format(Locale.US, "ReadPos[x: %f, y: %f, page: %d]", getX(), getY(), getPage());
 	}
 }

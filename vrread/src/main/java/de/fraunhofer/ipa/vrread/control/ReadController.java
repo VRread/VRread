@@ -1,6 +1,7 @@
 package de.fraunhofer.ipa.vrread.control;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import java.util.Objects;
 
@@ -19,17 +20,17 @@ import de.fraunhofer.ipa.vrread.graphics.layer.ScrollingTextLayer;
 
 public class ReadController {
 
+	private final static String TAG = ReadController.class.getSimpleName();
+
 	private Datasource datasource;
 	private final ScrollingTextLayer textLayer;
 	/**
 	 * Distance to be scrolled when a looking method is called.
 	 */
-	private float scrollDistanceIncrement = 0.001f;
+	private float scrollDistanceIncrement = 0.01f;
 
-	private int currentPage = 0;
-	private float x;
-	private float y;
 	private float scale = 1f;
+	private ReadPosition readPosition;
 
 	/**
 	 * @param textLayer The textlayer to work upon when receiving the movement commands.
@@ -37,6 +38,7 @@ public class ReadController {
 	ReadController(ScrollingTextLayer textLayer) {
 
 		this.textLayer = Objects.requireNonNull(textLayer);
+		this.readPosition = new ReadPosition(0, 0, 0);
 	}
 
 	/**
@@ -49,26 +51,46 @@ public class ReadController {
 	}
 
 	public void up() {
-		textLayer.setY(textLayer.getY() + scrollDistanceIncrement);
+		float y = readPosition.getY() - scrollDistanceIncrement;
+		if (y < 0) {
+			y = 0;
+		}
+		readPosition.setY(y);
+		createTexture();
+		//textLayer.setY(textLayer.getY() + scrollDistanceIncrement);
 	}
 
 	public void down() {
-		textLayer.setY(textLayer.getY() - scrollDistanceIncrement);
+		float y = readPosition.getY() + scrollDistanceIncrement;
+		if (y > 1) {
+			y = 1;
+		}
+		readPosition.setY(y);
+		createTexture();
+		//textLayer.setY(textLayer.getY() - scrollDistanceIncrement);
 	}
 
 	public void left() {
-		textLayer.setX(textLayer.getX() - scrollDistanceIncrement);
+		//textLayer.setX(textLayer.getX() - scrollDistanceIncrement);
 	}
 
 	public void right() {
-		textLayer.setX(textLayer.getX() + scrollDistanceIncrement);
+		//textLayer.setX(textLayer.getX() + scrollDistanceIncrement);
+	}
+
+	private void createTexture() {
+		Log.d(TAG, String.format("Creating texture position: %s", readPosition));
+
+		final TextureSize texSize = textLayer.getTextureSize();
+		final Bitmap bitmap = datasource.getTextureBitmap(readPosition, scale, texSize);
+		textLayer.setTexture(bitmap);
 	}
 
 	/**
 	 * Manually switch to the next page.
 	 */
 	public void nextPage() {
-		if(currentPage + 1 < datasource.getPageCount()) {
+		/*if(currentPage + 1 < datasource.getPageCount()) {
 			currentPage++;
 			x = 0;
 			y = 0;
@@ -77,14 +99,14 @@ public class ReadController {
 			textLayer.setTexture(bitmap);
 			textLayer.setX(x);
 			textLayer.setY(y);
-		}
+		}*/
 	}
 
 	/**
 	 * Manually switch to the previous page.
 	 */
 	public void previousPage() {
-		if(currentPage - 1 <= 0) {
+		/*if(currentPage - 1 <= 0) {
 			currentPage--;
 			x = 0;
 			y = 0;
@@ -93,7 +115,7 @@ public class ReadController {
 			textLayer.setTexture(bitmap);
 			textLayer.setY(y);
 			textLayer.setX(x);
-		}
+		}*/
 	}
 
 	/**
@@ -102,7 +124,7 @@ public class ReadController {
 	 * @param page The page to jump to.
 	 */
 	public void gotoPage(int page) {
-		if(page >= 0 && page < datasource.getPageCount()) {
+		/*if(page >= 0 && page < datasource.getPageCount()) {
 			currentPage = page;
 			x = 0;
 			y = 0;
@@ -111,7 +133,10 @@ public class ReadController {
 			textLayer.setTexture(bitmap);
 			textLayer.setY(y);
 			textLayer.setX(x);
-		}
+		}*/
 	}
 
+	public void setScale(float scale) {
+		this.scale = scale;
+	}
 }

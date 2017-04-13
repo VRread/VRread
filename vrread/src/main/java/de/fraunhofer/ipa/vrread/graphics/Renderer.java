@@ -29,7 +29,7 @@ public class Renderer implements GvrView.StereoRenderer {
 
 	private static final float Z_NEAR = 0.1f;
 	private static final float Z_FAR = 100.0f;
-	private static final float Z_MODEL_POS = 1f;
+	private static final float Z_MODEL_POS = 2f; // was 1.3
 	private static final float Z_LAYER_DISTANCE = 0.01f;
 	private static final float CAMERA_Z = 0.5f;
 
@@ -77,9 +77,10 @@ public class Renderer implements GvrView.StereoRenderer {
 
 	/**
 	 * TODO Den Zugriff hier threadsafe machen.
+	 * Adds a new layer to the renderer. There must be a position given in order to place it on the right layer.
 	 *
-	 * @param pos
-	 * @param layer
+	 * @param pos   The position to add the layer.
+	 * @param layer The layer to add.
 	 */
 	public void addLayer(int pos, Layer layer) {
 		if (pos < 0 || pos >= MAX_LAYERS) {
@@ -90,6 +91,11 @@ public class Renderer implements GvrView.StereoRenderer {
 		layersInitialized[pos] = false;
 	}
 
+	/**
+	 * Removes the layer at position pos again.
+	 *
+	 * @param pos Removes a layer.
+	 */
 	public void removeLayer(int pos) {
 		if (pos < 0 || pos >= MAX_LAYERS) {
 			throw new IllegalArgumentException("Pos must be between 0 and " + (MAX_LAYERS - 1));
@@ -165,7 +171,7 @@ public class Renderer implements GvrView.StereoRenderer {
 			// Prepare the model matrix.
 			Matrix.setIdentityM(modelMatrix, 0);
 
-			final float modelZPos = - (Z_MODEL_POS - i * Z_LAYER_DISTANCE);
+			final float modelZPos = -(Z_MODEL_POS - i * Z_LAYER_DISTANCE);
 			Matrix.translateM(modelMatrix, 0, 0f, 0f, modelZPos);
 
 			// This multiplies the view matrix by the model matrix, and stores the result in the MVP matrix
@@ -195,11 +201,12 @@ public class Renderer implements GvrView.StereoRenderer {
 				layersInitialized[i] = true;
 			}
 
-			if(layers[i] != null) {
+			if (layers[i] != null) {
 				layers[i].onNewFrame(headTransform);
 			}
 		}
 
+		// Tell the head gesture controller about the new position.
 		if (gestureController != null) {
 			gestureController.onHeadMovement(headTransform);
 		}

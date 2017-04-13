@@ -12,7 +12,7 @@ void main()
 {
 	// Background color could be implemented as a uniform for external manipuliation.
 	vec4 bgColor = vec4(1.0);
-	vec4 texColor = texture2D(u_Texture, (u_Scale * 4.0 * v_TexCoordinate) + u_Offset);
+	vec4 texColor = texture2D(u_Texture, (u_Scale * 1.0 * v_TexCoordinate) + u_Offset);
 
 	gl_FragColor = vec4(texColor.a) * texColor + vec4(1.0 - texColor.a) * bgColor;
 }

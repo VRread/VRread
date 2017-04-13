@@ -26,12 +26,19 @@ import java.util.Date;
 public class PDFDatasource implements Datasource {
 
 	private final static String TAG = PDFDatasource.class.getSimpleName();
+	private static final int BITMAP_PADDING = 0;
+
 	private PdfRenderer renderer;
 	private Context ctx;
 
 	public PDFDatasource(Uri file, Context context) throws IOException {
 
 		final ParcelFileDescriptor parcFile = context.getContentResolver().openFileDescriptor(file, "r");
+
+		if (parcFile == null) {
+			throw new IllegalArgumentException("Could not open given file URI.");
+		}
+
 		renderer = new PdfRenderer(parcFile);
 
 		this.ctx = context;
@@ -54,13 +61,19 @@ public class PDFDatasource implements Datasource {
 
 		PdfRenderer.Page page = renderer.openPage(position.getPage());
 
+		// Find the current position on the page.
+		float curX = position.getX() * page.getWidth();
+		float curY = (1 - position.getY()) * page.getHeight();
+
 		// Generate a bitmap with the correct dimensions.
-		Rect bitmapRect = new Rect(0, 0, size.getWidth(), size.getHeight());
+		Rect bitmapRect = new Rect(BITMAP_PADDING, BITMAP_PADDING,
+				size.getWidth() - BITMAP_PADDING,
+				size.getHeight() - BITMAP_PADDING);
 		Bitmap bitmap = Bitmap.createBitmap(size.getWidth(), size.getHeight(), Bitmap.Config.ARGB_8888);
 
 		Matrix transform = new Matrix();
-		transform.postScale(8, 8);
-		transform.postTranslate(position.getX(), position.getY());
+		transform.postTranslate(0, curY);
+		transform.postScale(scale, scale);
 
 		page.render(bitmap, bitmapRect, transform, PdfRenderer.Page.RENDER_MODE_FOR_PRINT);
 		page.close();
@@ -73,13 +86,13 @@ public class PDFDatasource implements Datasource {
 	private void saveFile(Bitmap img) {
 		// To be safe, you should check that the SDCard is mounted
 		// using Environment.getExternalStorageState() before doing this.
-		File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-				, "vrread");
+		File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+				"vrread");
 		mediaStorageDir.mkdirs();
 
 		// Create a media file name
 		String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmm").format(new Date());
-		String mImageName="MI_"+ timeStamp +".png";
+		String mImageName = "MI_" + timeStamp + ".png";
 		File mediaFile = new File(mediaStorageDir.getPath() + File.separator + mImageName);
 
 		try {

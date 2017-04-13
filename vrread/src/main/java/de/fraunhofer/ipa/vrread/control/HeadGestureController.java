@@ -5,6 +5,7 @@ import android.util.Log;
 import com.google.vr.sdk.base.HeadTransform;
 
 /**
+ * The gesture controller detects certain head movements and controls the attached read controller.
  * Created by tbf on 24.02.2017.
  */
 
@@ -41,7 +42,7 @@ public class HeadGestureController implements GestureController {
 
 	public HeadGestureController(SensitivityLevel sensitivity) {
 
-		switch(sensitivity) {
+		switch (sensitivity) {
 			case HIGH:
 				upMoveThreshold = 5;
 				downMoveThreshold = -10;
@@ -72,11 +73,11 @@ public class HeadGestureController implements GestureController {
 		headTransform.getQuaternion(headQuaternion, 0);
 		calculateEulerAngles();
 
-		if (roll > toRad(upMoveThreshold)) {
+		if (roll < toRad(downMoveThreshold)) {
 			if (controller != null) {
 				controller.onHeadGesture(HeadGesture.LOOK_DOWN);
 			}
-		} else if (roll < toRad(downMoveThreshold)) {
+		} else if (roll > toRad(upMoveThreshold)) {
 			if (controller != null) {
 				controller.onHeadGesture(HeadGesture.LOOK_UP);
 			}
