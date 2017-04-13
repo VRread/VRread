@@ -15,6 +15,8 @@ public class HeadGestureReadController extends ReadController {
 
 	private final String TAG = HeadGestureReadController.class.getSimpleName();
 
+	private int pageCounter = 0;
+
 	/**
 	 * @param textLayer The textlayer to work upon when receiving the movement commands.
 	 */
@@ -32,9 +34,33 @@ public class HeadGestureReadController extends ReadController {
 
 		switch(gesture) {
 			case LOOK_DOWN:
+
+				// Check if we need to flip the page.
+				if(getReadPosition().getY() >= 0.99f) {
+					pageCounter++;
+					if(pageCounter >= 10) {
+						pageCounter = 0;
+						nextPage();
+					}
+				} else {
+					pageCounter = 0;
+				}
+
 				down();
 				break;
 			case LOOK_UP:
+
+				// Check if we need to flip the page.
+				if(getReadPosition().getY() <= 0.01f) {
+					pageCounter++;
+					if(pageCounter >= 10) {
+						pageCounter = 0;
+						previousPage();
+					}
+				} else {
+					pageCounter = 0;
+				}
+
 				up();
 				break;
 			case LOOK_LEFT:

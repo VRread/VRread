@@ -86,36 +86,32 @@ public class ReadController {
 		textLayer.setTexture(bitmap);
 	}
 
+	public ReadPosition getReadPosition() {
+		return readPosition;
+	}
+
 	/**
 	 * Manually switch to the next page.
 	 */
 	public void nextPage() {
-		/*if(currentPage + 1 < datasource.getPageCount()) {
-			currentPage++;
-			x = 0;
-			y = 0;
-			final TextureSize texSize = textLayer.getTextureSize();
-			final Bitmap bitmap = datasource.getTextureBitmap(new ReadPosition(currentPage, x, y), scale, texSize);
-			textLayer.setTexture(bitmap);
-			textLayer.setX(x);
-			textLayer.setY(y);
-		}*/
+		if (readPosition.getPage() + 1 < datasource.getPageCount()) {
+			readPosition.setPage(readPosition.getPage() + 1);
+			readPosition.setY(0);
+
+			createTexture();
+		}
 	}
 
 	/**
 	 * Manually switch to the previous page.
 	 */
 	public void previousPage() {
-		/*if(currentPage - 1 <= 0) {
-			currentPage--;
-			x = 0;
-			y = 0;
-			final TextureSize texSize = textLayer.getTextureSize();
-			final Bitmap bitmap = datasource.getTextureBitmap(new ReadPosition(currentPage, x, y), scale, texSize);
-			textLayer.setTexture(bitmap);
-			textLayer.setY(y);
-			textLayer.setX(x);
-		}*/
+		if (readPosition.getPage() - 1 >= 0) {
+			readPosition.setPage(readPosition.getPage() - 1);
+			readPosition.setY(1);
+
+			createTexture();
+		}
 	}
 
 	/**
