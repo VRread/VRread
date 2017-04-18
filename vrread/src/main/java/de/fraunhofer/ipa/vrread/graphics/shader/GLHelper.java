@@ -55,45 +55,4 @@ public final class GLHelper {
 		}
 		return null;
 	}
-
-	/**
-	 * Loads a texture into openGL in order to use it later.
-	 *
-	 * @param ctx        Android context to access the resources.
-	 * @param resourceId The resource ID to load into a texture.
-	 * @return The texture ID handle so it can be referenced later.
-	 */
-	static int loadTexture(Context ctx, int resourceId) {
-
-		final int[] textureHandle = new int[1];
-
-		GLES20.glGenTextures(1, textureHandle, 0);
-
-		if (textureHandle[0] != 0) {
-			final BitmapFactory.Options options = new BitmapFactory.Options();
-			options.inScaled = false;   // No pre-scaling
-
-			// Read in the resource
-			final Bitmap bitmap = BitmapFactory.decodeResource(ctx.getResources(), resourceId, options);
-
-			// Bind to the texture in OpenGL
-			GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle[0]);
-
-			// Load the bitmap into the bound texture.
-			GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
-
-			// Set filtering of the texture
-			GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
-			GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
-
-			// Recycle the bitmap, since its data has been loaded into OpenGL.
-			bitmap.recycle();
-		}
-
-		if (textureHandle[0] == 0) {
-			throw new RuntimeException("Error loading texture.");
-		}
-
-		return textureHandle[0];
-	}
 }

@@ -39,7 +39,7 @@ public class ScrollingTextureShader extends QuadShader {
 
 	public synchronized void setTextureScale(float textureScale) {
 		// Invert this because the uv scale up works with the inverse.
-		this.textureScale = 1.0f / textureScale;
+		this.textureScale = textureScale;
 	}
 
 	public synchronized void setUv(float u, float v) {
@@ -94,8 +94,6 @@ public class ScrollingTextureShader extends QuadShader {
 		super.loadShader();
 
 		// Load texture
-		//textureDataHandle = GLHelper.loadTexture(ctx, R.drawable.text);
-
 		final BitmapFactory.Options options = new BitmapFactory.Options();
 		options.inScaled = false;   // No pre-scaling
 		final Bitmap bitmap = BitmapFactory.decodeResource(ctx.getResources(), R.drawable.text, options);

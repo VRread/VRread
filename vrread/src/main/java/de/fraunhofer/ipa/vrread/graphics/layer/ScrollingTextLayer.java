@@ -27,6 +27,9 @@ public class ScrollingTextLayer extends Layer {
 
 		// Get the shader back again.
 		textShader = (ScrollingTextureShader) getShader();
+
+		// Hardcoded value to 0.5 zoom so we have some margin to scroll.
+		textShader.setTextureScale(0.5f);
 	}
 
 	public float getX() {

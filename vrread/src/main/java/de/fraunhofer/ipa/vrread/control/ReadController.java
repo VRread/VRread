@@ -69,21 +69,38 @@ public class ReadController {
 	}
 
 	public void left() {
-		float x = readPosition.getX() - scrollDistanceIncrement / scale;
-		if (x < 0) {
-			x = 0;
+
+		float currentLayerPos = textLayer.getX();
+		currentLayerPos -= scrollDistanceIncrement / scale;
+
+		if(currentLayerPos < 0.5) {
+			textLayer.setX(currentLayerPos);
+		} else {
+			float x = readPosition.getX() - scrollDistanceIncrement / scale;
+			if (x < 0) {
+				x = 0;
+			}
+			//readPosition.setX(x);
+			//createTexture();
 		}
-		readPosition.setX(x);
-		createTexture();
 	}
 
 	public void right() {
-		float x = readPosition.getX() + scrollDistanceIncrement / scale;
-		if (x > 1) {
-			x = 1;
+
+		float currentLayerPos = textLayer.getX();
+		currentLayerPos += scrollDistanceIncrement / scale;
+
+		if(currentLayerPos < 0.5) {
+			textLayer.setX(currentLayerPos);
+		} else {
+			// We need to increment (jump) on read position and render new layer.
+			float x = readPosition.getX() + scrollDistanceIncrement / scale;
+			if (x > 1) {
+				x = 1;
+			}
+			//readPosition.setX(x);
+			//createTexture();
 		}
-		readPosition.setX(x);
-		createTexture();
 	}
 
 	private void createTexture() {

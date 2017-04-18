@@ -13,8 +13,7 @@ vec4 bgColor = vec4(1.0);
 // The entry point for our fragment shader.
 void main()
 {
-	vec4 texColor = texture2D(u_Texture, (u_Sca
-	le * v_TexCoordinate) + u_Offset);
+	vec4 texColor = texture2D(u_Texture, (u_Scale * v_TexCoordinate) + u_Offset);
 
 	gl_FragColor = vec4(texColor.a) * texColor + vec4(1.0 - texColor.a) * bgColor;
 }
