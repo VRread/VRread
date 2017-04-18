@@ -104,7 +104,9 @@ public class ReadController {
 	public void nextPage() {
 		if (readPosition.getPage() + 1 < datasource.getPageCount()) {
 			readPosition.setPage(readPosition.getPage() + 1);
+			// Set to top left position.
 			readPosition.setY(0);
+			readPosition.setX(0);
 
 			createTexture();
 		}
@@ -116,7 +118,9 @@ public class ReadController {
 	public void previousPage() {
 		if (readPosition.getPage() - 1 >= 0) {
 			readPosition.setPage(readPosition.getPage() - 1);
+			// Set back to middle bottom position.
 			readPosition.setY(1);
+			readPosition.setX(0.5f);
 
 			createTexture();
 		}

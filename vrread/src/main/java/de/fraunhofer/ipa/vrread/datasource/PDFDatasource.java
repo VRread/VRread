@@ -75,7 +75,6 @@ public class PDFDatasource implements Datasource {
 		transform.postTranslate(curX, curY);
 		transform.postScale(scale, scale);
 
-
 		page.render(bitmap, bitmapRect, transform, PdfRenderer.Page.RENDER_MODE_FOR_PRINT);
 		page.close();
 
