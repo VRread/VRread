@@ -27,7 +27,7 @@ public class ReadController {
 	/**
 	 * Distance to be scrolled when a looking method is called.
 	 */
-	private float scrollDistanceIncrement = 0.01f;
+	private float scrollDistanceIncrement = 0.04f;
 
 	private float scale = 1f;
 	private ReadPosition readPosition;
@@ -51,31 +51,39 @@ public class ReadController {
 	}
 
 	public void up() {
-		float y = readPosition.getY() - scrollDistanceIncrement;
+		float y = readPosition.getY() - scrollDistanceIncrement / scale;
 		if (y < 0) {
 			y = 0;
 		}
 		readPosition.setY(y);
 		createTexture();
-		//textLayer.setY(textLayer.getY() + scrollDistanceIncrement);
 	}
 
 	public void down() {
-		float y = readPosition.getY() + scrollDistanceIncrement;
+		float y = readPosition.getY() + scrollDistanceIncrement / scale;
 		if (y > 1) {
 			y = 1;
 		}
 		readPosition.setY(y);
 		createTexture();
-		//textLayer.setY(textLayer.getY() - scrollDistanceIncrement);
 	}
 
 	public void left() {
-		//textLayer.setX(textLayer.getX() - scrollDistanceIncrement);
+		float x = readPosition.getX() - scrollDistanceIncrement / scale;
+		if (x < 0) {
+			x = 0;
+		}
+		readPosition.setX(x);
+		createTexture();
 	}
 
 	public void right() {
-		//textLayer.setX(textLayer.getX() + scrollDistanceIncrement);
+		float x = readPosition.getX() + scrollDistanceIncrement / scale;
+		if (x > 1) {
+			x = 1;
+		}
+		readPosition.setX(x);
+		createTexture();
 	}
 
 	private void createTexture() {
@@ -120,16 +128,10 @@ public class ReadController {
 	 * @param page The page to jump to.
 	 */
 	public void gotoPage(int page) {
-		/*if(page >= 0 && page < datasource.getPageCount()) {
-			currentPage = page;
-			x = 0;
-			y = 0;
-			final TextureSize texSize = textLayer.getTextureSize();
-			final Bitmap bitmap = datasource.getTextureBitmap(new ReadPosition(currentPage, x, y), scale, texSize);
-			textLayer.setTexture(bitmap);
-			textLayer.setY(y);
-			textLayer.setX(x);
-		}*/
+		if(page >= 0 && page < datasource.getPageCount()) {
+			readPosition.setPage(page);
+			createTexture();
+		}
 	}
 
 	public void setScale(float scale) {

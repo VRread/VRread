@@ -61,13 +61,9 @@ public class PDFDatasource implements Datasource {
 
 		PdfRenderer.Page page = renderer.openPage(position.getPage());
 
-		// Find the current position on the page.
-		float curX = position.getX() * page.getWidth();
-
 		// We start to read at the top of the page, which is half of the PDF size.
-		//float curY = (1 - position.getY()) * page.getHeight();
-		float curHeight = position.getY() / 2 + 0.5f;
-		float curY = page.getHeight() * (1 - curHeight);
+		float curY = -page.getHeight() * position.getY();
+		float curX = -page.getWidth() * position.getX();
 
 		// Generate a bitmap with the correct dimensions.
 		Rect bitmapRect = new Rect(BITMAP_PADDING, BITMAP_PADDING,
@@ -76,8 +72,9 @@ public class PDFDatasource implements Datasource {
 		Bitmap bitmap = Bitmap.createBitmap(size.getWidth(), size.getHeight(), Bitmap.Config.ARGB_8888);
 
 		Matrix transform = new Matrix();
-		//transform.postScale(scale, scale);
-		transform.postTranslate(0, curY);
+		transform.postTranslate(curX, curY);
+		transform.postScale(scale, scale);
+
 
 		page.render(bitmap, bitmapRect, transform, PdfRenderer.Page.RENDER_MODE_FOR_PRINT);
 		page.close();
