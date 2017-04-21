@@ -3,7 +3,9 @@ package de.fraunhofer.ipa.vrread.control;
 import android.graphics.Bitmap;
 import android.util.Log;
 
+import java.util.LinkedList;
 import java.util.Objects;
+import java.util.Queue;
 
 import de.fraunhofer.ipa.vrread.datasource.Datasource;
 import de.fraunhofer.ipa.vrread.datasource.ReadPosition;
@@ -27,10 +29,17 @@ public class ReadController {
 	/**
 	 * Distance to be scrolled when a looking method is called.
 	 */
-	private float scrollDistanceIncrement = 0.04f;
-
+	private float scrollDistanceIncrement = 0.006f;
 	private float scale = 1f;
 	private ReadPosition readPosition;
+
+	/**
+	 * Holds the distance onf the page until a new texture tile is rendered. This is important for stepping back.
+	 * This increment is set when the first step occures.
+	 */
+	private float xIncrement = Float.NaN;
+
+	private Queue<Float> xIncrements = new LinkedList<>();
 
 	/**
 	 * @param textLayer The textlayer to work upon when receiving the movement commands.
@@ -73,15 +82,25 @@ public class ReadController {
 		float currentLayerPos = textLayer.getX();
 		currentLayerPos -= scrollDistanceIncrement / scale;
 
-		if(currentLayerPos < 0.5) {
+		// We need to increment (jump) on read position and render new layer.
+		float currentTextPos = readPosition.getX();
+		currentTextPos -= scrollDistanceIncrement / scale;
+
+		if (currentTextPos > 0) {
+			readPosition.setX(currentTextPos);
+		}
+
+		// Only increment the texture position if there is room left.
+		if(currentLayerPos > 0) {
 			textLayer.setX(currentLayerPos);
+
 		} else {
-			float x = readPosition.getX() - scrollDistanceIncrement / scale;
-			if (x < 0) {
-				x = 0;
+			// If there is no room left, create a new texture.
+			if(currentTextPos > 0 && !Float.isNaN(xIncrement)) {
+				readPosition.setX(readPosition.getX() - xIncrement);
+				createTexture();
+				textLayer.setX(0.5f);
 			}
-			//readPosition.setX(x);
-			//createTexture();
 		}
 	}
 
@@ -90,16 +109,33 @@ public class ReadController {
 		float currentLayerPos = textLayer.getX();
 		currentLayerPos += scrollDistanceIncrement / scale;
 
+		// We need to increment (jump) on read position and render new layer.
+		float currentTextPos = readPosition.getX();
+		currentTextPos += scrollDistanceIncrement / scale;
+
+		if (currentTextPos <= 1) {
+			readPosition.setX(currentTextPos);
+		}
+
+		// Only increment the texture position if there is room left.
 		if(currentLayerPos < 0.5) {
 			textLayer.setX(currentLayerPos);
+
 		} else {
-			// We need to increment (jump) on read position and render new layer.
-			float x = readPosition.getX() + scrollDistanceIncrement / scale;
-			if (x > 1) {
-				x = 1;
+			// If there is no room left, create a new texture.
+
+			// Save the step up increment if needed for going back.
+			if(Float.isNaN(xIncrement)) {
+				xIncrement = readPosition.getX();
 			}
-			//readPosition.setX(x);
-			//createTexture();
+
+			xIncrements.add(readPosition.getX());
+
+			if(currentTextPos < 1) {
+				//readPosition.setX(0.628f);
+				createTexture();
+				textLayer.setX(0);
+			}
 		}
 	}
 
