@@ -3,9 +3,8 @@ package de.fraunhofer.ipa.vrread.control;
 import android.graphics.Bitmap;
 import android.util.Log;
 
-import java.util.LinkedList;
 import java.util.Objects;
-import java.util.Queue;
+import java.util.Stack;
 
 import de.fraunhofer.ipa.vrread.datasource.Datasource;
 import de.fraunhofer.ipa.vrread.datasource.ReadPosition;
@@ -23,9 +22,8 @@ import de.fraunhofer.ipa.vrread.graphics.layer.ScrollingTextLayer;
 public class ReadController {
 
 	private final static String TAG = ReadController.class.getSimpleName();
-
-	private Datasource datasource;
 	private final ScrollingTextLayer textLayer;
+	private Datasource datasource;
 	/**
 	 * Distance to be scrolled when a looking method is called.
 	 */
@@ -38,8 +36,6 @@ public class ReadController {
 	 * This increment is set when the first step occures.
 	 */
 	private float xIncrement = Float.NaN;
-
-	private Queue<Float> xIncrements = new LinkedList<>();
 
 	/**
 	 * @param textLayer The textlayer to work upon when receiving the movement commands.
@@ -65,7 +61,7 @@ public class ReadController {
 			y = 0;
 		}
 		readPosition.setY(y);
-		createTexture();
+		createTexture(readPosition);
 	}
 
 	public void down() {
@@ -74,13 +70,10 @@ public class ReadController {
 			y = 1;
 		}
 		readPosition.setY(y);
-		createTexture();
+		createTexture(readPosition);
 	}
 
 	public void left() {
-
-		float currentLayerPos = textLayer.getX();
-		currentLayerPos -= scrollDistanceIncrement / scale;
 
 		// We need to increment (jump) on read position and render new layer.
 		float currentTextPos = readPosition.getX();
@@ -89,16 +82,25 @@ public class ReadController {
 		if (currentTextPos > 0) {
 			readPosition.setX(currentTextPos);
 		}
+		//readPosition.setX(currentTextPos);
 
 		// Only increment the texture position if there is room left.
-		if(currentLayerPos > 0) {
+
+		float currentLayerPos = textLayer.getX();
+		currentLayerPos -= scrollDistanceIncrement / scale;
+
+		if (currentLayerPos > 0) {
 			textLayer.setX(currentLayerPos);
 
 		} else {
 			// If there is no room left, create a new texture.
-			if(currentTextPos > 0 && !Float.isNaN(xIncrement)) {
-				readPosition.setX(readPosition.getX() - xIncrement);
-				createTexture();
+			if (currentTextPos > 0) {
+
+				//readPosition.setX(lastXPos);
+				ReadPosition nextTexPos = new ReadPosition(readPosition.getPage(),
+						readPosition.getX() - xIncrement,
+						readPosition.getY());
+				createTexture(nextTexPos);
 				textLayer.setX(0.5f);
 			}
 		}
@@ -106,44 +108,42 @@ public class ReadController {
 
 	public void right() {
 
-		float currentLayerPos = textLayer.getX();
-		currentLayerPos += scrollDistanceIncrement / scale;
-
 		// We need to increment (jump) on read position and render new layer.
 		float currentTextPos = readPosition.getX();
 		currentTextPos += scrollDistanceIncrement / scale;
 
-		if (currentTextPos <= 1) {
+		if (currentTextPos <= 1.5) {
 			readPosition.setX(currentTextPos);
 		}
 
 		// Only increment the texture position if there is room left.
-		if(currentLayerPos < 0.5) {
+		float currentLayerPos = textLayer.getX();
+		currentLayerPos += scrollDistanceIncrement / scale;
+		if (currentLayerPos < 0.5) {
+
 			textLayer.setX(currentLayerPos);
 
 		} else {
 			// If there is no room left, create a new texture.
 
 			// Save the step up increment if needed for going back.
-			if(Float.isNaN(xIncrement)) {
+			if (Float.isNaN(xIncrement)) {
 				xIncrement = readPosition.getX();
 			}
 
-			xIncrements.add(readPosition.getX());
-
-			if(currentTextPos < 1) {
+			if (currentTextPos < 1) {
 				//readPosition.setX(0.628f);
-				createTexture();
+				createTexture(readPosition);
 				textLayer.setX(0);
 			}
 		}
 	}
 
-	private void createTexture() {
-		Log.d(TAG, String.format("Creating texture position: %s", readPosition));
+	private void createTexture(ReadPosition texturePosition) {
+		Log.d(TAG, String.format("Creating texture position: %s", texturePosition));
 
 		final TextureSize texSize = textLayer.getTextureSize();
-		final Bitmap bitmap = datasource.getTextureBitmap(readPosition, scale, texSize);
+		final Bitmap bitmap = datasource.getTextureBitmap(texturePosition, scale, texSize);
 		textLayer.setTexture(bitmap);
 	}
 
@@ -161,7 +161,7 @@ public class ReadController {
 			readPosition.setY(0);
 			readPosition.setX(0);
 
-			createTexture();
+			createTexture(readPosition);
 		}
 	}
 
@@ -175,7 +175,7 @@ public class ReadController {
 			readPosition.setY(1);
 			readPosition.setX(0.5f);
 
-			createTexture();
+			createTexture(readPosition);
 		}
 	}
 
@@ -185,9 +185,9 @@ public class ReadController {
 	 * @param page The page to jump to.
 	 */
 	public void gotoPage(int page) {
-		if(page >= 0 && page < datasource.getPageCount()) {
+		if (page >= 0 && page < datasource.getPageCount()) {
 			readPosition.setPage(page);
-			createTexture();
+			createTexture(readPosition);
 		}
 	}
 
