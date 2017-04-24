@@ -31,7 +31,6 @@ public class ReadController {
 	private long lastRender = 0;
 	private float scale = 1f;
 	private ReadPosition readPosition;
-	private float delay;
 	private float distance;
 
 	/**
@@ -54,7 +53,7 @@ public class ReadController {
 
 	private boolean shouldStepFrame() {
 		long now = System.currentTimeMillis();
-		delay = now - lastRender;
+		float delay = now - lastRender;
 		lastRender = now;
 
 		if(delay > 100) {
@@ -74,8 +73,6 @@ public class ReadController {
 		readPosition.setY(readPosition.getY() - distance);
 		float texDistance = textLayer.getY() - distance / textLayer.getTextureSize().getHeight();
 
-		Log.d(TAG, String.format("Read Pos Y: %f, Tex Pos Y: %f", readPosition.getY(), textLayer.getY()));
-
 		if(texDistance > 0) {
 			textLayer.setY(texDistance);
 		} else {
@@ -89,6 +86,11 @@ public class ReadController {
 			createTexture(new ReadPosition(readPosition.getPage(), readPosition.getX(), readPosition.getY() - 512));
 			textLayer.setY(0.5f);
 		}
+
+		Log.d(TAG, String.format("RPosX: %.3f, RPosY: %.3f, TPosX: %.3f, TPosY: %.3f", readPosition.getX(),
+				readPosition.getY(),
+				textLayer.getX(),
+				textLayer.getY()));
 	}
 
 	public void down() {
@@ -99,8 +101,6 @@ public class ReadController {
 		readPosition.setY(readPosition.getY() + distance);
 		float texDistance = textLayer.getY() + distance / textLayer.getTextureSize().getHeight();
 
-		Log.d(TAG, String.format("Read Pos Y: %f, Tex Pos Y: %f", readPosition.getY(), textLayer.getY()));
-
 		if(texDistance < 0.5) {
 			textLayer.setY(texDistance);
 		} else {
@@ -108,6 +108,11 @@ public class ReadController {
 			createTexture(readPosition);
 			textLayer.setY(0);
 		}
+
+		Log.d(TAG, String.format("RPosX: %.3f, RPosY: %.3f, TPosX: %.3f, TPosY: %.3f", readPosition.getX(),
+				readPosition.getY(),
+				textLayer.getX(),
+				textLayer.getY()));
 	}
 
 	public void left() {
@@ -117,8 +122,6 @@ public class ReadController {
 
 		readPosition.setX(readPosition.getX() - distance);
 		float texDistance = textLayer.getX() - distance / 1024;
-
-		Log.d(TAG, String.format("Read Pos X: %f, Tex Pos X: %f", readPosition.getX(), textLayer.getX()));
 
 		if(texDistance > 0) {
 			textLayer.setX(texDistance);
@@ -131,32 +134,23 @@ public class ReadController {
 
 			// Reached and of tex. Render new.
 			//1024 * 0.5
-			readPosition.setX(readPosition.getX() - 512);
-			createTexture(readPosition);
+			createTexture(new ReadPosition(readPosition.getPage(), readPosition.getX() - 512, readPosition.getY()));
 			textLayer.setX(0.5f);
 		}
 
+		Log.d(TAG, String.format("RPosX: %.3f, RPosY: %.3f, TPosX: %.3f, TPosY: %.3f", readPosition.getX(),
+				readPosition.getY(),
+				textLayer.getX(),
+				textLayer.getY()));
 	}
 
 	public void right() {
-
-		return;
-		/*
-		long now = System.currentTimeMillis();
-		long delay = now - lastRender;
-
-		if(delay > 100) {
-			lastRender = now;
+		if(!shouldStepFrame()) {
 			return;
 		}
 
-		lastRender = now;
-		float distance = baseVelocitySec * delay / 1000f;
-
 		readPosition.setX(readPosition.getX() + distance);
 		float texDistance = textLayer.getX() + distance / 1024;
-
-		Log.d(TAG, String.format("Read Pos X: %f, Tex Pos X: %f", readPosition.getX(), textLayer.getX()));
 
 		if(texDistance < 0.5) {
 			textLayer.setX(texDistance);
@@ -165,7 +159,11 @@ public class ReadController {
 			createTexture(readPosition);
 			textLayer.setX(0);
 		}
-*/
+
+		Log.d(TAG, String.format("RPosX: %.3f, RPosY: %.3f, TPosX: %.3f, TPosY: %.3f", readPosition.getX(),
+				readPosition.getY(),
+				textLayer.getX(),
+				textLayer.getY()));
 	}
 
 	private void createTexture(ReadPosition texturePosition) {
