@@ -65,12 +65,35 @@ public class ReadController {
 	}
 
 	public void down() {
-		float y = readPosition.getY() + scrollDistanceIncrement / scale;
-		if (y > 1) {
-			y = 1;
+		// We need to increment (jump) on read position and render new layer.
+		float currentTextPos = readPosition.getY();
+		currentTextPos += scrollDistanceIncrement / scale;
+
+		if (currentTextPos <= 1.5) {
+			readPosition.setY(currentTextPos);
 		}
-		readPosition.setY(y);
-		createTexture(readPosition);
+
+		// Only increment the texture position if there is room left.
+		float currentLayerPos = textLayer.getY();
+		currentLayerPos += scrollDistanceIncrement / scale;
+		if (currentLayerPos < 0.5) {
+
+			textLayer.setY(currentLayerPos);
+
+		} else {
+			// If there is no room left, create a new texture.
+
+			// Save the step up increment if needed for going back.
+			if (Float.isNaN(xIncrement)) {
+				xIncrement = readPosition.getX();
+			}
+
+			if (currentTextPos < 1) {
+				//readPosition.setX(0.628f);
+				createTexture(readPosition);
+				textLayer.setY(0);
+			}
+		}
 	}
 
 	public void left() {

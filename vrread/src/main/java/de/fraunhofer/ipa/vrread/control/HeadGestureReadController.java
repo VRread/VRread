@@ -40,7 +40,7 @@ public class HeadGestureReadController extends ReadController {
 					pageCounter++;
 					if(pageCounter >= 10) {
 						pageCounter = 0;
-						nextPage();
+						//nextPage();
 					}
 				} else {
 					pageCounter = 0;
