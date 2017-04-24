@@ -65,4 +65,9 @@ public class ReadPosition {
 	public String toString() {
 		return String.format(Locale.US, "ReadPos[x: %f, y: %f, page: %d]", getX(), getY(), getPage());
 	}
+
+	public void set(ReadPosition pos) {
+		this.x = pos.x;
+		this.y = pos.y;
+	}
 }

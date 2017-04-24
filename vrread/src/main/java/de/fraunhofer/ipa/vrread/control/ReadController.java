@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.util.Log;
 
 import java.util.Objects;
-import java.util.Stack;
 
 import de.fraunhofer.ipa.vrread.datasource.Datasource;
 import de.fraunhofer.ipa.vrread.datasource.ReadPosition;
@@ -28,9 +27,10 @@ public class ReadController {
 	 * Distance to be scrolled when a looking method is called.
 	 */
 	private float baseVelocitySec = 100f;
-	private long lastRender = 0;
+	private long lastRenderTime = 0;
 	private float scale = 1f;
 	private ReadPosition readPosition;
+	private ReadPosition lastRenderPosition = new ReadPosition();
 	private float distance;
 
 	/**
@@ -53,11 +53,11 @@ public class ReadController {
 
 	private boolean shouldStepFrame() {
 		long now = System.currentTimeMillis();
-		float delay = now - lastRender;
-		lastRender = now;
+		float delay = now - lastRenderTime;
+		lastRenderTime = now;
 
 		if(delay > 100) {
-			lastRender = now;
+			lastRenderTime = now;
 			return false;
 		}
 
@@ -66,7 +66,7 @@ public class ReadController {
 	}
 
 	public void up() {
-		if(!shouldStepFrame()) {
+		/*if(!shouldStepFrame()) {
 			return;
 		}
 
@@ -91,9 +91,11 @@ public class ReadController {
 				readPosition.getY(),
 				textLayer.getX(),
 				textLayer.getY()));
+*/
 	}
 
 	public void down() {
+		/*
 		if(!shouldStepFrame()) {
 			return;
 		}
@@ -113,6 +115,7 @@ public class ReadController {
 				readPosition.getY(),
 				textLayer.getX(),
 				textLayer.getY()));
+				*/
 	}
 
 	public void left() {
@@ -133,8 +136,10 @@ public class ReadController {
 			}
 
 			// Reached and of tex. Render new.
-			//1024 * 0.5
-			createTexture(new ReadPosition(readPosition.getPage(), readPosition.getX() - 512, readPosition.getY()));
+			ReadPosition newPos = new ReadPosition(readPosition.getPage(),
+					readPosition.getX() - 512,
+					lastRenderPosition.getY());
+			createTexture(newPos);
 			textLayer.setX(0.5f);
 		}
 
@@ -156,7 +161,10 @@ public class ReadController {
 			textLayer.setX(texDistance);
 		} else {
 			// Reached and of tex. Render new.
-			createTexture(readPosition);
+			ReadPosition newPos = new ReadPosition(readPosition.getPage(),
+					readPosition.getX(),
+					lastRenderPosition.getY());
+			createTexture(newPos);
 			textLayer.setX(0);
 		}
 
@@ -168,6 +176,8 @@ public class ReadController {
 
 	private void createTexture(ReadPosition texturePosition) {
 		Log.d(TAG, String.format("Creating texture position: %s", texturePosition));
+
+		lastRenderPosition.set(texturePosition);
 
 		final TextureSize texSize = textLayer.getTextureSize();
 		final Bitmap bitmap = datasource.getTextureBitmap(texturePosition, scale, texSize);
@@ -214,6 +224,11 @@ public class ReadController {
 	public void gotoPage(int page) {
 		if (page >= 0 && page < datasource.getPageCount()) {
 			readPosition.setPage(page);
+
+			//369,200, TPosX: 0,000, TPosY: 0,361
+			readPosition.setY(369);
+			textLayer.setY(0.361f);
+
 			createTexture(readPosition);
 		}
 	}
