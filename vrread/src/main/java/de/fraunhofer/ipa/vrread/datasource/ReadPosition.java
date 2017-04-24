@@ -35,7 +35,7 @@ public class ReadPosition {
 
 	public void setX(float x) {
 		if(x < 0) {
-			throw new IllegalArgumentException("X can not be negative.");
+			x = 0;
 		}
 
 		this.x = x;
@@ -43,7 +43,7 @@ public class ReadPosition {
 
 	public void setY(float y) {
 		if(y < 0) {
-			throw new IllegalArgumentException("Y can not be negative.");
+			y = 0;
 		}
 
 		this.y = y;

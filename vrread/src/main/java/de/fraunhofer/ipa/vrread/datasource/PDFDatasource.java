@@ -63,7 +63,13 @@ public class PDFDatasource implements Datasource {
 
 		// We start to read at the top of the page, which is half of the PDF size.
 		float curY = -(page.getHeight() - size.getHeight() / scale) * position.getY();
-		float curX = -(page.getWidth() - size.getWidth() / scale) * position.getX() * 1.256f;
+		float curX = - position.getX() / scale;
+
+
+		float maxOffsetX = - page.getWidth();
+		if(curX < maxOffsetX) {
+			curX = maxOffsetX;
+		}
 
 		// Generate a bitmap with the correct dimensions.
 		Rect bitmapRect = new Rect(BITMAP_PADDING, BITMAP_PADDING,
