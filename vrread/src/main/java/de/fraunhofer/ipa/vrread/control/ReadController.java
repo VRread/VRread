@@ -27,7 +27,7 @@ public class ReadController {
 	/**
 	 * Distance to be scrolled when a looking method is called.
 	 */
-	private float baseVelocitySec = 50f;
+	private float baseVelocitySec = 100f;
 	private long lastRender = 0;
 	private float scale = 1f;
 	private ReadPosition readPosition;
@@ -71,7 +71,22 @@ public class ReadController {
 	}
 
 	public void down() {
+		if(!shouldStepFrame()) {
+			return;
+		}
 
+		readPosition.setY(readPosition.getY() + distance);
+		float texDistance = textLayer.getY() + distance / textLayer.getTextureSize().getHeight();
+
+		Log.d(TAG, String.format("Tex Pos Y: %f, Read Pos Y: %f", readPosition.getY(), texDistance));
+
+		if(texDistance < 0.5) {
+			textLayer.setY(texDistance);
+		} else {
+			// Reached and of tex. Render new.
+			createTexture(readPosition);
+			textLayer.setY(0);
+		}
 	}
 
 	public void left() {
