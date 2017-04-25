@@ -66,7 +66,7 @@ public class ReadController {
 	}
 
 	public void up() {
-		/*if(!shouldStepFrame()) {
+		if(!shouldStepFrame()) {
 			return;
 		}
 
@@ -83,7 +83,10 @@ public class ReadController {
 
 			// Reached and of tex. Render new.
 			//1024 * 0.5
-			createTexture(new ReadPosition(readPosition.getPage(), readPosition.getX(), readPosition.getY() - 512));
+			ReadPosition newPos = new ReadPosition(readPosition.getPage(),
+					lastRenderPosition.getX(),
+					readPosition.getY() - 512);
+			createTexture(newPos);
 			textLayer.setY(0.5f);
 		}
 
@@ -91,11 +94,10 @@ public class ReadController {
 				readPosition.getY(),
 				textLayer.getX(),
 				textLayer.getY()));
-*/
 	}
 
 	public void down() {
-		/*
+
 		if(!shouldStepFrame()) {
 			return;
 		}
@@ -107,7 +109,10 @@ public class ReadController {
 			textLayer.setY(texDistance);
 		} else {
 			// Reached and of tex. Render new.
-			createTexture(readPosition);
+			ReadPosition newPos = new ReadPosition(readPosition.getPage(),
+					lastRenderPosition.getX(),
+					readPosition.getY());
+			createTexture(newPos);
 			textLayer.setY(0);
 		}
 
@@ -115,7 +120,6 @@ public class ReadController {
 				readPosition.getY(),
 				textLayer.getX(),
 				textLayer.getY()));
-				*/
 	}
 
 	public void left() {
@@ -224,11 +228,6 @@ public class ReadController {
 	public void gotoPage(int page) {
 		if (page >= 0 && page < datasource.getPageCount()) {
 			readPosition.setPage(page);
-
-			//369,200, TPosX: 0,000, TPosY: 0,361
-			readPosition.setY(369);
-			textLayer.setY(0.361f);
-
 			createTexture(readPosition);
 		}
 	}
