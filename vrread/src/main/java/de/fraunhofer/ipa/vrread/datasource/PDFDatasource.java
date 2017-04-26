@@ -29,6 +29,7 @@ public class PDFDatasource implements Datasource {
 	private static final int BITMAP_PADDING = 0;
 
 	private PdfRenderer renderer;
+	private ReadPosition pageBoundary = new ReadPosition();
 	private Context ctx;
 
 	public PDFDatasource(Uri file, Context context) throws IOException {
@@ -60,6 +61,11 @@ public class PDFDatasource implements Datasource {
 	public Bitmap getTextureBitmap(ReadPosition position, float scale, TextureSize size) {
 
 		PdfRenderer.Page page = renderer.openPage(position.getPage());
+
+		// Check if we must invalidate the boundary.
+		pageBoundary.setPage(position.getPage());
+		pageBoundary.setX(page.getWidth());
+		pageBoundary.setY(page.getHeight());
 
 		// We start to read at the top of the page, which is half of the PDF size.
 		float curY = - position.getY() / scale;
@@ -98,7 +104,8 @@ public class PDFDatasource implements Datasource {
 	}
 
 	@Override
-	public boolean isInsidePage(ReadPosition tempReadPosition) {
-		return true;
+	public boolean isInsidePage(ReadPosition tempReadPosition, float scale) {
+
+		return tempReadPosition.getX() / scale < pageBoundary.getX();
 	}
 }

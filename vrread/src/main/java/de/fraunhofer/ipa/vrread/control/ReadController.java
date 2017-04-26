@@ -167,7 +167,7 @@ public class ReadController {
 		tempReadPosition.set(readPosition);
 		tempReadPosition.setX(newX);
 
-		if(!datasource.isInsidePage(tempReadPosition)) {
+		if(!datasource.isInsidePage(tempReadPosition, scale)) {
 			return;
 		}
 

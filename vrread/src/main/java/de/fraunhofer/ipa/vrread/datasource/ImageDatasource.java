@@ -37,7 +37,7 @@ public class ImageDatasource implements Datasource {
 	}
 
 	@Override
-	public boolean isInsidePage(ReadPosition tempReadPosition) {
+	public boolean isInsidePage(ReadPosition tempReadPosition, float scale) {
 		return true;
 	}
 }
