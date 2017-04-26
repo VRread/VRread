@@ -20,6 +20,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.WindowManager;
 
 import com.google.vr.sdk.base.AndroidCompat;
 import com.google.vr.sdk.base.GvrActivity;
@@ -80,6 +81,9 @@ public class VRViewActivity extends GvrActivity {
 		final ScrollingTextLayer textLayer = new ScrollingTextLayer(this);
 		renderer.addLayer(0, textLayer);
 
+		// Set the user chosen contrast mode.
+		textLayer.setContrastMode(appSettings.getContrast());
+
 		// Add the helper line if requested via settings.
 		if (appSettings.hasHelperline()) {
 			renderer.addLayer(1, new HelperLineLayer(this));
@@ -115,6 +119,9 @@ public class VRViewActivity extends GvrActivity {
 				Log.e(TAG, "Can not open the given file URI.");
 			}
 		}
+
+		// Start intercepting power key
+		//getWindow().addFlags(WindowManager.LayoutParams.FLAG);
 	}
 
 	/**

@@ -3,6 +3,7 @@ precision mediump float;		// Set the default precision to medium.
 uniform sampler2D u_Texture;    // The input texture.
 uniform float u_Scale;			// Scale of the texture.
 uniform vec2 u_Offset;			// uv Offset of the texture.
+uniform int u_ContrastMode;		// 0: Normal 1: Inverted, 2: YellowGreen
 
 varying vec2 v_TexCoordinate;
 
@@ -14,6 +15,15 @@ vec4 bgColor = vec4(1.0);
 void main()
 {
 	vec4 texColor = texture2D(u_Texture, (u_Scale * v_TexCoordinate) + u_Offset);
-
-	gl_FragColor = vec4(texColor.a) * texColor + vec4(1.0 - texColor.a) * bgColor;
+	vec4 blendColor = vec4(texColor.a) * texColor + vec4(1.0 - texColor.a) * bgColor;
+	if(u_ContrastMode == 0) {
+		// Normal mode.
+		gl_FragColor = blendColor;
+	} else if(u_ContrastMode == 1) {
+		// Inverted colors.
+		gl_FragColor = vec4(1.0 - blendColor.r, 1.0 - blendColor.g, 1.0 - blendColor.b, 1.0);
+	} else {
+		// Not implemented.
+		gl_FragColor = vec4(0, 1.0, 0, 1.0);
+	}
 }

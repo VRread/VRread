@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 
 import com.google.vr.sdk.base.HeadTransform;
 
+import de.fraunhofer.ipa.vrread.control.Contrast;
 import de.fraunhofer.ipa.vrread.control.ReadController;
 import de.fraunhofer.ipa.vrread.graphics.shader.ScrollingTextureShader;
 
@@ -20,6 +21,8 @@ public class ScrollingTextLayer extends Layer {
 	private float x = 0;
 	private float y = 0;
 	private Bitmap newTexture;
+	private Contrast contrastMode = null;
+
 	private final ScrollingTextureShader textShader;
 
 	public ScrollingTextLayer(Context ctx) {
@@ -49,15 +52,6 @@ public class ScrollingTextLayer extends Layer {
 	}
 
 	/**
-	 * Sets the scale of the texture layer.
-	 *
-	 * @param scale The new scale of the texture layer.
-	 */
-	public void setScale(float scale) {
-		textShader.setTextureScale(scale);
-	}
-
-	/**
 	 * Advises the layer to use a new bitmap. In the next render cycle the bitmap is exchanged.
 	 * <p>
 	 * Note: After the bitmap was used its memory is freed and its recycled. This is done in this method because it is
@@ -69,8 +63,12 @@ public class ScrollingTextLayer extends Layer {
 		this.newTexture = bitmap;
 	}
 
+	public void setContrastMode(Contrast contrast) {
+		this.contrastMode = contrast;
+	}
+
 	/**
-	 * Transfer the new x and y uv coordinates into the shader.
+	 * Transfer the new x and y uv coordinates into the shader. This is done inside the render thread.
 	 *
 	 * @param headTransform The new head tranform.
 	 */
@@ -80,6 +78,11 @@ public class ScrollingTextLayer extends Layer {
 
 		// Transfer the uv coordiantes.
 		textShader.setUv(x, y);
+
+		if(contrastMode != null) {
+			textShader.setContrastMode(contrastMode);
+			contrastMode = null;
+		}
 
 		// Transfer the new texture if there is one.
 		if(newTexture != null) {

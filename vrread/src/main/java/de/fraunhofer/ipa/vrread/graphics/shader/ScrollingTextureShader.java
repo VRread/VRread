@@ -7,6 +7,7 @@ import android.opengl.GLES20;
 import android.opengl.GLUtils;
 
 import de.fraunhofer.ipa.vrread.R;
+import de.fraunhofer.ipa.vrread.control.Contrast;
 
 /**
  * This creates a shader which is able to draw, scroll and scale a texture.
@@ -20,6 +21,7 @@ public class ScrollingTextureShader extends QuadShader {
 
 	private int textureUvOffsetParam;
 	private int textureScaleParam;
+	private int contrastModeParam;
 
 	// This is a handle to our texture data.
 	private int textureDataHandle = -1;
@@ -36,6 +38,8 @@ public class ScrollingTextureShader extends QuadShader {
 	private float u = 0f;
 	private float v = 0f;
 
+	private Contrast contrastMode = Contrast.NORMAL;
+
 
 	public synchronized void setTextureScale(float textureScale) {
 		// Invert this because the uv scale up works with the inverse.
@@ -45,6 +49,10 @@ public class ScrollingTextureShader extends QuadShader {
 	public synchronized void setUv(float u, float v) {
 		this.u = u;
 		this.v = v;
+	}
+
+	public synchronized  void setContrastMode(Contrast contrast) {
+		this.contrastMode = contrast;
 	}
 
 	private synchronized float getTextureScale() {
@@ -74,6 +82,7 @@ public class ScrollingTextureShader extends QuadShader {
 		// Send scale and offset
 		GLES20.glUniform1f(textureScaleParam, getTextureScale());
 		GLES20.glUniform2f(textureUvOffsetParam, u, v);
+		GLES20.glUniform1i(contrastModeParam, contrastMode.ordinal());
 		GLHelper.checkGLError("texture scale offset");
 	}
 
@@ -104,8 +113,9 @@ public class ScrollingTextureShader extends QuadShader {
 		// Texture params
 		textureScaleParam = GLES20.glGetUniformLocation(quadProgram, "u_Scale");
 		textureUvOffsetParam = GLES20.glGetUniformLocation(quadProgram, "u_Offset");
+		contrastModeParam = GLES20.glGetUniformLocation(quadProgram, "u_ContrastMode");
 
-		GLHelper.checkGLError("Floor program params");
+		GLHelper.checkGLError("loadShader params");
 	}
 
 	public void useTexture(Bitmap bitmap) {

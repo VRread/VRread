@@ -6,6 +6,7 @@ import android.preference.PreferenceManager;
 
 import java.util.Objects;
 
+import de.fraunhofer.ipa.vrread.control.Contrast;
 import de.fraunhofer.ipa.vrread.control.SensitivityLevel;
 
 /**
@@ -47,7 +48,7 @@ public class AppSettings {
 	 */
 	public SensitivityLevel getSensitivity() {
 
-		String sensitivity = sharedPrefs.getString(getKey(R.string.key_pref_sensitivity), "0");
+		final String sensitivity = sharedPrefs.getString(getKey(R.string.key_pref_sensitivity), "0");
 		int level = Integer.parseInt(sensitivity);
 		final int enumCount = SensitivityLevel.values().length;
 
@@ -56,6 +57,24 @@ public class AppSettings {
 		}
 
 		return SensitivityLevel.values()[level];
+	}
+
+	/**
+	 * Returns the chosen contrast value.
+	 *
+	 * @return The user chosen contrast level.
+	 */
+	public Contrast getContrast() {
+
+		final String sensitivity = sharedPrefs.getString(getKey(R.string.key_pref_contrast), "0");
+		int level = Integer.parseInt(sensitivity);
+		final int enumCount = Contrast.values().length;
+
+		if (level < 0 || level >= enumCount) {
+			throw new IndexOutOfBoundsException("Chosen sensitivty level is not in range.");
+		}
+
+		return Contrast.values()[level];
 	}
 
 	/**

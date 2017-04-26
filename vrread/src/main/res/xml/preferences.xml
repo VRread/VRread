@@ -24,4 +24,13 @@
 		android:defaultValue="0"
 		/>
 
+	<ListPreference
+		android:key="@string/key_pref_contrast"
+		android:title="@string/contrast"
+		android:summary="@string/contrast_summary"
+		android:entries="@array/pref_contrast_entries"
+		android:entryValues="@array/pref_contrast_values"
+		android:defaultValue="0"
+		/>
+
 </PreferenceScreen>
