@@ -35,4 +35,9 @@ public class ImageDatasource implements Datasource {
 	public int getPageCount() {
 		return 0;
 	}
+
+	@Override
+	public boolean isInsidePage(ReadPosition tempReadPosition) {
+		return true;
+	}
 }

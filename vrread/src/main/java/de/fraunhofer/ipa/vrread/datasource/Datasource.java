@@ -29,4 +29,5 @@ public interface Datasource {
 	 */
 	int getPageCount();
 
+	boolean isInsidePage(ReadPosition tempReadPosition);
 }

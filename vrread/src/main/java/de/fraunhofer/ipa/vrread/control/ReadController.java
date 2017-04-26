@@ -21,6 +21,7 @@ import de.fraunhofer.ipa.vrread.graphics.layer.ScrollingTextLayer;
 public class ReadController {
 
 	private final static String TAG = ReadController.class.getSimpleName();
+	private final static int NUM_CALLS_PAGE_CHANGE = 10;
 	private final ScrollingTextLayer textLayer;
 	private Datasource datasource;
 	/**
@@ -30,8 +31,10 @@ public class ReadController {
 	private long lastRenderTime = 0;
 	private float scale = 1f;
 	private ReadPosition readPosition;
+	private ReadPosition tempReadPosition = new ReadPosition();
 	private ReadPosition lastRenderPosition = new ReadPosition();
 	private float distance;
+	private int nextPageDelayCounter = 0;
 
 	/**
 	 * @param textLayer The textlayer to work upon when receiving the movement commands.
@@ -158,8 +161,17 @@ public class ReadController {
 			return;
 		}
 
-		readPosition.setX(readPosition.getX() + distance);
+		float newX = readPosition.getX() + distance;
 		float texDistance = textLayer.getX() + distance / 1024;
+
+		tempReadPosition.set(readPosition);
+		tempReadPosition.setX(newX);
+
+		if(!datasource.isInsidePage(tempReadPosition)) {
+			return;
+		}
+
+		readPosition.setX(newX);
 
 		if(texDistance < 0.5) {
 			textLayer.setX(texDistance);

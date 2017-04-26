@@ -96,4 +96,9 @@ public class PDFDatasource implements Datasource {
 	public int getPageCount() {
 		return renderer.getPageCount();
 	}
+
+	@Override
+	public boolean isInsidePage(ReadPosition tempReadPosition) {
+		return true;
+	}
 }
