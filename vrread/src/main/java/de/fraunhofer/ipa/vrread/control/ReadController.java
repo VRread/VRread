@@ -100,13 +100,21 @@ public class ReadController {
 	}
 
 	public void down() {
-
 		if(!shouldStepFrame()) {
 			return;
 		}
 
-		readPosition.setY(readPosition.getY() + distance);
+		float newY = readPosition.getY() + distance;
 		float texDistance = textLayer.getY() + distance / textLayer.getTextureSize().getHeight();
+
+		tempReadPosition.set(readPosition);
+		tempReadPosition.setX(newY);
+
+		if(!datasource.isInsidePage(tempReadPosition, scale)) {
+			return;
+		}
+
+		readPosition.setY(newY);
 
 		if(texDistance < 0.5) {
 			textLayer.setY(texDistance);
