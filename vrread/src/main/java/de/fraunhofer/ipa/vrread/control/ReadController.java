@@ -27,7 +27,7 @@ public class ReadController {
 	/**
 	 * Distance to be scrolled when a looking method is called.
 	 */
-	private float baseVelocitySec = 100f;
+	private float baseVelocitySec = 500f;
 	private long lastRenderTime = 0;
 	private float scale = 1f;
 	private ReadPosition readPosition;
@@ -111,6 +111,11 @@ public class ReadController {
 		tempReadPosition.setX(newY);
 
 		if(!datasource.isInsidePage(tempReadPosition, scale)) {
+			nextPageDelayCounter++;
+			if(nextPageDelayCounter > NUM_CALLS_PAGE_CHANGE) {
+				nextPage();
+				nextPageDelayCounter = 0;
+			}
 			return;
 		}
 
@@ -221,6 +226,8 @@ public class ReadController {
 			// Set to top left position.
 			readPosition.setY(0);
 			readPosition.setX(0);
+			textLayer.setX(0);
+			textLayer.setY(0);
 
 			createTexture(readPosition);
 		}
@@ -248,6 +255,10 @@ public class ReadController {
 	public void gotoPage(int page) {
 		if (page >= 0 && page < datasource.getPageCount()) {
 			readPosition.setPage(page);
+			readPosition.setY(0);
+			readPosition.setX(0);
+			textLayer.setX(0);
+			textLayer.setY(0);
 			createTexture(readPosition);
 		}
 	}
