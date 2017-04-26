@@ -89,32 +89,7 @@ public class PDFDatasource implements Datasource {
 		page.render(bitmap, bitmapRect, transform, PdfRenderer.Page.RENDER_MODE_FOR_PRINT);
 		page.close();
 
-		saveFile(bitmap);
-
 		return bitmap;
-	}
-
-	private void saveFile(Bitmap img) {
-		// To be safe, you should check that the SDCard is mounted
-		// using Environment.getExternalStorageState() before doing this.
-		File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-				"vrread");
-		mediaStorageDir.mkdirs();
-
-		// Create a media file name
-		String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmm").format(new Date());
-		String mImageName = "MI_" + timeStamp + ".png";
-		File mediaFile = new File(mediaStorageDir.getPath() + File.separator + mImageName);
-
-		try {
-			FileOutputStream fos = new FileOutputStream(mediaFile);
-			img.compress(Bitmap.CompressFormat.PNG, 90, fos);
-			fos.close();
-		} catch (FileNotFoundException e) {
-			Log.d(TAG, "File not found: " + e.getMessage());
-		} catch (IOException e) {
-			Log.d(TAG, "Error accessing file: " + e.getMessage());
-		}
 	}
 
 	@Override
