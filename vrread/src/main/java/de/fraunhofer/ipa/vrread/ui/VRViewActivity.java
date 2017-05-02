@@ -20,6 +20,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
 
 import com.google.vr.sdk.base.AndroidCompat;
 import com.google.vr.sdk.base.GvrActivity;
@@ -55,6 +56,7 @@ public class VRViewActivity extends GvrActivity {
 	private Renderer renderer;
 	private AppSettings appSettings;
 	private DatasourceFactory datasourceFactory;
+	private HeadGestureReadController readController;
 
 	/**
 	 * Sets the viewMatrix to our GvrView and initializes the transformation matrices we will use to render our scene.
@@ -96,7 +98,7 @@ public class VRViewActivity extends GvrActivity {
 
 		// Then we create the read controller which in turn will move the text layer upon the
 		// movement of the head.
-		final HeadGestureReadController readController = new HeadGestureReadController(textLayer);
+		readController = new HeadGestureReadController(textLayer);
 		headController.setHeadGestureReadController(readController);
 
 		// Extract the file uri.
@@ -129,10 +131,10 @@ public class VRViewActivity extends GvrActivity {
 	 */
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if(keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+		if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
 			Log.d(TAG, "Volume UP was pressed");
 			return true;
-		} else if(keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+		} else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
 			Log.d(TAG, "Volume DOWN was pressed.");
 			return true;
 		}
@@ -156,5 +158,13 @@ public class VRViewActivity extends GvrActivity {
 	@Override
 	public void onCardboardTrigger() {
 		Log.i(TAG, "onCardboardTrigger");
+	}
+
+	/**
+	 * Resets the reader back to the beginning of the file.
+	 */
+	public void onJumpStart(View view) {
+		Log.d(TAG, "Resetting view to page 0.");
+		readController.gotoPage(0);
 	}
 }
