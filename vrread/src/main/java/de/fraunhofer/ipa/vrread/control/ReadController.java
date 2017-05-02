@@ -27,7 +27,7 @@ public class ReadController {
 	/**
 	 * Distance to be scrolled when a looking method is called.
 	 */
-	private float baseVelocitySec = 200f;
+	private float baseVelocitySec = 50f;
 	private long lastRenderTime = 0;
 	private float scale = 1f;
 	private ReadPosition readPosition;

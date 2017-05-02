@@ -65,7 +65,7 @@ public class AppSettings {
 	 * @return A value between 1 and 3.
 	 */
 	public int getScollspeedFactor() {
-		int spd = sharedPrefs.getInt(getKey(R.string.key_pref_scrollspeed), 1);
+		int spd = Integer.parseInt(sharedPrefs.getString(getKey(R.string.key_pref_scrollspeed), "1"));
 
 		if(spd < 1) {
 			spd = 1;
