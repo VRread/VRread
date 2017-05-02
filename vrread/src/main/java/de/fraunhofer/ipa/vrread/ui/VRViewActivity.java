@@ -20,7 +20,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.WindowManager;
 
 import com.google.vr.sdk.base.AndroidCompat;
 import com.google.vr.sdk.base.GvrActivity;
@@ -114,6 +113,7 @@ public class VRViewActivity extends GvrActivity {
 
 				readController.setDatasource(ds);
 				readController.setScale(zoomFac);
+				readController.setScrollSpeedFactor(appSettings.getScollspeedFactor());
 				readController.gotoPage(0);
 			} else {
 				Log.e(TAG, "Can not open the given file URI.");

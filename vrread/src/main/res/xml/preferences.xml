@@ -39,7 +39,7 @@
 		android:summary="@string/scrollspeed_summary"
 		android:entries="@array/pref_speed_entries"
 		android:entryValues="@array/pref_speed_values"
-		android:defaultValue="0"
+		android:defaultValue="1"
 		/>
 
 </PreferenceScreen>
