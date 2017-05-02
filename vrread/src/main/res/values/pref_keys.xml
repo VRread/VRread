@@ -8,4 +8,5 @@ AppSettings class.
 	<string name="key_pref_helperline">pref_helperline</string>
 	<string name="key_pref_sensitivity">pref_sensitivity</string>
 	<string name="key_pref_contrast">pref_contrast</string>
+	<string name="key_pref_scrollspeed">pref_scrollspeed</string>
 </resources>

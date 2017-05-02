@@ -19,4 +19,8 @@
 	<string name="inverted">Invertiert</string>
 	<string name="normal">Normal</string>
 	<string name="blueyellow">Blau/Gelb</string>
+	<string name="fast">Schneller</string>
+	<string name="fastest">Am schnellsten</string>
+	<string name="scrollspeed">Scrollgeschwindigkeit</string>
+	<string name="scrollspeed_summary">Gibt die Geschwindigkeit an mit der bei einer Kopfbewegung der Text verschoben wird.</string>
 </resources>

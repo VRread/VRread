@@ -33,4 +33,13 @@
 		android:defaultValue="0"
 		/>
 
+	<ListPreference
+		android:key="@string/key_pref_scrollspeed"
+		android:title="@string/scrollspeed"
+		android:summary="@string/scrollspeed_summary"
+		android:entries="@array/pref_speed_entries"
+		android:entryValues="@array/pref_speed_values"
+		android:defaultValue="0"
+		/>
+
 </PreferenceScreen>
