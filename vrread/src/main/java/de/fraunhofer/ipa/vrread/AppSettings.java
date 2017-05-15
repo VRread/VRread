@@ -67,10 +67,10 @@ public class AppSettings {
 	public int getScollspeedFactor() {
 		int spd = Integer.parseInt(sharedPrefs.getString(getKey(R.string.key_pref_scrollspeed), "1"));
 
-		if(spd < 1) {
+		if (spd < 1) {
 			spd = 1;
 		}
-		if(spd > 3) {
+		if (spd > 3) {
 			spd = 3;
 		}
 		return spd;
@@ -103,6 +103,18 @@ public class AppSettings {
 		return sharedPrefs.getBoolean(getKey(R.string.key_pref_helperline), false);
 	}
 
+	/**
+	 * Returns configuration for the helperline position on the screen.
+	 * <ul>
+	 *     <li>0: Position in the middle of the screen.</li>
+	 *     <li>1: Position on 55% from the top.</li>
+	 *     <li>2: Position on 60% from the top.</li>
+	 * </ul>
+	 * @return The code for the helperline position on the screen.
+	 */
+	public int helperlinePosition() {
+		return sharedPrefs.getInt(getKey(R.string.key_pref_helperline_position), 0);
+	}
 
 	/**
 	 * Returns TRUE if this is the first run of the application. After calling this method once. It will never return

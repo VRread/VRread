@@ -24,4 +24,10 @@
 	<string name="scrollspeed">Scrollgeschwindigkeit</string>
 	<string name="scrollspeed_summary">Gibt die Geschwindigkeit an mit der bei einer Kopfbewegung der Text verschoben wird.</string>
 	<string name="beginning">Anfang</string>
+
+	<string name="percent_55">55%</string>
+	<string name="percent_60">60%</string>
+	<string name="helperline_position">Leselinien Position</string>
+	<string name="helperline_position_summary">Position der Leselinie auf dem Bildschirm.</string>
 </resources>
+
