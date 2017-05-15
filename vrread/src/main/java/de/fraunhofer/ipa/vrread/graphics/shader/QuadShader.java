@@ -28,6 +28,10 @@ public abstract class QuadShader extends Shader {
 		// no op.
 	}
 
+	/**
+	 * Load, compile and create the shader programm. It should be saved in quadProgram variable so this class can
+	 * manage it.
+	 */
 	protected abstract void createShaderProgram();
 
 	@SuppressWarnings("WeakerAccess")

@@ -1,6 +1,6 @@
 precision mediump float;
 
-uniform float u_Size;			// Size of the line in percent.
+uniform float u_LinePosition;			// Size of the line in percent.
 
 varying vec2 v_TexCoordinate;
 

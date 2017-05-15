@@ -87,7 +87,9 @@ public class VRViewActivity extends GvrActivity {
 
 		// Add the helper line if requested via settings.
 		if (appSettings.hasHelperline()) {
-			renderer.addLayer(1, new HelperLineLayer(this));
+			HelperLineLayer helperLineLayer = new HelperLineLayer(this);
+			helperLineLayer.setLinePosition(appSettings.getHelperlinePosition());
+			renderer.addLayer(1, helperLineLayer);
 		}
 
 		// Now we need a head gesture controller which finds certain

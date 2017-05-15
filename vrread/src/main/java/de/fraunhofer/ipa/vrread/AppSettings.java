@@ -112,8 +112,10 @@ public class AppSettings {
 	 * </ul>
 	 * @return The code for the helperline position on the screen.
 	 */
-	public int helperlinePosition() {
-		return sharedPrefs.getInt(getKey(R.string.key_pref_helperline_position), 0);
+	public int getHelperlinePosition() {
+
+		final String helperlinePosStr = sharedPrefs.getString(getKey(R.string.key_pref_helperline_position), "0");
+		return Integer.parseInt(helperlinePosStr);
 	}
 
 	/**
