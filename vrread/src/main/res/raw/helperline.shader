@@ -13,7 +13,7 @@ const float THICKNESS = 0.01;
 void main()
 {
 	// Check where we currently are.
-	if(v_TexCoordinate.y > (0.5 - THICKNESS / 2.0) && v_TexCoordinate.y < (0.5 + THICKNESS / 2.0)) {
+	if(v_TexCoordinate.y > (u_LinePosition - THICKNESS / 2.0) && v_TexCoordinate.y < (u_LinePosition + THICKNESS / 2.0)) {
 		gl_FragColor = vec4(1, 0, 0, 1);
 	} else {
 		gl_FragColor = vec4(0, 0, 0, 0);
