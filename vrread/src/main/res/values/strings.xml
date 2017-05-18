@@ -29,5 +29,6 @@
 	<string name="percent_60">60%</string>
 	<string name="helperline_position">Leselinien Position</string>
 	<string name="helperline_position_summary">Position der Leselinie auf dem Bildschirm.</string>
+	<string name="can_not_open_file">Can not open file.</string>
 </resources>
 

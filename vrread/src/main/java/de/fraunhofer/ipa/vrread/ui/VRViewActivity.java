@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.vr.sdk.base.AndroidCompat;
 import com.google.vr.sdk.base.GvrActivity;
@@ -121,6 +122,8 @@ public class VRViewActivity extends GvrActivity {
 				readController.gotoPage(0);
 			} else {
 				Log.e(TAG, "Can not open the given file URI.");
+				Toast.makeText(this, getText(R.string.can_not_open_file), Toast.LENGTH_SHORT).show();
+				finish();
 			}
 		}
 
