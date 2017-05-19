@@ -132,7 +132,7 @@ public class VRViewActivity extends GvrActivity {
 	}
 
 	/**
-	 * Handle the sound button keys and perform certain actions with them.
+	 * Handle the sound button keys and perform the reset to zero and jumping back to the beginning of the document.
 	 */
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -141,6 +141,8 @@ public class VRViewActivity extends GvrActivity {
 			return true;
 		} else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
 			Log.d(TAG, "Volume DOWN was pressed.");
+			readController.gotoPage(0);
+			gvrView.recenterHeadTracker();
 			return true;
 		}
 		return super.onKeyDown(keyCode, event);

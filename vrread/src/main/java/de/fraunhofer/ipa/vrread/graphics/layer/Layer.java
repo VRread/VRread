@@ -34,16 +34,6 @@ public class Layer {
 	@SuppressWarnings("WeakerAccess")
 	protected FloatBuffer quadVertices;
 
-	/**
-	 * Use this ctor to set internal shader to null. Then the subsclass has to manage the shader handling and
-	 * calling by
-	 * itself.
-	 */
-	Layer() {
-
-		this.shader = null;
-	}
-
 	Layer(QuadShader shader) {
 
 		this.shader = Objects.requireNonNull(shader);
