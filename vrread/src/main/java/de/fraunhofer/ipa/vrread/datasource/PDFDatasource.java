@@ -1,5 +1,7 @@
 package de.fraunhofer.ipa.vrread.datasource;
 
+import android.content.ContentProviderClient;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
@@ -8,6 +10,7 @@ import android.graphics.pdf.PdfRenderer;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.ParcelFileDescriptor;
+import android.os.RemoteException;
 import android.util.Log;
 
 import java.io.File;
@@ -34,7 +37,8 @@ public class PDFDatasource implements Datasource {
 
 	public PDFDatasource(Uri file, Context context) throws IOException {
 
-		final ParcelFileDescriptor parcFile = context.getContentResolver().openFileDescriptor(file, "r");
+		final ContentResolver resolver = context.getContentResolver();
+		final ParcelFileDescriptor parcFile = resolver.openFileDescriptor(file, "r");
 
 		if (parcFile == null) {
 			throw new IllegalArgumentException("Could not open given file URI.");

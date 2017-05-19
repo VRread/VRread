@@ -24,7 +24,7 @@ public class MainActivity extends Activity {
 
 	private static final int INTENT_OPEN_DOC_CODE = 1;
 	// Callback constant to check for permission granting.
-	private static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 10;
+	private static final int MY_PERMISSIONS_REQUEST_READ_STORAGE = 10;
 
 	private DatasourceService datasourceService = new DatasourceService();
 
@@ -69,7 +69,7 @@ public class MainActivity extends Activity {
 			grantResults) {
 
 		switch (requestCode) {
-			case MY_PERMISSIONS_REQUEST_READ_CONTACTS:
+			case MY_PERMISSIONS_REQUEST_READ_STORAGE:
 				// If request is cancelled, the result arrays are empty.
 				if (grantResults.length > 0
 						&& grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -111,25 +111,40 @@ public class MainActivity extends Activity {
 				// No explanation needed, we can request the permission.
 
 				ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-						MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+						MY_PERMISSIONS_REQUEST_READ_STORAGE);
 
-				// MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-				// app-defined int constant. The callback method gets the
-				// result of the request.
+				return;
 			}
 		}
 
-		// ACTION_OPEN_DOCUMENT is the intent to choose a certain file.
-		final Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-		intent.addCategory(Intent.CATEGORY_OPENABLE);
-		// prepare for multiple uris.
-		intent.setType("*/*");
-		//intent.setType("application/pdf");
 		// Get the mime types from all installed Datasources.
 		String[] mimetypes = datasourceService.getSupportedMimeTypes();
-		intent.putExtra(Intent.EXTRA_MIME_TYPES, mimetypes);
 
+		// ACTION_OPEN_DOCUMENT is the intent to choose a certain file.
+		final Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+		intent.setType("*/*");
+		intent.addCategory(Intent.CATEGORY_OPENABLE);
+		intent.putExtra(Intent.EXTRA_MIME_TYPES, mimetypes);
 		startActivityForResult(intent, INTENT_OPEN_DOC_CODE);
+
+
+		// Special intent for shitty Samsung file manager.
+		Intent samsungIntent = new Intent("com.sec.android.app.myfiles.PICK_DATA");
+		// if you want any file type, you can skip next line
+		samsungIntent.putExtra("CONTENT_TYPE", "*/*");
+		samsungIntent.addCategory(Intent.CATEGORY_DEFAULT);
+
+		Intent chooserIntent;
+		if (getPackageManager().resolveActivity(samsungIntent, 0) != null){
+			// it is device with samsung file manager
+			chooserIntent = Intent.createChooser(samsungIntent, "Open file");
+			chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] { intent});
+		}
+		else {
+			chooserIntent = Intent.createChooser(intent, "Open file");
+		}
+
+		startActivityForResult(chooserIntent, INTENT_OPEN_DOC_CODE);
 	}
 
 	/**
