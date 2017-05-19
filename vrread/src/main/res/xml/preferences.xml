@@ -8,6 +8,16 @@
 		android:defaultValue="false"
 		/>
 
+	<ListPreference
+		android:key="@string/key_pref_helperline_position"
+		android:title="@string/helperline_position"
+		android:summary="@string/helperline_position_summary"
+		android:entries="@array/pref_helperline_pos_entries"
+		android:entryValues="@array/pref_helperline_pos_value"
+		android:defaultValue="1"
+		android:dependency="@string/key_pref_helperline"
+		/>
+
 	<de.fraunhofer.ipa.vrread.NumberPickerPreference
 		android:key="@string/key_pref_zoom"
 		android:title="@string/zoom"
@@ -39,15 +49,6 @@
 		android:summary="@string/scrollspeed_summary"
 		android:entries="@array/pref_speed_entries"
 		android:entryValues="@array/pref_speed_values"
-		android:defaultValue="1"
-		/>
-
-	<ListPreference
-		android:key="@string/key_pref_helperline_position"
-		android:title="@string/helperline_position"
-		android:summary="@string/helperline_position_summary"
-		android:entries="@array/pref_helperline_pos_entries"
-		android:entryValues="@array/pref_helperline_pos_value"
 		android:defaultValue="1"
 		/>
 
