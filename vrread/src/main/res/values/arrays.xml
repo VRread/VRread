@@ -15,6 +15,7 @@
 	<string-array name="pref_contrast_entries">
 		<item>@string/normal</item>
 		<item>@string/inverted</item>
+		<item>@string/blackyellow</item>
 		<item>@string/blueyellow</item>
 	</string-array>
 
@@ -22,6 +23,7 @@
 		<item>0</item>
 		<item>1</item>
 		<item>2</item>
+		<item>3</item>
 	</string-array>
 
 	<string-array name="pref_speed_entries">
@@ -47,4 +49,5 @@
 		<item>1</item>
 		<item>2</item>
 	</string-array>
+	<string name="blackyellow">Schwarz/Gelb</string>
 </resources>
