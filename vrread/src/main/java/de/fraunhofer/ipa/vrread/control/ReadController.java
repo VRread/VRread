@@ -55,22 +55,31 @@ public class ReadController {
 		this.datasource = datasource;
 	}
 
-	private boolean shouldStepFrame() {
+	/**
+	 * Calculates if the app should perform a render step. Which should create 25 fps.
+	 *
+	 * @param externalSpeedFactor A factor externally determined how fast a app should scroll. Should be between 0 and
+	 *                            1.
+	 * @return
+	 */
+	private boolean shouldStepFrame(float externalSpeedFactor) {
 		long now = System.currentTimeMillis();
 		float delay = now - lastRenderTime;
 		lastRenderTime = now;
 
-		if (delay > 100) {
+		// 40ms = 25 fps
+		if (delay > 40) {
 			lastRenderTime = now;
 			return false;
 		}
 
-		distance = baseVelocitySec * scrollSpeedFactor * delay / 1000f;
+		// Calculate the distance which was moved since the last frame.
+		distance = baseVelocitySec * scrollSpeedFactor * externalSpeedFactor * delay / 1000f;
 		return true;
 	}
 
-	public void up() {
-		if (!shouldStepFrame()) {
+	public void up(float speedFactor) {
+		if (!shouldStepFrame(speedFactor)) {
 			return;
 		}
 
@@ -97,8 +106,8 @@ public class ReadController {
 				readPosition.getY(), textLayer.getX(), textLayer.getY()));
 	}
 
-	public void down() {
-		if (!shouldStepFrame()) {
+	public void down(float speedFactor) {
+		if (!shouldStepFrame(speedFactor)) {
 			return;
 		}
 
@@ -133,8 +142,8 @@ public class ReadController {
 				readPosition.getY(), textLayer.getX(), textLayer.getY()));
 	}
 
-	public void left() {
-		if (!shouldStepFrame()) {
+	public void left(float speedFactor) {
+		if (!shouldStepFrame(speedFactor)) {
 			return;
 		}
 
@@ -161,8 +170,8 @@ public class ReadController {
 				readPosition.getY(), textLayer.getX(), textLayer.getY()));
 	}
 
-	public void right() {
-		if (!shouldStepFrame()) {
+	public void right(float speedFactor) {
+		if (!shouldStepFrame(speedFactor)) {
 			return;
 		}
 

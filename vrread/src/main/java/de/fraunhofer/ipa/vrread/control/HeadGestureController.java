@@ -14,6 +14,14 @@ public class HeadGestureController implements GestureController {
 	private final static String TAG = HeadGestureController.class.getSimpleName();
 
 	/**
+	 * The angle AFTER the threshold under which the speed is linearly ramped up.
+	 */
+	private final static float MAX_SPEED_ANGLE_PITCH_DEGREE = 10;
+
+	private final static float MAX_SPEED_ANGLE_ROLL_DEGREE = 10;
+
+
+	/**
 	 * Holds the rotation of the head.
 	 */
 	private float[] headQuaternion = new float[4];
@@ -30,6 +38,9 @@ public class HeadGestureController implements GestureController {
 	private int upMoveThreshold;
 	private int downMoveThreshold;
 	private int leftRightThreshold;
+
+	private float speedFactorX = 1.0f;
+	private float speedFactorY = 1.0f;
 
 	private HeadGestureReadController controller;
 
@@ -71,27 +82,68 @@ public class HeadGestureController implements GestureController {
 
 		// Get deviation of the head angle from the z direction with regards to the y axis.
 		headTransform.getQuaternion(headQuaternion, 0);
+
 		calculateEulerAngles();
+
+		calculateSpeedFactors();
 
 		if (roll < toRad(downMoveThreshold)) {
 			if (controller != null) {
-				controller.onHeadGesture(HeadGesture.LOOK_DOWN);
+				controller.onHeadGesture(HeadGesture.LOOK_DOWN, speedFactorY);
 			}
 		} else if (roll > toRad(upMoveThreshold)) {
 			if (controller != null) {
-				controller.onHeadGesture(HeadGesture.LOOK_UP);
+				controller.onHeadGesture(HeadGesture.LOOK_UP, speedFactorY);
 			}
 		}
 
 		if (pitch > toRad(leftRightThreshold)) {
 			if (controller != null) {
-				controller.onHeadGesture(HeadGesture.LOOK_LEFT);
+				controller.onHeadGesture(HeadGesture.LOOK_LEFT, speedFactorX);
 			}
 		} else if (pitch < toRad(-leftRightThreshold)) {
 			if (controller != null) {
-				controller.onHeadGesture(HeadGesture.LOOK_RIGHT);
+				controller.onHeadGesture(HeadGesture.LOOK_RIGHT, speedFactorX);
 			}
 		}
+	}
+
+	/**
+	 * Depending on the euler angles the speed factor for both the x and y direction is calculated. If the angles of
+	 * head movement increase a linear speed increase is performed until the speed factor reaches 1. Small movements
+	 * of the head only perform a small speed increase.
+	 */
+	private void calculateSpeedFactors() {
+
+		float overshootX = Math.abs(pitch) - toRad(leftRightThreshold);
+		speedFactorX  = overshootX / toRad(MAX_SPEED_ANGLE_PITCH_DEGREE);
+
+		if(speedFactorX < 0) {
+			speedFactorX = 0;
+		}
+		if(speedFactorX > 1) {
+			speedFactorX = 1;
+		}
+
+		if(roll < 0) {
+			// Looked down
+			// downMoveThresold is negative, roll is also negative we void the math abs with this term.
+			float overshootY = toRad(-downMoveThreshold) + roll;
+			speedFactorY = overshootY / toRad(MAX_SPEED_ANGLE_ROLL_DEGREE);
+		} else {
+			// Looked up
+			float overshootY = roll - toRad(upMoveThreshold);
+			speedFactorY = overshootY / toRad(MAX_SPEED_ANGLE_ROLL_DEGREE);
+		}
+
+		if(speedFactorY > 1) {
+			speedFactorY = 1;
+		}
+		if(speedFactorY < 0) {
+			speedFactorY = 0;
+		}
+
+		Log.d(TAG, String.format("Speedfactors X: %.2f Y: %.2f", speedFactorX, speedFactorY));
 	}
 
 	/**

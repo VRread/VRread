@@ -30,6 +30,17 @@ public class HeadGestureReadController extends ReadController {
 	 * @param gesture The recognized head gesture.
 	 */
 	public void onHeadGesture(HeadGesture gesture) {
+		onHeadGesture(gesture, 1.0f);
+	}
+
+	/**
+	 * This method allow to place an additional speed factor which is used to control movement speed of the gesture
+	 * controller.
+	 *
+	 * @param gesture The recognized head gesture.
+	 * @param speedFactor A speed factor (between 0 and +INF) to controll the movement speed.
+	 */
+	public void onHeadGesture(HeadGesture gesture, float speedFactor) {
 		Log.d(TAG, String.format("Recognized head gesture: %s", gesture));
 
 		switch(gesture) {
@@ -46,7 +57,7 @@ public class HeadGestureReadController extends ReadController {
 					pageCounter = 0;
 				}
 
-				down();
+				down(speedFactor);
 				break;
 			case LOOK_UP:
 
@@ -61,13 +72,13 @@ public class HeadGestureReadController extends ReadController {
 					pageCounter = 0;
 				}
 
-				up();
+				up(speedFactor);
 				break;
 			case LOOK_LEFT:
-				left();
+				left(speedFactor);
 				break;
 			case LOOK_RIGHT:
-				right();
+				right(speedFactor);
 				break;
 			default:
 				Log.e(TAG, "Direction is not known.");
