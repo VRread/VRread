@@ -10,8 +10,8 @@ varying vec2 v_TexCoordinate;
 // Background color could be implemented as a uniform for external manipuliation.
 // currently its only white.
 vec4 bgColor = vec4(1.0);
-vec4 yellowColor = vec4(1.0, 1.0, 0, 1);
-vec4 blueColor = vec4(0, 0, 1.0, 1);
+vec4 yellowColor = vec4(1.0, 1.0, 0.0, 1.0);
+vec4 blueColor = vec4(0.0, 0.0, 1.0, 1.0);
 
 // The entry point for our fragment shader.
 void main()
@@ -28,12 +28,12 @@ void main()
 	} else if(u_ContrastMode == 2) {
 		// Black/Yellow
 		// White index gives us a indicator how much we want to see a yellow color.
-		float whiteIndex = (blendColor.r + blendColor.g + blendColor.b) / 3;
+		float whiteIndex = (blendColor.r + blendColor.g + blendColor.b) / 3.0;
       	gl_FragColor = yellowColor * whiteIndex;
 	} else if(u_ContrastMode == 3) {
       	// Blue/Yellow
-      	float whiteIndex = (blendColor.r + blendColor.g + blendColor.b) / 3;
-      	gl_FragColor = yellowColor * whiteIndex + blueColor * (1 - whiteIndex);
+      	float whiteIndex = (blendColor.r + blendColor.g + blendColor.b) / 3.0;
+      	gl_FragColor = yellowColor * whiteIndex + blueColor * (1.0 - whiteIndex);
     } else {
     	// Not implemented.
     	gl_FragColor = vec4(0, 1.0, 0, 1.0);

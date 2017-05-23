@@ -8,5 +8,6 @@ package de.fraunhofer.ipa.vrread.control;
 public enum Contrast {
 	NORMAL,
 	INVERTED,
-	YELLOWBLUE
+	BLACK_YELLOW,
+	YELLOW_BLUE
 }
