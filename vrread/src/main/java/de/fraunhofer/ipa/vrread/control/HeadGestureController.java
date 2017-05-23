@@ -116,7 +116,7 @@ public class HeadGestureController implements GestureController {
 	private void calculateSpeedFactors() {
 
 		float overshootX = Math.abs(pitch) - toRad(leftRightThreshold);
-		speedFactorX  = overshootX / toRad(MAX_SPEED_ANGLE_PITCH_DEGREE);
+		speedFactorX  = overshootX * toRad(MAX_SPEED_ANGLE_PITCH_DEGREE);
 
 		if(speedFactorX < 0) {
 			speedFactorX = 0;
@@ -128,8 +128,9 @@ public class HeadGestureController implements GestureController {
 		if(roll < 0) {
 			// Looked down
 			// downMoveThresold is negative, roll is also negative we void the math abs with this term.
-			float overshootY = Math.abs(roll) - toRad(downMoveThreshold);
-			speedFactorY = Math.abs(overshootY / toRad(MAX_SPEED_ANGLE_ROLL_DEGREE));
+			float overshootY = Math.abs(roll) - Math.abs(toRad(downMoveThreshold));
+			float maxSpdRoll = toRad(MAX_SPEED_ANGLE_ROLL_DEGREE);
+			speedFactorY = Math.abs(overshootY) / maxSpdRoll;
 		} else {
 			// Looked up
 			float overshootY = roll - toRad(upMoveThreshold);

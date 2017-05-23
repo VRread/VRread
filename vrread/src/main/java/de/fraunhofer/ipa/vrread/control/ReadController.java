@@ -64,6 +64,8 @@ public class ReadController {
 	 */
 	private boolean shouldStepFrame(float externalSpeedFactor) {
 
+		externalSpeedFactor = 1f;
+
 		long now = System.currentTimeMillis();
 		float delay = now - lastRenderTime;
 		lastRenderTime = now;

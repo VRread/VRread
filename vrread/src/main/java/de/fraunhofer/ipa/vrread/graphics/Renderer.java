@@ -29,7 +29,7 @@ public class Renderer implements GvrView.StereoRenderer {
 
 	private static final float Z_NEAR = 0.1f;
 	private static final float Z_FAR = 100.0f;
-	private static final float Z_MODEL_POS = 2f; // was 1.3
+	private static final float Z_MODEL_POS = 1.45f; // was 1.3
 	private static final float Z_LAYER_DISTANCE = 0.01f;
 	private static final float CAMERA_Z = 0.5f;
 
