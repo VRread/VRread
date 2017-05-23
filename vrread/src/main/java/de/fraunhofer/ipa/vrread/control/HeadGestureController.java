@@ -118,12 +118,13 @@ public class HeadGestureController implements GestureController {
 		float overshootX = Math.abs(pitch) - toRad(leftRightThreshold);
 		speedFactorX  = overshootX / toRad(MAX_SPEED_ANGLE_PITCH_DEGREE);
 
+		/*
 		if(speedFactorX < 0) {
 			speedFactorX = 0;
 		}
 		if(speedFactorX > 1) {
 			speedFactorX = 1;
-		}
+		}*/
 
 		if(roll < 0) {
 			// Looked down
@@ -136,12 +137,12 @@ public class HeadGestureController implements GestureController {
 			speedFactorY = overshootY / toRad(MAX_SPEED_ANGLE_ROLL_DEGREE);
 		}
 
-		if(speedFactorY > 1) {
+		/*if(speedFactorY > 1) {
 			speedFactorY = 1;
 		}
 		if(speedFactorY < 0) {
 			speedFactorY = 0;
-		}
+		}*/
 
 		Log.d(TAG, String.format("Speedfactors X: %.2f Y: %.2f", speedFactorX, speedFactorY));
 	}

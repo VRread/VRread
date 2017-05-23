@@ -136,10 +136,10 @@ public class VRViewActivity extends GvrActivity {
 	 */
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+		if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
 			Log.d(TAG, "Volume UP was pressed");
 			return true;
-		} else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+		} else if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
 			Log.d(TAG, "Volume DOWN was pressed.");
 			readController.gotoPage(0);
 			gvrView.recenterHeadTracker();
