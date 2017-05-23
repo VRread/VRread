@@ -30,7 +30,7 @@ public class MainActivity extends Activity {
 	// Callback constant to check for permission granting.
 	private static final int MY_PERMISSIONS_REQUEST_READ_STORAGE = 10;
 
-	private DatasourceService datasourceService = new DatasourceService();
+	private final DatasourceService datasourceService = new DatasourceService();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -59,15 +59,6 @@ public class MainActivity extends Activity {
 			if (data != null) {
 				Uri uri = data.getData();
 				Log.d(TAG, "Open Document: " + uri.toString());
-
-				/*
-				final ContentResolver resolver = getContentResolver();
-				try {
-					final ParcelFileDescriptor parcFile = resolver.openFileDescriptor(uri, "r");
-				} catch (FileNotFoundException e) {
-					Log.e(TAG, "WTF GEHT NICHT.");
-					e.printStackTrace();
-				}*/
 
 				// Prepare the datasource for this document and send it to the visualization.
 				final Intent intent = new Intent(this, VRViewActivity.class);
@@ -131,31 +122,14 @@ public class MainActivity extends Activity {
 		}
 
 		// Get the mime types from all installed Datasources.
-		String[] mimetypes = datasourceService.getSupportedMimeTypes();
+		final String[] mimetypes = datasourceService.getSupportedMimeTypes();
 
 		// ACTION_OPEN_DOCUMENT is the intent to choose a certain file.
 		final Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
 		intent.setType("*/*");
 		intent.addCategory(Intent.CATEGORY_OPENABLE);
 		intent.putExtra(Intent.EXTRA_MIME_TYPES, mimetypes);
-
-		// Special intent for shitty Samsung file manager.
-		Intent samsungIntent = new Intent("com.sec.android.app.myfiles.PICK_DATA");
-		// if you want any file type, you can skip next line
-		samsungIntent.putExtra("CONTENT_TYPE", "*/*");
-		samsungIntent.addCategory(Intent.CATEGORY_DEFAULT);
-
-		Intent chooserIntent;
-		if (getPackageManager().resolveActivity(samsungIntent, 0) != null){
-			// it is device with samsung file manager
-			chooserIntent = Intent.createChooser(samsungIntent, "Open file");
-			chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] { intent});
-		}
-		else {
-			chooserIntent = Intent.createChooser(intent, "Open file");
-		}
-
-		startActivityForResult(chooserIntent, INTENT_OPEN_DOC_CODE);
+		startActivityForResult(intent, INTENT_OPEN_DOC_CODE);
 	}
 
 	/**
