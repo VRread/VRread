@@ -59,15 +59,16 @@ public class MainActivity extends Activity {
 			if (data != null) {
 				Uri uri = data.getData();
 				Log.d(TAG, "Open Document: " + uri.toString());
-/*
+
+				/*
 				final ContentResolver resolver = getContentResolver();
 				try {
 					final ParcelFileDescriptor parcFile = resolver.openFileDescriptor(uri, "r");
 				} catch (FileNotFoundException e) {
 					Log.e(TAG, "WTF GEHT NICHT.");
 					e.printStackTrace();
-				}
-*/
+				}*/
+
 				// Prepare the datasource for this document and send it to the visualization.
 				final Intent intent = new Intent(this, VRViewActivity.class);
 				intent.putExtra(VRViewActivity.EXTRA_OPEN_URI, uri);
