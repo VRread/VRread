@@ -7,7 +7,7 @@ uniform int u_ContrastMode;		// 0: Normal 1: Inverted, 2: YellowGreen
 
 varying vec2 v_TexCoordinate;
 
-// Background color could be implemented as a uniform for external manipuliation.
+// Background color could be implemented as a uniform for external manipulation.
 // currently its only white.
 vec4 bgColor = vec4(1.0);
 vec4 yellowColor = vec4(1.0, 1.0, 0.0, 1.0);
