@@ -125,8 +125,6 @@ public class MainActivity extends Activity {
 		intent.setType("*/*");
 		intent.addCategory(Intent.CATEGORY_OPENABLE);
 		intent.putExtra(Intent.EXTRA_MIME_TYPES, mimetypes);
-		startActivityForResult(intent, INTENT_OPEN_DOC_CODE);
-
 
 		// Special intent for shitty Samsung file manager.
 		Intent samsungIntent = new Intent("com.sec.android.app.myfiles.PICK_DATA");
@@ -148,7 +146,7 @@ public class MainActivity extends Activity {
 	}
 
 	/**
-	 * TEMPORARLY: Opens the settings. Make this into a normal styled app lookup.
+	 * Opens the settings. Make this into a normal styled app lookup.
 	 */
 	public void onSettings(View view) {
 
