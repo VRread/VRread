@@ -29,6 +29,7 @@ void main()
 		// Black/Yellow
 		// White index gives us a indicator how much we want to see a yellow color.
 		float whiteIndex = (blendColor.r + blendColor.g + blendColor.b) / 3.0;
+      	//gl_FragColor = yellowColor * (1.0 - whiteIndex);
       	gl_FragColor = yellowColor * whiteIndex;
 	} else if(u_ContrastMode == 3) {
       	// Blue/Yellow

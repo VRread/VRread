@@ -2,16 +2,20 @@ package de.fraunhofer.ipa.vrread.ui;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
+
+import java.io.FileNotFoundException;
 
 import de.fraunhofer.ipa.vrread.AppSettings;
 import de.fraunhofer.ipa.vrread.R;
@@ -55,7 +59,15 @@ public class MainActivity extends Activity {
 			if (data != null) {
 				Uri uri = data.getData();
 				Log.d(TAG, "Open Document: " + uri.toString());
-
+/*
+				final ContentResolver resolver = getContentResolver();
+				try {
+					final ParcelFileDescriptor parcFile = resolver.openFileDescriptor(uri, "r");
+				} catch (FileNotFoundException e) {
+					Log.e(TAG, "WTF GEHT NICHT.");
+					e.printStackTrace();
+				}
+*/
 				// Prepare the datasource for this document and send it to the visualization.
 				final Intent intent = new Intent(this, VRViewActivity.class);
 				intent.putExtra(VRViewActivity.EXTRA_OPEN_URI, uri);
