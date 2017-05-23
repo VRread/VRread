@@ -126,9 +126,6 @@ public class VRViewActivity extends GvrActivity {
 				finish();
 			}
 		}
-
-		// Start intercepting power key
-		//getWindow().addFlags(WindowManager.LayoutParams.FLAG);
 	}
 
 	/**

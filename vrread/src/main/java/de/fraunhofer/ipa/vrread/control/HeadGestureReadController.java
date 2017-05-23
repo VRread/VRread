@@ -25,15 +25,6 @@ public class HeadGestureReadController extends ReadController {
 	}
 
 	/**
-	 * Translates a recognized head gesture into read commands.
-	 *
-	 * @param gesture The recognized head gesture.
-	 */
-	public void onHeadGesture(HeadGesture gesture) {
-		onHeadGesture(gesture, 1.0f);
-	}
-
-	/**
 	 * This method allow to place an additional speed factor which is used to control movement speed of the gesture
 	 * controller.
 	 *
@@ -51,7 +42,7 @@ public class HeadGestureReadController extends ReadController {
 					pageCounter++;
 					if(pageCounter >= 10) {
 						pageCounter = 0;
-						//nextPage();
+						nextPage();
 					}
 				} else {
 					pageCounter = 0;
