@@ -1,6 +1,5 @@
 package de.fraunhofer.ipa.vrread.datasource;
 
-import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -8,17 +7,9 @@ import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.pdf.PdfRenderer;
 import android.net.Uri;
-import android.os.Environment;
 import android.os.ParcelFileDescriptor;
-import android.os.RemoteException;
-import android.util.Log;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  * The datasource is responsible for creation of new textures and sending them
@@ -33,7 +24,6 @@ public class PDFDatasource implements Datasource {
 
 	private PdfRenderer renderer;
 	private ReadPosition pageBoundary = new ReadPosition();
-	private Context ctx;
 
 	public PDFDatasource(Uri file, Context context) throws IOException {
 
@@ -45,8 +35,6 @@ public class PDFDatasource implements Datasource {
 		}
 
 		renderer = new PdfRenderer(parcFile);
-
-		this.ctx = context;
 	}
 
 	public static String[] getSupportedMimeTypes() {
