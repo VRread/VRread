@@ -97,7 +97,8 @@ public class PDFDatasource implements Datasource {
 
 	@Override
 	public boolean isInsidePage(ReadPosition tempReadPosition, float scale) {
-
-		return tempReadPosition.getX() / scale < pageBoundary.getX();
+		boolean isInPageX = tempReadPosition.getX() / scale < pageBoundary.getX();
+		boolean isInPageY = tempReadPosition.getY() / scale < pageBoundary.getY();
+		return isInPageX && isInPageY;
 	}
 }

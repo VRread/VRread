@@ -44,13 +44,6 @@ public class HeadGestureController implements GestureController {
 
 	private HeadGestureReadController controller;
 
-	/**
-	 * Creates a {@link HeadGestureController} with a sensitivity level HIGH.
-	 */
-	public HeadGestureController() {
-		this(SensitivityLevel.HIGH);
-	}
-
 	public HeadGestureController(SensitivityLevel sensitivity) {
 
 		switch (sensitivity) {

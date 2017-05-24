@@ -99,8 +99,8 @@ public class ReadController {
 
 			// Reached and of tex. Render new.
 			//1024 * 0.5
-			ReadPosition newPos = new ReadPosition(readPosition.getPage(), lastRenderPosition.getX(), readPosition
-					.getY() - 512);
+			ReadPosition newPos = new ReadPosition(readPosition.getPage(), lastRenderPosition.getX(),
+					readPosition.getY() - 512);
 			createTexture(newPos);
 			textLayer.setY(0.5f);
 		}
@@ -136,8 +136,9 @@ public class ReadController {
 			textLayer.setY(texDistance);
 		} else {
 			// Reached and of tex. Render new.
-			ReadPosition newPos = new ReadPosition(readPosition.getPage(), lastRenderPosition.getX(), readPosition
-					.getY());
+			ReadPosition newPos = new ReadPosition(readPosition.getPage(),
+					lastRenderPosition.getX(),
+					readPosition.getY());
 			createTexture(newPos);
 			textLayer.setY(0);
 		}
