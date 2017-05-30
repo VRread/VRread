@@ -43,7 +43,7 @@ public class ReadController {
 
 	private float renderDelay = 0f;
 	private float scale = 1f;
-	private ReadPosition readPosition;
+	private ReadPosition currentReadPosition;
 	private ReadPosition tempReadPosition = new ReadPosition();
 	private ReadPosition lastRenderPosition = new ReadPosition();
 	private float distance;
@@ -56,9 +56,9 @@ public class ReadController {
 	ReadController(ScrollingTextLayer textLayer) {
 
 		this.textLayer = Objects.requireNonNull(textLayer);
-		this.readPosition = new ReadPosition(0, 0, 0);
+		this.currentReadPosition = new ReadPosition(0, 0, 0);
 
-		if(textLayer.getTextureSize().getHeight() != textLayer.getTextureSize().getWidth()) {
+		if (textLayer.getTextureSize().getHeight() != textLayer.getTextureSize().getWidth()) {
 			throw new IllegalArgumentException("Currently only qudratic texture sizes are supported.");
 		}
 
@@ -113,13 +113,13 @@ public class ReadController {
 
 		lastRenderTime = System.currentTimeMillis();
 
-		float newY = readPosition.getY() - distance;
+		float newY = currentReadPosition.getY() - distance;
 		float texDistance = textLayer.getY() - distance / textureSize;
 
-		tempReadPosition.set(readPosition);
+		tempReadPosition.set(currentReadPosition);
 		tempReadPosition.setY(newY);
 
-		if (!datasource.isInsidePage(tempReadPosition, scale)) {
+		if (tempReadPosition.getY() < 0.002) {
 			nextPageDelayCounter++;
 			if (nextPageDelayCounter > NUM_CALLS_PAGE_CHANGE) {
 				previousPage();
@@ -128,27 +128,26 @@ public class ReadController {
 			return;
 		}
 
-		readPosition.setY(newY);
+		currentReadPosition.setY(newY);
 
 		if (texDistance > 0) {
 			textLayer.setY(texDistance);
 		} else {
 			// Start of page reached do nothing.
-			if (readPosition.getY() <= 0.01) {
+			if (currentReadPosition.getY() <= 0.01) {
 				return;
 			}
 
 			// Reached and of tex. Render new.
 			// 1024 * 0.5 = 512. Thats the new y coordiante of the the new texture.
-			ReadPosition newPos = new ReadPosition(readPosition.getPage(),
-					lastRenderPosition.getX(),
-					readPosition.getY() - textureSize / 2);
+			ReadPosition newPos = new ReadPosition(currentReadPosition.getPage(), lastRenderPosition.getX(),
+					currentReadPosition.getY() - textureSize / 2);
 			createTexture(newPos);
 			textLayer.setY(0.5f);
 		}
 
-		Log.d(TAG, String.format("RPosX: %.3f, RPosY: %.3f, TPosX: %.3f, TPosY: %.3f", readPosition.getX(),
-				readPosition.getY(), textLayer.getX(), textLayer.getY()));
+		Log.d(TAG, String.format("RPosX: %.3f, RPosY: %.3f, TPosX: %.3f, TPosY: %.3f", currentReadPosition.getX(),
+				currentReadPosition.getY(), textLayer.getX(), textLayer.getY()));
 	}
 
 	void down(float speedFactor) {
@@ -161,11 +160,12 @@ public class ReadController {
 
 		lastRenderTime = System.currentTimeMillis();
 
-		float newY = readPosition.getY() + distance;
+		float newY = currentReadPosition.getY() + distance;
 		float texDistance = textLayer.getY() + distance / textureSize;
 
-		tempReadPosition.set(readPosition);
-		tempReadPosition.setY(newY + textureSize / 4);
+		tempReadPosition.set(currentReadPosition);
+		//tempReadPosition.setY(newY + textureSize / 4);
+		tempReadPosition.setY(newY);
 
 		if (!datasource.isInsidePage(tempReadPosition, scale)) {
 			nextPageDelayCounter++;
@@ -176,20 +176,20 @@ public class ReadController {
 			return;
 		}
 
-		readPosition.setY(newY);
+		currentReadPosition.setY(newY);
 
 		if (texDistance < 0.5) {
 			textLayer.setY(texDistance);
 		} else {
 			// Reached and of tex. Render new.
-			ReadPosition newPos = new ReadPosition(readPosition.getPage(), lastRenderPosition.getX(), readPosition
-					.getY());
+			ReadPosition newPos = new ReadPosition(currentReadPosition.getPage(), lastRenderPosition.getX(),
+					currentReadPosition.getY());
 			createTexture(newPos);
 			textLayer.setY(0);
 		}
 
-		Log.d(TAG, String.format("RPosX: %.3f, RPosY: %.3f, TPosX: %.3f, TPosY: %.3f", readPosition.getX(),
-				readPosition.getY(), textLayer.getX(), textLayer.getY()));
+		Log.d(TAG, String.format("RPosX: %.3f, RPosY: %.3f, TPosX: %.3f, TPosY: %.3f", currentReadPosition.getX(),
+				currentReadPosition.getY(), textLayer.getX(), textLayer.getY()));
 	}
 
 	void left(float speedFactor) {
@@ -201,7 +201,7 @@ public class ReadController {
 
 		lastRenderTime = System.currentTimeMillis();
 
-		readPosition.setX(readPosition.getX() - distance);
+		currentReadPosition.setX(currentReadPosition.getX() - distance);
 		float texDistance = textLayer.getX() - distance / textureSize;
 
 		if (texDistance > 0) {
@@ -209,19 +209,20 @@ public class ReadController {
 		} else {
 
 			// Start of page reached do nothing.
-			if (readPosition.getX() <= 0.01) {
+			if (currentReadPosition.getX() <= 0.01) {
 				return;
 			}
 
 			// Reached and of tex. Render new.
-			ReadPosition newPos = new ReadPosition(readPosition.getPage(), readPosition.getX() - textureSize / 2,
+			ReadPosition newPosTex = new ReadPosition(currentReadPosition.getPage(),
+					currentReadPosition.getX() - textureSize / 2,
 					lastRenderPosition.getY());
-			createTexture(newPos);
+			createTexture(newPosTex);
 			textLayer.setX(0.5f);
 		}
 
-		Log.d(TAG, String.format("RPosX: %.3f, RPosY: %.3f, TPosX: %.3f, TPosY: %.3f", readPosition.getX(),
-				readPosition.getY(), textLayer.getX(), textLayer.getY()));
+		Log.d(TAG, String.format("RPosX: %.3f, RPosY: %.3f, TPosX: %.3f, TPosY: %.3f", currentReadPosition.getX(),
+				currentReadPosition.getY(), textLayer.getX(), textLayer.getY()));
 	}
 
 	void right(float speedFactor) {
@@ -233,36 +234,43 @@ public class ReadController {
 
 		lastRenderTime = System.currentTimeMillis();
 
-		float newX = readPosition.getX() + distance;
+		float newX = currentReadPosition.getX() + distance;
 		float texDistance = textLayer.getX() + distance / textureSize;
 
-		tempReadPosition.set(readPosition);
+		tempReadPosition.set(currentReadPosition);
 		// Dive by 2 so we get 1/4 tex size overshoot to the border of
 		// the document.
-		tempReadPosition.setX(newX + textureSize / 4);
+		//tempReadPosition.setX(newX + textureSize / 4);
+		tempReadPosition.setX(newX);
 
 		if (!datasource.isInsidePage(tempReadPosition, scale)) {
 			return;
 		}
 
-		readPosition.setX(newX);
+		currentReadPosition.setX(newX);
 
 		if (texDistance < 0.5) {
 			textLayer.setX(texDistance);
 		} else {
 			// Reached and of tex. Render new.
-			ReadPosition newPos = new ReadPosition(readPosition.getPage(), readPosition.getX(), lastRenderPosition
-					.getY());
+			ReadPosition newPos = new ReadPosition(currentReadPosition.getPage(), currentReadPosition.getX(),
+					lastRenderPosition.getY());
 			createTexture(newPos);
 			textLayer.setX(0);
 		}
 
-		Log.d(TAG, String.format("RPosX: %.3f, RPosY: %.3f, TPosX: %.3f, TPosY: %.3f", readPosition.getX(),
-				readPosition.getY(), textLayer.getX(), textLayer.getY()));
+		Log.d(TAG, String.format("RPosX: %.3f, RPosY: %.3f, TPosX: %.3f, TPosY: %.3f", currentReadPosition.getX(),
+				currentReadPosition.getY(), textLayer.getX(), textLayer.getY()));
 	}
 
 	private void createTexture(ReadPosition texturePosition) {
-		Log.d(TAG, String.format("Creating texture position: %s", texturePosition));
+		Log.d(TAG, String.format("Create Tex nextTexPos: %.1f %.1f, readPos: %.1f %.1f textLayer: %.1f %.1f",
+				texturePosition.getX(),
+				texturePosition.getY(),
+				currentReadPosition.getX(),
+				currentReadPosition.getY(),
+				textLayer.getX(),
+				textLayer.getY()));
 
 		lastRenderPosition.set(texturePosition);
 
@@ -271,23 +279,23 @@ public class ReadController {
 		textLayer.setTexture(bitmap);
 	}
 
-	ReadPosition getReadPosition() {
-		return readPosition;
+	ReadPosition getCurrentReadPosition() {
+		return currentReadPosition;
 	}
 
 	/**
 	 * Manually switch to the next page.
 	 */
 	void nextPage() {
-		if (readPosition.getPage() + 1 < datasource.getPageCount()) {
-			readPosition.setPage(readPosition.getPage() + 1);
+		if (currentReadPosition.getPage() + 1 < datasource.getPageCount()) {
+			currentReadPosition.setPage(currentReadPosition.getPage() + 1);
 			// Set to top left position.
-			readPosition.setY(0);
-			readPosition.setX(0);
+			currentReadPosition.setY(0);
+			currentReadPosition.setX(0);
 			textLayer.setX(0);
 			textLayer.setY(0);
 
-			createTexture(readPosition);
+			createTexture(currentReadPosition);
 		}
 	}
 
@@ -295,13 +303,26 @@ public class ReadController {
 	 * Manually switch to the previous page.
 	 */
 	void previousPage() {
-		if (readPosition.getPage() - 1 >= 0) {
-			readPosition.setPage(readPosition.getPage() - 1);
-			// Set back to middle bottom position.
-			readPosition.setY(1);
-			readPosition.setX(0.5f);
+		if (currentReadPosition.getPage() - 1 >= 0) {
 
-			createTexture(readPosition);
+			/*currentReadPosition.setPage(currentReadPosition.getPage() - 1);
+			// Set back to middle bottom position.
+			currentReadPosition.setY(1);
+			currentReadPosition.setX(0.5f);*/
+
+			currentReadPosition.setPage(0);
+			// Set back to middle bottom position.
+			currentReadPosition.setY(1582.4194f);
+			currentReadPosition.setX(0);
+
+			ReadPosition newTexPos = new ReadPosition(
+					0,
+					0,
+					currentReadPosition.getY() - 512);
+
+			createTexture(newTexPos);
+
+			textLayer.setY(0.5f);
 		}
 	}
 
@@ -312,12 +333,12 @@ public class ReadController {
 	 */
 	public void gotoPage(int page) {
 		if (page >= 0 && page < datasource.getPageCount()) {
-			readPosition.setPage(page);
-			readPosition.setY(0);
-			readPosition.setX(0);
+			currentReadPosition.setPage(page);
+			currentReadPosition.setY(0);
+			currentReadPosition.setX(0);
 			textLayer.setX(0);
 			textLayer.setY(0);
-			createTexture(readPosition);
+			createTexture(currentReadPosition);
 		}
 	}
 

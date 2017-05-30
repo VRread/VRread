@@ -20,7 +20,6 @@ import java.io.IOException;
 public class PDFDatasource implements Datasource {
 
 	private final static String TAG = PDFDatasource.class.getSimpleName();
-	private static final int BITMAP_PADDING = 0;
 
 	private PdfRenderer renderer;
 	private ReadPosition pageBoundary = new ReadPosition();
@@ -75,9 +74,9 @@ public class PDFDatasource implements Datasource {
 		}
 
 		// Generate a bitmap with the correct dimensions.
-		Rect bitmapRect = new Rect(BITMAP_PADDING, BITMAP_PADDING,
-				size.getWidth() - BITMAP_PADDING,
-				size.getHeight() - BITMAP_PADDING);
+		Rect bitmapRect = new Rect(0, 0,
+				size.getWidth(),
+				size.getHeight());
 		Bitmap bitmap = Bitmap.createBitmap(size.getWidth(), size.getHeight(), Bitmap.Config.ARGB_8888);
 
 		Matrix transform = new Matrix();
