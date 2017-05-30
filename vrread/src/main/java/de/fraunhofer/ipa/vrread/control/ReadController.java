@@ -22,16 +22,21 @@ import de.fraunhofer.ipa.vrread.graphics.layer.ScrollingTextLayer;
 public class ReadController {
 
 	private final static String TAG = ReadController.class.getSimpleName();
+
 	private final static int NUM_CALLS_PAGE_CHANGE = 10;
-	/**
-	 * Distance to be scrolled when a looking method is called.
-	 */
+
+	// Set this value to modify the rendered FPS.
+	private final static int TARGET_FPS = 50;
+
+	private final static int RENDER_DELAY_MS = 1000 / TARGET_FPS;
+
+	// Base speed of the application.
 	private final static float BASE_VELOCITY = 50f;
 
 	private final ScrollingTextLayer textLayer;
 	private Datasource datasource;
 
-	private long lastRenderTime = 0;
+	private long lastRenderTime = System.currentTimeMillis();
 	private float renderDelay = 0f;
 	private float scale = 1f;
 	private ReadPosition readPosition;
@@ -66,15 +71,12 @@ public class ReadController {
 	 */
 	private boolean shouldStepFrame() {
 
-		long now = System.currentTimeMillis();
-		renderDelay = now - lastRenderTime;
+		renderDelay = System.currentTimeMillis() - lastRenderTime;
 
-		// 40ms = 25 fps
-		if (renderDelay < 40) {
+		if (renderDelay < RENDER_DELAY_MS) {
 			return false;
 		}
 
-		lastRenderTime = now;
 		return true;
 	}
 
@@ -85,7 +87,7 @@ public class ReadController {
 	 */
 	private void calculateMovedDistance(float externalSpeedFactor) {
 		// Calculate the distance which was moved since the last frame.
-		distance = BASE_VELOCITY * scrollSpeedFactor * externalSpeedFactor * renderDelay / 1000f;
+		distance = BASE_VELOCITY * scrollSpeedFactor * externalSpeedFactor * renderDelay * (scale / 17) / 1000f;
 	}
 
 	void up(float speedFactor) {
@@ -115,6 +117,8 @@ public class ReadController {
 			createTexture(newPos);
 			textLayer.setY(0.5f);
 		}
+
+		lastRenderTime = System.currentTimeMillis();
 
 		Log.d(TAG, String.format("RPosX: %.3f, RPosY: %.3f, TPosX: %.3f, TPosY: %.3f", readPosition.getX(),
 				readPosition.getY(), textLayer.getX(), textLayer.getY()));
@@ -155,6 +159,8 @@ public class ReadController {
 			textLayer.setY(0);
 		}
 
+		lastRenderTime = System.currentTimeMillis();
+
 		Log.d(TAG, String.format("RPosX: %.3f, RPosY: %.3f, TPosX: %.3f, TPosY: %.3f", readPosition.getX(),
 				readPosition.getY(), textLayer.getX(), textLayer.getY()));
 	}
@@ -184,6 +190,8 @@ public class ReadController {
 			createTexture(newPos);
 			textLayer.setX(0.5f);
 		}
+
+		lastRenderTime = System.currentTimeMillis();
 
 		Log.d(TAG, String.format("RPosX: %.3f, RPosY: %.3f, TPosX: %.3f, TPosY: %.3f", readPosition.getX(),
 				readPosition.getY(), textLayer.getX(), textLayer.getY()));
@@ -217,6 +225,8 @@ public class ReadController {
 			createTexture(newPos);
 			textLayer.setX(0);
 		}
+
+		lastRenderTime = System.currentTimeMillis();
 
 		Log.d(TAG, String.format("RPosX: %.3f, RPosY: %.3f, TPosX: %.3f, TPosY: %.3f", readPosition.getX(),
 				readPosition.getY(), textLayer.getX(), textLayer.getY()));
