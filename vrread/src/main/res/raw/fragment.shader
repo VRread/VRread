@@ -35,7 +35,7 @@ void main()
 	} else if(u_ContrastMode == 3) {
       	// Blue/Yellow
       	float whiteIndex = (blendColor.r + blendColor.g + blendColor.b) / 3.0;
-      	gl_FragColor = yellowColor * whiteIndex + blueColor * (1.0 - whiteIndex);
+      	gl_FragColor = yellowColor * (1.0 - whiteIndex) + blueColor * whiteIndex;
     } else {
     	// Not implemented.
     	gl_FragColor = vec4(0, 1.0, 0, 1.0);
