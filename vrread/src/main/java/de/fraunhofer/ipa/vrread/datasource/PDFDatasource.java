@@ -100,4 +100,11 @@ public class PDFDatasource implements Datasource {
 		boolean isInPageY = tempReadPosition.getY() / scale < pageBoundary.getY();
 		return isInPageX && isInPageY;
 	}
+
+	public int getPageHeight(int previousPage, float scale) {
+		PdfRenderer.Page page = renderer.openPage(previousPage);
+		final int pageHeight = (int)(page.getHeight() * scale);
+		page.close();
+		return pageHeight;
+	}
 }

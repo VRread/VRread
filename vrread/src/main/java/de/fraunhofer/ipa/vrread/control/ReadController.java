@@ -6,6 +6,7 @@ import android.util.Log;
 import java.util.Objects;
 
 import de.fraunhofer.ipa.vrread.datasource.Datasource;
+import de.fraunhofer.ipa.vrread.datasource.PDFDatasource;
 import de.fraunhofer.ipa.vrread.datasource.ReadPosition;
 import de.fraunhofer.ipa.vrread.datasource.TextureSize;
 import de.fraunhofer.ipa.vrread.graphics.layer.ScrollingTextLayer;
@@ -119,15 +120,6 @@ public class ReadController {
 		tempReadPosition.set(currentReadPosition);
 		tempReadPosition.setY(newY);
 
-		if (tempReadPosition.getY() < 5) {
-			nextPageDelayCounter++;
-			if (nextPageDelayCounter > NUM_CALLS_PAGE_CHANGE) {
-				previousPage();
-				nextPageDelayCounter = 0;
-			}
-			return;
-		}
-
 		currentReadPosition.setY(newY);
 
 		if (texDistance > 0) {
@@ -135,6 +127,11 @@ public class ReadController {
 		} else {
 			// Start of page reached do nothing.
 			if (currentReadPosition.getY() <= 0.01) {
+				nextPageDelayCounter++;
+				if (nextPageDelayCounter > NUM_CALLS_PAGE_CHANGE) {
+					previousPage();
+					nextPageDelayCounter = 0;
+				}
 				return;
 			}
 
@@ -142,13 +139,16 @@ public class ReadController {
 			// 1024 * 0.5 = 512. Thats the new y coordiante of the the new texture.
 			ReadPosition newPos = new ReadPosition(currentReadPosition.getPage(),
 					lastRenderPosition.getX(),
-					currentReadPosition.getY() - textureSize / 2);
+					lastRenderPosition.getY() - textureSize / 2);
 			createTexture(newPos);
 			textLayer.setY(0.5f);
 		}
 
-		Log.d(TAG, String.format("RPosX: %.3f, RPosY: %.3f, TPosX: %.3f, TPosY: %.3f", currentReadPosition.getX(),
-				currentReadPosition.getY(), textLayer.getX(), textLayer.getY()));
+		Log.d(TAG, String.format("RPosX: %.3f, RPosY: %.3f, TPosX: %.3f, TPosY: %.3f",
+				currentReadPosition.getX(),
+				currentReadPosition.getY(),
+				textLayer.getX(),
+				textLayer.getY()));
 	}
 
 	void down(float speedFactor) {
@@ -191,8 +191,11 @@ public class ReadController {
 			textLayer.setY(0);
 		}
 
-		Log.d(TAG, String.format("RPosX: %.3f, RPosY: %.3f, TPosX: %.3f, TPosY: %.3f", currentReadPosition.getX(),
-				currentReadPosition.getY(), textLayer.getX(), textLayer.getY()));
+		Log.d(TAG, String.format("RPosX: %.3f, RPosY: %.3f, TPosX: %.3f, TPosY: %.3f",
+				currentReadPosition.getX(),
+				currentReadPosition.getY(),
+				textLayer.getX(),
+				textLayer.getY()));
 	}
 
 	void left(float speedFactor) {
@@ -318,24 +321,21 @@ public class ReadController {
 	void previousPage() {
 		if (currentReadPosition.getPage() - 1 >= 0) {
 
-			/*currentReadPosition.setPage(currentReadPosition.getPage() - 1);
-			// Set back to middle bottom position.
-			currentReadPosition.setY(1);
-			currentReadPosition.setX(0.5f);*/
+			final int previousPage = currentReadPosition.getPage() - 1;
 
-			currentReadPosition.setPage(0);
-			// Set back to middle bottom position.
-			currentReadPosition.setY(1540.76f);
+			final int pageHeight = ((PDFDatasource)datasource).getPageHeight(previousPage, scale);
+
+			currentReadPosition.setPage(previousPage);
+			currentReadPosition.setY(pageHeight);
 			currentReadPosition.setX(0);
 
 			ReadPosition newTexPos = new ReadPosition(
-					0,
-					0,
-					currentReadPosition.getY() - 512);
-
-			createTexture(newTexPos);
+					previousPage,
+					currentReadPosition.getX(),
+					currentReadPosition.getY());
 
 			textLayer.setY(0.5f);
+			createTexture(newTexPos);
 		}
 	}
 
