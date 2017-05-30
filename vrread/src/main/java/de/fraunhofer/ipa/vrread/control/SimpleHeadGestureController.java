@@ -9,9 +9,9 @@ import com.google.vr.sdk.base.HeadTransform;
  * Created by tbf on 24.02.2017.
  */
 
-public class HeadGestureController implements GestureController {
+public class SimpleHeadGestureController implements GestureController {
 
-	private final static String TAG = HeadGestureController.class.getSimpleName();
+	private final static String TAG = SimpleHeadGestureController.class.getSimpleName();
 
 	/**
 	 * The angle AFTER the threshold under which the speed is linearly ramped up.
@@ -44,7 +44,7 @@ public class HeadGestureController implements GestureController {
 
 	private HeadGestureReadController controller;
 
-	public HeadGestureController(SensitivityLevel sensitivity) {
+	public SimpleHeadGestureController(SensitivityLevel sensitivity) {
 
 		switch (sensitivity) {
 			case HIGH:

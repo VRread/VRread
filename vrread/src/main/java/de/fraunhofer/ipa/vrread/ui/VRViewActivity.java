@@ -29,7 +29,7 @@ import com.google.vr.sdk.base.GvrView;
 
 import de.fraunhofer.ipa.vrread.AppSettings;
 import de.fraunhofer.ipa.vrread.R;
-import de.fraunhofer.ipa.vrread.control.HeadGestureController;
+import de.fraunhofer.ipa.vrread.control.SimpleHeadGestureController;
 import de.fraunhofer.ipa.vrread.control.HeadGestureReadController;
 import de.fraunhofer.ipa.vrread.control.SensitivityLevel;
 import de.fraunhofer.ipa.vrread.datasource.Datasource;
@@ -96,7 +96,7 @@ public class VRViewActivity extends GvrActivity {
 		// Now we need a head gesture controller which finds certain
 		// gestures in the movement.
 		final SensitivityLevel level = appSettings.getSensitivity();
-		final HeadGestureController headController = new HeadGestureController(level);
+		final SimpleHeadGestureController headController = new SimpleHeadGestureController(level);
 		renderer.setGestureController(headController);
 
 		// Then we create the read controller which in turn will move the text layer upon the

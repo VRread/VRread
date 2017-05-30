@@ -10,6 +10,7 @@ import de.fraunhofer.ipa.vrread.datasource.ReadPosition;
 import de.fraunhofer.ipa.vrread.datasource.TextureSize;
 import de.fraunhofer.ipa.vrread.graphics.layer.ScrollingTextLayer;
 
+
 /**
  * The read controller is holding the current reading position and reacts upon control requests. It will calculate a new
  * reading position, see if it can just correct the visual appearance at the shader or if it needs to send a whole new
@@ -22,13 +23,16 @@ public class ReadController {
 
 	private final static String TAG = ReadController.class.getSimpleName();
 	private final static int NUM_CALLS_PAGE_CHANGE = 10;
-	private final ScrollingTextLayer textLayer;
-	private Datasource datasource;
 	/**
 	 * Distance to be scrolled when a looking method is called.
 	 */
-	private float baseVelocitySec = 50f;
+	private final static float BASE_VELOCITY = 50f;
+
+	private final ScrollingTextLayer textLayer;
+	private Datasource datasource;
+
 	private long lastRenderTime = 0;
+	private float renderDelay = 0f;
 	private float scale = 1f;
 	private ReadPosition readPosition;
 	private ReadPosition tempReadPosition = new ReadPosition();
@@ -58,33 +62,39 @@ public class ReadController {
 	/**
 	 * Calculates if the app should perform a render step. Which should create 25 fps.
 	 *
-	 * @param externalSpeedFactor A factor externally determined how fast a app should scroll. Should be between 0 and
-	 *                            1.
-	 * @return
+	 * @return TRUE if a new frame should be rendered. FALSE if not.
 	 */
-	private boolean shouldStepFrame(float externalSpeedFactor) {
-
-		externalSpeedFactor = 1f;
+	private boolean shouldStepFrame() {
 
 		long now = System.currentTimeMillis();
-		float delay = now - lastRenderTime;
+		renderDelay = now - lastRenderTime;
 		lastRenderTime = now;
 
 		// 40ms = 25 fps
-		if (delay > 40) {
+		if (renderDelay > 40) {
 			lastRenderTime = now;
 			return false;
 		}
 
-		// Calculate the distance which was moved since the last frame.
-		distance = baseVelocitySec * scrollSpeedFactor * externalSpeedFactor * delay / 1000f;
 		return true;
 	}
 
-	public void up(float speedFactor) {
-		if (!shouldStepFrame(speedFactor)) {
+	/**
+	 * Calculates the distance which the document has to be moved since the last render step.
+	 *
+	 * @param externalSpeedFactor The external speed factor.
+	 */
+	private void calculateMovedDistance(float externalSpeedFactor) {
+		// Calculate the distance which was moved since the last frame.
+		distance = BASE_VELOCITY * scrollSpeedFactor * externalSpeedFactor * renderDelay / 1000f;
+	}
+
+	void up(float speedFactor) {
+		if (!shouldStepFrame()) {
 			return;
 		}
+
+		calculateMovedDistance(speedFactor);
 
 		readPosition.setY(readPosition.getY() - distance);
 		float texDistance = textLayer.getY() - distance / textLayer.getTextureSize().getHeight();
@@ -99,8 +109,8 @@ public class ReadController {
 
 			// Reached and of tex. Render new.
 			//1024 * 0.5
-			ReadPosition newPos = new ReadPosition(readPosition.getPage(), lastRenderPosition.getX(),
-					readPosition.getY() - 512);
+			ReadPosition newPos = new ReadPosition(readPosition.getPage(), lastRenderPosition.getX(), readPosition
+					.getY() - 512);
 			createTexture(newPos);
 			textLayer.setY(0.5f);
 		}
@@ -109,11 +119,13 @@ public class ReadController {
 				readPosition.getY(), textLayer.getX(), textLayer.getY()));
 	}
 
-	public void down(float speedFactor) {
+	void down(float speedFactor) {
 
-		if (!shouldStepFrame(speedFactor)) {
+		if (!shouldStepFrame()) {
 			return;
 		}
+
+		calculateMovedDistance(speedFactor);
 
 		float newY = readPosition.getY() + distance;
 		float texDistance = textLayer.getY() + distance / textLayer.getTextureSize().getHeight();
@@ -136,9 +148,8 @@ public class ReadController {
 			textLayer.setY(texDistance);
 		} else {
 			// Reached and of tex. Render new.
-			ReadPosition newPos = new ReadPosition(readPosition.getPage(),
-					lastRenderPosition.getX(),
-					readPosition.getY());
+			ReadPosition newPos = new ReadPosition(readPosition.getPage(), lastRenderPosition.getX(), readPosition
+					.getY());
 			createTexture(newPos);
 			textLayer.setY(0);
 		}
@@ -147,10 +158,12 @@ public class ReadController {
 				readPosition.getY(), textLayer.getX(), textLayer.getY()));
 	}
 
-	public void left(float speedFactor) {
-		if (!shouldStepFrame(speedFactor)) {
+	void left(float speedFactor) {
+		if (!shouldStepFrame()) {
 			return;
 		}
+
+		calculateMovedDistance(speedFactor);
 
 		readPosition.setX(readPosition.getX() - distance);
 		float texDistance = textLayer.getX() - distance / 1024;
@@ -175,10 +188,12 @@ public class ReadController {
 				readPosition.getY(), textLayer.getX(), textLayer.getY()));
 	}
 
-	public void right(float speedFactor) {
-		if (!shouldStepFrame(speedFactor)) {
+	void right(float speedFactor) {
+		if (!shouldStepFrame()) {
 			return;
 		}
+
+		calculateMovedDistance(speedFactor);
 
 		float newX = readPosition.getX() + distance;
 		float texDistance = textLayer.getX() + distance / 1024;
@@ -216,14 +231,14 @@ public class ReadController {
 		textLayer.setTexture(bitmap);
 	}
 
-	public ReadPosition getReadPosition() {
+	ReadPosition getReadPosition() {
 		return readPosition;
 	}
 
 	/**
 	 * Manually switch to the next page.
 	 */
-	public void nextPage() {
+	void nextPage() {
 		if (readPosition.getPage() + 1 < datasource.getPageCount()) {
 			readPosition.setPage(readPosition.getPage() + 1);
 			// Set to top left position.
@@ -239,7 +254,7 @@ public class ReadController {
 	/**
 	 * Manually switch to the previous page.
 	 */
-	public void previousPage() {
+	void previousPage() {
 		if (readPosition.getPage() - 1 >= 0) {
 			readPosition.setPage(readPosition.getPage() - 1);
 			// Set back to middle bottom position.
