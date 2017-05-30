@@ -36,32 +36,9 @@ public class HeadGestureReadController extends ReadController {
 
 		switch(gesture) {
 			case LOOK_DOWN:
-
-				// Check if we need to flip the page.
-				if(getReadPosition().getY() >= 0.99f) {
-					pageCounter++;
-					if(pageCounter >= 10) {
-						pageCounter = 0;
-					}
-				} else {
-					pageCounter = 0;
-				}
-
 				down(speedFactor);
 				break;
 			case LOOK_UP:
-
-				// Check if we need to flip the page.
-				if(getReadPosition().getY() <= 0.01f) {
-					pageCounter++;
-					if(pageCounter >= 10) {
-						pageCounter = 0;
-						previousPage();
-					}
-				} else {
-					pageCounter = 0;
-				}
-
 				up(speedFactor);
 				break;
 			case LOOK_LEFT:
