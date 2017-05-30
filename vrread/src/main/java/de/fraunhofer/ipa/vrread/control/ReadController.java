@@ -165,7 +165,7 @@ public class ReadController {
 		float texDistance = textLayer.getY() + distance / textureSize;
 
 		tempReadPosition.set(readPosition);
-		tempReadPosition.setY(newY);
+		tempReadPosition.setY(newY + textureSize / 4);
 
 		if (!datasource.isInsidePage(tempReadPosition, scale)) {
 			nextPageDelayCounter++;
