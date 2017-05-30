@@ -33,6 +33,9 @@ public class ReadController {
 	// Base speed of the application.
 	private final static float BASE_VELOCITY = 100f;
 
+	// We sometimes need this size in order to calculate read distances.
+	private final int textureSize;
+
 	private final ScrollingTextLayer textLayer;
 	private Datasource datasource;
 
@@ -54,6 +57,12 @@ public class ReadController {
 
 		this.textLayer = Objects.requireNonNull(textLayer);
 		this.readPosition = new ReadPosition(0, 0, 0);
+
+		if(textLayer.getTextureSize().getHeight() != textLayer.getTextureSize().getWidth()) {
+			throw new IllegalArgumentException("Currently only qudratic texture sizes are supported.");
+		}
+
+		textureSize = textLayer.getTextureSize().getHeight();
 	}
 
 	/**
@@ -105,7 +114,7 @@ public class ReadController {
 		lastRenderTime = System.currentTimeMillis();
 
 		float newY = readPosition.getY() - distance;
-		float texDistance = textLayer.getY() - distance / textLayer.getTextureSize().getHeight();
+		float texDistance = textLayer.getY() - distance / textureSize;
 
 		tempReadPosition.set(readPosition);
 		tempReadPosition.setY(newY);
@@ -133,7 +142,7 @@ public class ReadController {
 			// 1024 * 0.5 = 512. Thats the new y coordiante of the the new texture.
 			ReadPosition newPos = new ReadPosition(readPosition.getPage(),
 					lastRenderPosition.getX(),
-					readPosition.getY() - 512);
+					readPosition.getY() - textureSize / 2);
 			createTexture(newPos);
 			textLayer.setY(0.5f);
 		}
@@ -153,7 +162,7 @@ public class ReadController {
 		lastRenderTime = System.currentTimeMillis();
 
 		float newY = readPosition.getY() + distance;
-		float texDistance = textLayer.getY() + distance / textLayer.getTextureSize().getHeight();
+		float texDistance = textLayer.getY() + distance / textureSize;
 
 		tempReadPosition.set(readPosition);
 		tempReadPosition.setY(newY);
@@ -193,7 +202,7 @@ public class ReadController {
 		lastRenderTime = System.currentTimeMillis();
 
 		readPosition.setX(readPosition.getX() - distance);
-		float texDistance = textLayer.getX() - distance / 1024;
+		float texDistance = textLayer.getX() - distance / textureSize;
 
 		if (texDistance > 0) {
 			textLayer.setX(texDistance);
@@ -205,7 +214,7 @@ public class ReadController {
 			}
 
 			// Reached and of tex. Render new.
-			ReadPosition newPos = new ReadPosition(readPosition.getPage(), readPosition.getX() - 512,
+			ReadPosition newPos = new ReadPosition(readPosition.getPage(), readPosition.getX() - textureSize / 2,
 					lastRenderPosition.getY());
 			createTexture(newPos);
 			textLayer.setX(0.5f);
@@ -225,10 +234,12 @@ public class ReadController {
 		lastRenderTime = System.currentTimeMillis();
 
 		float newX = readPosition.getX() + distance;
-		float texDistance = textLayer.getX() + distance / 1024;
+		float texDistance = textLayer.getX() + distance / textureSize;
 
 		tempReadPosition.set(readPosition);
-		tempReadPosition.setX(newX);
+		// Dive by 2 so we get 1/4 tex size overshoot to the border of
+		// the document.
+		tempReadPosition.setX(newX + textureSize / 4);
 
 		if (!datasource.isInsidePage(tempReadPosition, scale)) {
 			return;

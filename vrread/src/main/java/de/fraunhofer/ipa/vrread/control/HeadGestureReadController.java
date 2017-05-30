@@ -15,8 +15,6 @@ public class HeadGestureReadController extends ReadController {
 
 	private final String TAG = HeadGestureReadController.class.getSimpleName();
 
-	private int pageCounter = 0;
-
 	/**
 	 * @param textLayer The textlayer to work upon when receiving the movement commands.
 	 */
