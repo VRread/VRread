@@ -68,14 +68,13 @@ public class ReadController {
 
 		long now = System.currentTimeMillis();
 		renderDelay = now - lastRenderTime;
-		lastRenderTime = now;
 
 		// 40ms = 25 fps
-		if (renderDelay > 40) {
-			lastRenderTime = now;
+		if (renderDelay < 40) {
 			return false;
 		}
 
+		lastRenderTime = now;
 		return true;
 	}
 
@@ -90,6 +89,7 @@ public class ReadController {
 	}
 
 	void up(float speedFactor) {
+
 		if (!shouldStepFrame()) {
 			return;
 		}
@@ -108,9 +108,10 @@ public class ReadController {
 			}
 
 			// Reached and of tex. Render new.
-			//1024 * 0.5
-			ReadPosition newPos = new ReadPosition(readPosition.getPage(), lastRenderPosition.getX(), readPosition
-					.getY() - 512);
+			// 1024 * 0.5 = 512. Thats the new y coordiante of the the new texture.
+			ReadPosition newPos = new ReadPosition(readPosition.getPage(),
+					lastRenderPosition.getX(),
+					readPosition.getY() - 512);
 			createTexture(newPos);
 			textLayer.setY(0.5f);
 		}
@@ -131,7 +132,7 @@ public class ReadController {
 		float texDistance = textLayer.getY() + distance / textLayer.getTextureSize().getHeight();
 
 		tempReadPosition.set(readPosition);
-		tempReadPosition.setX(newY);
+		tempReadPosition.setY(newY);
 
 		if (!datasource.isInsidePage(tempReadPosition, scale)) {
 			nextPageDelayCounter++;

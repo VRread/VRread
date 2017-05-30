@@ -17,8 +17,7 @@ public class SimpleHeadGestureController implements GestureController {
 	 * The angle AFTER the threshold under which the speed is linearly ramped up.
 	 */
 	private final static float MAX_SPEED_ANGLE_PITCH_DEGREE = 10;
-
-	private final static float MAX_SPEED_ANGLE_ROLL_DEGREE = 15;
+	private final static float MAX_SPEED_ANGLE_ROLL_DEGREE = 10;
 
 
 	/**
@@ -109,7 +108,7 @@ public class SimpleHeadGestureController implements GestureController {
 	private void calculateSpeedFactors() {
 
 		float overshootX = Math.abs(pitch) - toRad(leftRightThreshold);
-		speedFactorX  = overshootX * toRad(MAX_SPEED_ANGLE_PITCH_DEGREE);
+		speedFactorX  = overshootX / toRad(MAX_SPEED_ANGLE_PITCH_DEGREE);
 
 		if(speedFactorX < 0) {
 			speedFactorX = 0;
