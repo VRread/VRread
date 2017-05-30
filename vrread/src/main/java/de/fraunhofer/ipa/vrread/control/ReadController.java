@@ -119,7 +119,7 @@ public class ReadController {
 		tempReadPosition.set(currentReadPosition);
 		tempReadPosition.setY(newY);
 
-		if (tempReadPosition.getY() < 0.002) {
+		if (tempReadPosition.getY() < 5) {
 			nextPageDelayCounter++;
 			if (nextPageDelayCounter > NUM_CALLS_PAGE_CHANGE) {
 				previousPage();
@@ -140,7 +140,8 @@ public class ReadController {
 
 			// Reached and of tex. Render new.
 			// 1024 * 0.5 = 512. Thats the new y coordiante of the the new texture.
-			ReadPosition newPos = new ReadPosition(currentReadPosition.getPage(), lastRenderPosition.getX(),
+			ReadPosition newPos = new ReadPosition(currentReadPosition.getPage(),
+					lastRenderPosition.getX(),
 					currentReadPosition.getY() - textureSize / 2);
 			createTexture(newPos);
 			textLayer.setY(0.5f);
@@ -161,7 +162,6 @@ public class ReadController {
 		lastRenderTime = System.currentTimeMillis();
 
 		float newY = currentReadPosition.getY() + distance;
-		float texDistance = textLayer.getY() + distance / textureSize;
 
 		tempReadPosition.set(currentReadPosition);
 		//tempReadPosition.setY(newY + textureSize / 4);
@@ -178,11 +178,14 @@ public class ReadController {
 
 		currentReadPosition.setY(newY);
 
-		if (texDistance < 0.5) {
-			textLayer.setY(texDistance);
+		float newShaderY = textLayer.getY() + distance / textureSize;
+
+		if (newShaderY < 0.5) {
+			textLayer.setY(newShaderY);
 		} else {
 			// Reached and of tex. Render new.
-			ReadPosition newPos = new ReadPosition(currentReadPosition.getPage(), lastRenderPosition.getX(),
+			ReadPosition newPos = new ReadPosition(currentReadPosition.getPage(),
+					lastRenderPosition.getX(),
 					currentReadPosition.getY());
 			createTexture(newPos);
 			textLayer.setY(0);
@@ -264,6 +267,16 @@ public class ReadController {
 	}
 
 	private void createTexture(ReadPosition texturePosition) {
+
+		final int halfTextSize = (textureSize / 2);
+
+		// Make sure next tex patch is increment of 512.
+		final int y = (int) texturePosition.getY() / halfTextSize;
+		texturePosition.setY(halfTextSize * y);
+
+		final int x = (int) texturePosition.getX() / halfTextSize;
+		texturePosition.setX(halfTextSize * x);
+
 		Log.d(TAG, String.format("Create Tex nextTexPos: %.1f %.1f, readPos: %.1f %.1f textLayer: %.1f %.1f",
 				texturePosition.getX(),
 				texturePosition.getY(),
@@ -312,7 +325,7 @@ public class ReadController {
 
 			currentReadPosition.setPage(0);
 			// Set back to middle bottom position.
-			currentReadPosition.setY(1582.4194f);
+			currentReadPosition.setY(1540.76f);
 			currentReadPosition.setX(0);
 
 			ReadPosition newTexPos = new ReadPosition(
