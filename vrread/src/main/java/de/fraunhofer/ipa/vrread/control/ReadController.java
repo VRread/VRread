@@ -207,11 +207,13 @@ public class ReadController {
 
 		lastRenderTime = System.currentTimeMillis();
 
-		currentReadPosition.setX(currentReadPosition.getX() - distance);
-		float texDistance = textLayer.getX() - distance / textureSize;
+		final float newX = currentReadPosition.getX() - distance;
+		currentReadPosition.setX(newX);
 
-		if (texDistance > 0) {
-			textLayer.setX(texDistance);
+		float newShaderX = textLayer.getX() - distance / textureSize;
+
+		if (newShaderX > 0) {
+			textLayer.setX(newShaderX);
 		} else {
 
 			// Start of page reached do nothing.
@@ -227,8 +229,11 @@ public class ReadController {
 			textLayer.setX(0.5f);
 		}
 
-		Log.d(TAG, String.format("RPosX: %.3f, RPosY: %.3f, TPosX: %.3f, TPosY: %.3f", currentReadPosition.getX(),
-				currentReadPosition.getY(), textLayer.getX(), textLayer.getY()));
+		Log.d(TAG, String.format("RPosX: %.3f, RPosY: %.3f, TPosX: %.3f, TPosY: %.3f",
+				currentReadPosition.getX(),
+				currentReadPosition.getY(),
+				textLayer.getX(),
+				textLayer.getY()));
 	}
 
 	void right(float speedFactor) {
@@ -241,7 +246,7 @@ public class ReadController {
 		lastRenderTime = System.currentTimeMillis();
 
 		float newX = currentReadPosition.getX() + distance;
-		float texDistance = textLayer.getX() + distance / textureSize;
+		float newShaderX = textLayer.getX() + distance / textureSize;
 
 		tempReadPosition.set(currentReadPosition);
 		// Dive by 2 so we get 1/4 tex size overshoot to the border of
@@ -255,8 +260,8 @@ public class ReadController {
 
 		currentReadPosition.setX(newX);
 
-		if (texDistance < 0.5) {
-			textLayer.setX(texDistance);
+		if (newShaderX < 0.5) {
+			textLayer.setX(newShaderX);
 		} else {
 			// Reached and of tex. Render new.
 			ReadPosition newPos = new ReadPosition(currentReadPosition.getPage(), currentReadPosition.getX(),
@@ -265,8 +270,11 @@ public class ReadController {
 			textLayer.setX(0);
 		}
 
-		Log.d(TAG, String.format("RPosX: %.3f, RPosY: %.3f, TPosX: %.3f, TPosY: %.3f", currentReadPosition.getX(),
-				currentReadPosition.getY(), textLayer.getX(), textLayer.getY()));
+		Log.d(TAG, String.format("RPosX: %.3f, RPosY: %.3f, TPosX: %.3f, TPosY: %.3f",
+				currentReadPosition.getX(),
+				currentReadPosition.getY(),
+				textLayer.getX(),
+				textLayer.getY()));
 	}
 
 	private void createTexture(ReadPosition texturePosition) {
