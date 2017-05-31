@@ -13,6 +13,7 @@
 	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 	<!-- Required to detect viewer insertion. -->
 	<uses-permission android:name="android.permission.NFC"/>
+	<uses-permission android:name="android.permission.INTERNET" />
 
 	<!-- Make accelerometer and gyroscope hard requirements for good head tracking. -->
 	<uses-feature
