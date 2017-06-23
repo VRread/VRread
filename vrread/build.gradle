@@ -14,7 +14,7 @@ android {
     buildTypes {
         release {
             minifyEnabled true
-            proguardFiles.add(file('../../proguard-gvr.txt'))
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
     compileOptions {

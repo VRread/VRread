@@ -16,6 +16,7 @@
 
 package de.fraunhofer.ipa.vrread.ui;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -104,28 +105,55 @@ public class VRViewActivity extends GvrActivity {
 		readController = new HeadGestureReadController(textLayer);
 		headController.setHeadGestureReadController(readController);
 
-		// Extract the file uri.
+		// Adapt to the zoom factor.
+		float zoomFac = appSettings.getZoomFactor();
+		readController.setScale(zoomFac);
+		readController.setScrollSpeedFactor(appSettings.getScollspeedFactor());
+
+		// Check how our activity was started. If it was started via our main activity
+		// open the file.
 		if (getIntent().hasExtra(EXTRA_OPEN_URI)) {
 
 			Uri fileUri = getIntent().getExtras().getParcelable(EXTRA_OPEN_URI);
 			Log.d(TAG, "Received uri: " + fileUri);
 
-			final Datasource ds = datasourceFactory.getDatasource(fileUri);
+			prepareDatasource(fileUri);
+		} else {
+			// Seems like we where started by a intent filter.
+			Log.d(TAG, "Activity started by external intent. Trying to fetch data.");
 
-			if (ds != null) {
-				// Adapt to the zoom factor.
-				float zoomFac = appSettings.getZoomFactor();
+			Uri data = getBrowserIntentData(getIntent());
 
-				readController.setDatasource(ds);
-				readController.setScale(zoomFac);
-				readController.setScrollSpeedFactor(appSettings.getScollspeedFactor());
-				readController.gotoPage(0);
-			} else {
-				Log.e(TAG, "Can not open the given file URI.");
-				Toast.makeText(this, getText(R.string.can_not_open_file), Toast.LENGTH_SHORT).show();
+			if(data == null) {
+				Toast.makeText(this, R.string.can_not_open_file, Toast.LENGTH_LONG).show();
 				finish();
 			}
+
+			prepareDatasource(data);
 		}
+	}
+
+	private void prepareDatasource(Uri fileUri) {
+		Log.d(TAG, "Opening URI for datasource.");
+
+		final Datasource ds = datasourceFactory.getDatasource(fileUri);
+
+		if (ds != null) {
+			readController.setDatasource(ds);
+			readController.gotoPage(0);
+		} else {
+			Log.e(TAG, "Can not open the given file URI.");
+			Toast.makeText(this, getText(R.string.can_not_open_file), Toast.LENGTH_SHORT).show();
+			finish();
+		}
+	}
+
+	private Uri getBrowserIntentData(Intent intent) {
+
+		final String text = intent.getStringExtra(Intent.EXTRA_TEXT);
+		final Uri dataUri = Uri.parse(text);
+
+		return dataUri;
 	}
 
 	/**

@@ -32,7 +32,7 @@ public class ReadController {
 	private final static int RENDER_DELAY_MS = 1000 / TARGET_FPS;
 
 	// Base speed of the application.
-	private final static float BASE_VELOCITY = 100f;
+	private final static float BASE_VELOCITY = 25f;
 
 	// We sometimes need this size in order to calculate read distances.
 	private final int textureSize;
