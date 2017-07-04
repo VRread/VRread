@@ -30,9 +30,9 @@ import com.google.vr.sdk.base.GvrView;
 
 import de.fraunhofer.ipa.vrread.AppSettings;
 import de.fraunhofer.ipa.vrread.R;
-import de.fraunhofer.ipa.vrread.control.SimpleHeadGestureController;
 import de.fraunhofer.ipa.vrread.control.HeadGestureReadController;
 import de.fraunhofer.ipa.vrread.control.SensitivityLevel;
+import de.fraunhofer.ipa.vrread.control.SimpleHeadGestureController;
 import de.fraunhofer.ipa.vrread.datasource.Datasource;
 import de.fraunhofer.ipa.vrread.datasource.DatasourceFactory;
 import de.fraunhofer.ipa.vrread.graphics.Renderer;
@@ -122,9 +122,9 @@ public class VRViewActivity extends GvrActivity {
 			// Seems like we where started by a intent filter.
 			Log.d(TAG, "Activity started by external intent. Trying to fetch data.");
 
-			Uri data = getBrowserIntentData(getIntent());
+			Uri data = getExternalIntentData(getIntent());
 
-			if(data == null) {
+			if (data == null) {
 				Toast.makeText(this, R.string.can_not_open_file, Toast.LENGTH_LONG).show();
 				finish();
 			}
@@ -148,12 +148,26 @@ public class VRViewActivity extends GvrActivity {
 		}
 	}
 
-	private Uri getBrowserIntentData(Intent intent) {
+	/**
+	 * Check which intent format triggered the application. We will display this data here.
+	 *
+	 * @param intent The intent which triggered the application.
+	 * @return The URI of the file to open.
+	 */
+	private Uri getExternalIntentData(Intent intent) {
 
-		final String text = intent.getStringExtra(Intent.EXTRA_TEXT);
-		final Uri dataUri = Uri.parse(text);
-
-		return dataUri;
+		switch(intent.getAction()) {
+			case Intent.ACTION_VIEW:
+				return  intent.getData();
+			case Intent.ACTION_SEND:
+				// We got arbitrary text send. It is most likly a URL.
+				final String text = intent.getStringExtra(Intent.EXTRA_TEXT);
+				final Uri dataUri = Uri.parse(text);
+				return dataUri;
+			default:
+				// No known data.
+				return null;
+		}
 	}
 
 	/**
