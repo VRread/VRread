@@ -32,10 +32,6 @@ public class CapabilityChecker implements DialogInterface.OnDismissListener {
 	 */
 	public boolean hasNeededFeatures() {
 
-		return false;
-
-		/*
-
 		final SensorManager sensorMgr = (SensorManager) ctx.getSystemService(Context.SENSOR_SERVICE);
 		final List<Sensor> sensors = sensorMgr.getSensorList(Sensor.TYPE_ALL);
 
@@ -44,7 +40,7 @@ public class CapabilityChecker implements DialogInterface.OnDismissListener {
 				return true;
 			}
 		}
-		return false;*/
+		return false;
 	}
 
 	/**

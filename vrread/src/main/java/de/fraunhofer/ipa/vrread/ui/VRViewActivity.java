@@ -29,6 +29,7 @@ import com.google.vr.sdk.base.GvrActivity;
 import com.google.vr.sdk.base.GvrView;
 
 import de.fraunhofer.ipa.vrread.AppSettings;
+import de.fraunhofer.ipa.vrread.CapabilityChecker;
 import de.fraunhofer.ipa.vrread.R;
 import de.fraunhofer.ipa.vrread.control.HeadGestureReadController;
 import de.fraunhofer.ipa.vrread.control.SensitivityLevel;
@@ -66,6 +67,10 @@ public class VRViewActivity extends GvrActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		// Check if the app has all the features needes for it to work properly.
+		CapabilityChecker checker = new CapabilityChecker(this);
+		checker.notifyNotAllFeatures();
 
 		setContentView(R.layout.renderer);
 
