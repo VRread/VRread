@@ -18,6 +18,7 @@ import android.view.View;
 import java.io.FileNotFoundException;
 
 import de.fraunhofer.ipa.vrread.AppSettings;
+import de.fraunhofer.ipa.vrread.CapabilityChecker;
 import de.fraunhofer.ipa.vrread.R;
 import de.fraunhofer.ipa.vrread.datasource.DatasourceService;
 
@@ -35,6 +36,10 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		// Check if the app has all the features needes for it to work properly.
+		CapabilityChecker checker = new CapabilityChecker(this);
+		checker.notifyNotAllFeatures();
 
 		// Prepare the default values for the preferences.
 		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);

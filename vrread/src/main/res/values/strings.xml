@@ -30,5 +30,7 @@
 	<string name="helperline_position">Leselinien Position</string>
 	<string name="helperline_position_summary">Position der Leselinie auf dem Bildschirm.</string>
 	<string name="can_not_open_file">Can not open file.</string>
+	<string name="device_misses_features">Dieses Gerät erfüllt nicht die Mindestanforderung zum Betrieb der App.</string>
+	<string name="attention">Achtung</string>
 </resources>
 
